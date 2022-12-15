@@ -1,25 +1,20 @@
-import mysql from 'mysql2/promise';
+// import mysql from 'mysql2/promise';
+import { query } from "./connection";
 
 export default async function handler(req, res) {
 
-    const connection = await mysql.createConnection({
-        host: 'localhost',
-        user: 'mtsingson',
-        password: 'akosimik13',
-        database: 'coreserv_db'
-    });
 
     try {
-        const query = "SELECT * FROM vendors";
+        const sql = "SELECT * FROM vendors";
+        const valuesParam = [];
 
-        const [result] = await connection.execute(query);
-        connection.end();
+        const result = await query({query: sql, values: valuesParam});
 
         res.status(200).json({ result: result })
 
     } 
     catch (error) {
-        res.status(500).json({ error: error })
+        res.status(500).json({ error: error.message })
     }
 
     
