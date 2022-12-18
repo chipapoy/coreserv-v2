@@ -13,10 +13,10 @@ export default async function handler(req, res) {
         const result = await query({query: sql, values: valuesParam});
 
         if(result.length > 0){
-            res.status(200).json({ result: 'success' })
+            res.status(200).json({ result: result[0] })
         }
         else{
-            res.status(200).json({ result: 'Wrong password' })
+            res.status(401).json({ result: 'Wrong password' })
         }
         
 

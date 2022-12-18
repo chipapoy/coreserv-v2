@@ -11,23 +11,27 @@ const Login = () => {
     const [password, setPassword] = useState('');
 
     const submitLogin = async event => {
-        event.preventDefault();
 
-        // console.log(email);
-        // console.log(md5(password));
+        event.preventDefault();
 
         axios.post('/api/checkLogin', {
             email: email,
             password: md5(password)
         })
-        .then(function (response) {
-            console.log(response);
+        .then(function (res) {
+            // console.log(response);
+            // console.log(res.data.result.email)
+            sessionStorage.id = res.data.result.id;
+            sessionStorage.name = res.data.result.name;
+            sessionStorage.token = res.data.result.remember_token;
+
+            
+
         })
         .catch(function (error) {
-            console.log(error);
+            console.log(error.response);
+            sessionStorage.clear();
         });
-
-
 
     }
 
