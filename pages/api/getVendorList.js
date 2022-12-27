@@ -10,7 +10,7 @@ export default async function handler(req, res) {
 
         const result = await query({query: sql, values: valuesParam});
 
-        res.status(200).json({ result: result })
+        res.status(200).json(result)
 
     } 
     catch (error) {

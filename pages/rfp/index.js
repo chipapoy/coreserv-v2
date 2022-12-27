@@ -25,7 +25,7 @@ const Index = () => {
                     </div>
                     <div className="section-body">
                         <div className="container-fluid">
-                            <h4>Dashboard</h4>
+                            <h4>RFP</h4>
                         </div>
                     </div>
                 </div>    
