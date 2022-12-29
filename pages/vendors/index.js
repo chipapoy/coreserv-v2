@@ -11,6 +11,7 @@ import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import IconButton from "@mui/material/IconButton";
 import AddIcon from "@mui/icons-material/Add";
+import EditIcon from "@mui/icons-material/Edit";
 import Tooltip from "@mui/material/Tooltip";
 
 const Index = () => {
@@ -160,7 +161,18 @@ const Index = () => {
             return (
             <TableRow>
                 <TableCell colSpan={colSpan}>
-                    {/* Custom expandable row option. Data: {JSON.stringify(rowData)} */}
+                    <Link 
+                        href={{
+                            pathname:'/rfp/update',
+                            query: rowData
+                        }}
+                    >  
+                        <Tooltip>
+                            <IconButton>
+                                <EditIcon  />
+                            </IconButton>
+                        </Tooltip>
+                    </Link>
                 </TableCell>
             </TableRow>
             );
@@ -173,16 +185,16 @@ const Index = () => {
             //     console.log("clicked on icon!");
             // }
             
-            // return (
-            //     <Link href='/vendors/create'>  
-            //         <Tooltip title="Add new Vendor">
-            //             <IconButton>
-            //                 <AddIcon  />
-            //             </IconButton>
-            //         </Tooltip>
-            //     </Link>
+            return (
+                <Link href='/vendors/create'>  
+                    <Tooltip title="Add new Vendor">
+                        <IconButton>
+                            <AddIcon  />
+                        </IconButton>
+                    </Tooltip>
+                </Link>
                 
-            // );
+            );
         }
     }
 
