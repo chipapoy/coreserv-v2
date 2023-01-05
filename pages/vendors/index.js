@@ -201,6 +201,7 @@ const Index = () => {
                 styleOverrides: {
                     fixedHeader: {
                         backgroundColor: '#E35217',
+                        color: '#FFF'
                     },
                 },
             },
