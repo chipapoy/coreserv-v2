@@ -14,25 +14,70 @@ import IconButton from "@mui/material/IconButton";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import Tooltip from "@mui/material/Tooltip";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Index = () => {
 
     const [data,setData] = useState([]);
 
+
+    // const getData = async () => {
+
+    //     try {
+    //         const result = await axios.get('/api/getVendorList');
+
+    //         setData(result.data);
+    //     } 
+    //     catch (error) {
+            
+    //         toast.error('Unable to connect to server. Please try again.', {
+    //             position: "top-right",
+    //             autoClose: 5000,
+    //             hideProgressBar: false,
+    //             closeOnClick: true,
+    //             pauseOnHover: false,
+    //             draggable: false,
+    //             progress: undefined,
+    //             theme: "dark",
+    //         });
+
+    //         setData([]);
+    //     }
+    // };
+
     useEffect(() => {
 
-        const getData = async () => {
+        // getData();
+        const cancelToken = axios.CancelToken.source();
+        let settingData = true;
+        
+        axios.get('/api/getVendorList', {cancelToken:cancelToken.token})
+        .then( (res) => {
+            if(settingData){
+                setData(res.data);
+            }
+        })
+        .catch( (err) => {
 
-            const result = await axios.get('/api/getVendorList');
-
-            setData(result.data);
-        };
-
-        getData();
-
-        console.log(data);
+            if(settingData){
+                toast.error('Unable to connect to server. Please try again.', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: false,
+                    pauseOnFocusLoss: false,
+                    draggable: false,
+                    progress: undefined,
+                    theme: "dark",
+                });
+            }
+        })
 
         return () => {
+            settingData = false;
+            cancelToken.cancel();
             setData([]);
         }
 
@@ -138,13 +183,13 @@ const Index = () => {
         selectableRowsHideCheckboxes: true,
         print: false,
         onRowClick: function(rowData,meta){
-            console.log(rowData)
+            console.log(rowData[0])
             console.log(meta)
         },
         expandableRows: true,
         expandableRowsHeader: false,
         isRowExpandable: (dataIndex, expandedRows) => {
-            if (dataIndex === 3 || dataIndex === 4) return false;
+            // if (dataIndex === 3 || dataIndex === 4) return false;
 
             // Prevent expand/collapse of any row if there are 4 rows expanded already (but allow those already expanded to be collapsed)
             if (expandedRows.data.length > 4 && expandedRows.data.filter(d => d.dataIndex === dataIndex).length === 0)
@@ -160,8 +205,8 @@ const Index = () => {
                 <TableCell colSpan={colSpan}>
                     <Link 
                         href={{
-                            pathname:'/rfp/update',
-                            query: rowData
+                            pathname:'/vendors/update',
+                            query: { id: rowData[0] }
                         }}
                     >  
                         <Tooltip>
@@ -209,13 +254,14 @@ const Index = () => {
                 styleOverrides: {
                     headerCell: {
                         backgroundColor: '#E35217',
+                        color: '#FFF'
                     },
                 },
             },
             MUIDataTableBodyCell: {
                 styleOverrides: {
                     root: {
-                        fontSize: '12px',
+                        fontSize: '11px',
                     },
                 },
             }
@@ -231,7 +277,7 @@ const Index = () => {
             <div id="main_content">
 
                 <Sidemenu></Sidemenu>
-
+                {/* <ToastContainer /> */}
                 <div className="page">
                     <div id="page_top" className="section-body">
                         <div className="container-fluid">

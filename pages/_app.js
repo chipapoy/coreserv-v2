@@ -5,6 +5,7 @@ import '../assets/plugins/bootstrap/css/bootstrap.min.css'
 // import '../assets/js/core.js'
 import '../assets/css/main.css'
 import '../assets/css/default.css'
+import { ToastContainer } from 'react-toastify';
 
 function MyApp({ Component, pageProps }) {
 
@@ -12,7 +13,13 @@ function MyApp({ Component, pageProps }) {
       document.body.className = 'font-opensans offcanvas-active';
   });
 
-  return <Component {...pageProps} />
+  return (
+    <>
+      <ToastContainer />
+      <Component {...pageProps} />
+    </>
+    
+  )
 }
 
 export default MyApp

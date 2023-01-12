@@ -5,7 +5,7 @@ export default async function handler(req, res) {
 
 
     try {
-        const sql = "SELECT * FROM tier_tbl ORDER BY tier ASC";
+        const sql = "SELECT tier as value, tier as label FROM tier_tbl ORDER BY tier ASC";
         const valuesParam = [];
 
         const result = await query({query: sql, values: valuesParam});

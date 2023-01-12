@@ -5,7 +5,7 @@ export default async function handler(req, res) {
 
 
     try {
-        const sql = "SELECT * FROM account_type_tbl ORDER BY account_type ASC";
+        const sql = "SELECT account_type as value, account_type as label FROM account_type_tbl ORDER BY account_type ASC";
         const valuesParam = [];
 
         const result = await query({query: sql, values: valuesParam});

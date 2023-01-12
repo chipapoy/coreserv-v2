@@ -11,9 +11,11 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Select from 'react-select';
 
-const Create = () => {
+const Update = () => {
 
     const router = useRouter();
+
+    const recordId = router.query.id;
 
     const [cityArr,setCityArr] = useState([]);
     const [tierArr,setTierArr] = useState([]);
@@ -22,17 +24,87 @@ const Create = () => {
     const [paymentTermsArr,setPaymentTermsArr] = useState([]);
     const [soaTypeArr,setSoaTypeArr] = useState([]);
 
+    const [submitBtn,setSubmitBtn] = useState('Submit');
+    const [btnDisabled,setBtnDisabled] = useState(false);
+
+    const [vendorName, setVendorName] = useState('');
+    const [vendorCode, setVendorCode] = useState('');
+    const [bldg, setBldg] = useState('');
     const [city, setCity] = useState('');
+    const [contactPerson, setContactPerson] = useState('');
+    const [contactNum, setContactNum] = useState('');
+    const [kam, setKam] = useState('');
     const [tier, setTier] = useState('');
     const [account, setAccount] = useState('');
     const [accountType, setAccountType] = useState('');
     const [paymentTerms, setPaymentTerms] = useState('');
     const [soa, setSoa] = useState('');
+    
 
-    const [submitBtn,setSubmitBtn] = useState('Submit');
-    const [btnDisabled,setBtnDisabled] = useState(false);
+    useEffect(() => {
 
+        // console.log(recordId)
+        
+        let settingData = true;
+        
+        axios.post('/api/getVendorDetails', {
+            id: recordId
+        })
+        .then( (res) => {
 
+            // console.log(res.data[0])
+            
+            if(settingData){
+                // setVendorDetails(res.data[0]);
+                setVendorName(res.data[0].vendor_name)
+                setVendorCode(res.data[0].vendor_code)
+                setBldg(res.data[0].bldg_name)
+                setContactPerson(res.data[0].contact_person)
+                setContactNum(res.data[0].contact_num)
+                setKam(res.data[0].kam)
+                setCity({'value':res.data[0].city, 'label':res.data[0].city})
+                setTier({'value':res.data[0].tier_segment, 'label':res.data[0].tier_segment})
+                setAccount({'value':res.data[0].account, 'label':res.data[0].account})
+                setAccountType({'value':res.data[0].account_type, 'label':res.data[0].account_type})
+                setPaymentTerms({'value':res.data[0].payment_terms, 'label':res.data[0].payment_terms})
+                setSoa({'value':res.data[0].soa_type, 'label':res.data[0].soa_type})
+            }
+        })
+        .catch( (err) => {
+
+            if(settingData){
+                toast.error('Unable to connect to server. Please try again.', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: false,
+                    pauseOnFocusLoss: false,
+                    draggable: false,
+                    progress: undefined,
+                    theme: "dark",
+                });
+            }
+        })
+
+        return () => {
+            settingData = false;
+            // cancelToken.cancel();
+            setVendorName('');
+            setVendorCode('');
+            setBldg('');
+            setCity('');
+            setContactPerson('');
+            setContactNum('');
+            setKam('');
+            setTier('');
+            setAccount('');
+            setAccountType('');
+            setPaymentTerms('');
+            setSoa('');
+        }
+
+    }, [recordId]);
 
     useEffect(() => {
 
@@ -97,6 +169,32 @@ const Create = () => {
     }, []);
 
 
+    const [disableForm,SetDisableForm] = useState(false);
+
+    const handleVendorName = (e) => {
+        setVendorName(e.target.value);
+    }
+
+    const handleVendorCode = (e) => {
+        setVendorCode(e.target.value);
+    }
+
+    const handleBldg = (e) => {
+        setBldg(e.target.value);
+    }
+
+    const handleContactPerson = (e) => {
+        setContactPerson(e.target.value);
+    }
+
+    const handleContactNum = (e) => {
+        setContactNum(e.target.value);
+    }
+
+    const handleKam = (e) => {
+        setKam(e.target.value);
+    }
+
     const handleCity = (val) => {
         setCity(val);
     }
@@ -127,15 +225,17 @@ const Create = () => {
 
         setSubmitBtn('Processing');
         setBtnDisabled(true);
+        SetDisableForm(true)
 
         const data = {
-            vendor_name: event.target.vendor_name.value,
-            vendor_code: event.target.vendor_code.value,
-            bldg_name: event.target.bldg_name.value,
+            id: recordId,
+            vendor_name: vendorName,
+            vendor_code: vendorCode,
+            bldg_name: bldg,
             city: city.value,
-            contact_person: event.target.contact_person.value,
-            contact_num: event.target.contact_num.value,
-            kam: event.target.kam.value,
+            contact_person: contactPerson,
+            contact_num: contactNum,
+            kam: kam,
             tier: tier.value,
             account: account.value,
             account_type: accountType.value,
@@ -143,8 +243,10 @@ const Create = () => {
             soa_type: soa.value
         }
 
+        // console.log(data);
+
         // API endpoint where we send form data.
-        const url = '/api/createVendor'
+        const url = '/api/updateVendor'
 
         await axios.post(url, data)
         .then( res => {
@@ -153,7 +255,7 @@ const Create = () => {
 
             if(res.status === 200){
 
-                toast.success('New Vendor Added', {
+                toast.success('Vendor has been updated', {
                     position: "top-right",
                     autoClose: 5000,
                     hideProgressBar: false,
@@ -166,6 +268,7 @@ const Create = () => {
                 })
                 
                 toast.onChange(v => {
+                    console.log(v)
                     if(v.status === "removed"){
                         router.push("/vendors")
                     }
@@ -175,6 +278,7 @@ const Create = () => {
 
                 setSubmitBtn('Submit');
                 setBtnDisabled(false);
+                SetDisableForm(false)
 
                 toast.error('Unable to connect to server. Please try again.', {
                     position: "top-right",
@@ -194,6 +298,7 @@ const Create = () => {
 
             setSubmitBtn('Submit');
             setBtnDisabled(false);
+            SetDisableForm(false)
 
             // console.log(err)
 
@@ -234,24 +339,48 @@ const Create = () => {
 
                             <form onSubmit={submitData} className="card">
                                 <div className="card-body">
-                                    <div className="card-title">Create new vendor</div>
+                                    <div className="card-title">Update vendor {recordId}</div>
                                     <div className="row">
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Vendor Name</label>
-                                                <input type="text" id="vendor_name" className="form-control" /*required*/ />
+                                                <input 
+                                                    type="text" 
+                                                    id="vendor_name" 
+                                                    className="form-control"
+                                                    value={vendorName}
+                                                    onChange={handleVendorName}
+                                                    disabled={disableForm}
+                                                     /*required*/ 
+                                                />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Vendor Code</label>
-                                                <input type="text" id="vendor_code" className="form-control" /*required*/ />
+                                                <input 
+                                                    type="text" 
+                                                    id="vendor_code" 
+                                                    className="form-control" 
+                                                    value={vendorCode}
+                                                    onChange={handleVendorCode}
+                                                    disabled={disableForm}
+                                                    /*required*/ 
+                                                />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Building Name</label>
-                                                <input type="text" id="bldg_name" className="form-control" /*required*/ />
+                                                <input 
+                                                    type="text" 
+                                                    id="bldg_name" 
+                                                    className="form-control" 
+                                                    value={bldg}
+                                                    onChange={handleBldg}
+                                                    disabled={disableForm}
+                                                    /*required*/ 
+                                                />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
@@ -261,25 +390,50 @@ const Create = () => {
                                                     value={city}
                                                     options={cityArr} 
                                                     onChange={handleCity}
+                                                    isDisabled={disableForm}
                                                 />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Contact Person</label>
-                                                <input type="text" id="contact_person" className="form-control" /*required*/ />
+                                                <input 
+                                                    type="text" 
+                                                    id="contact_person" 
+                                                    className="form-control" 
+                                                    value={contactPerson}
+                                                    onChange={handleContactPerson}
+                                                    disabled={disableForm}
+                                                    /*required*/ 
+                                                />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">Contact #</label>
-                                                <input type="text" id="contact_num" className="form-control" /*required*/ />
+                                                <input 
+                                                    type="text" 
+                                                    id="contact_num" 
+                                                    className="form-control" 
+                                                    value={contactNum}
+                                                    onChange={handleContactNum}
+                                                    disabled={disableForm}
+                                                    /*required*/ 
+                                                />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
                                             <div className="form-group">
                                                 <label className="form-label">KAM</label>
-                                                <input type="text" id="kam" className="form-control" /*required*/ />
+                                                <input 
+                                                    type="text" 
+                                                    id="kam" 
+                                                    className="form-control" 
+                                                    value={kam}
+                                                    onChange={handleKam}
+                                                    disabled={disableForm}
+                                                    /*required*/ 
+                                                />
                                             </div>
                                         </div>
                                         <div className="col-md-6">
@@ -289,6 +443,7 @@ const Create = () => {
                                                     value={tier}
                                                     options={tierArr} 
                                                     onChange={handleTier}
+                                                    isDisabled={disableForm}
                                                 />
                                             </div>
                                         </div>
@@ -299,6 +454,7 @@ const Create = () => {
                                                     value={account}
                                                     options={accountArr} 
                                                     onChange={handleAccount}
+                                                    isDisabled={disableForm}
                                                 />
                                             </div>
                                         </div>
@@ -309,6 +465,7 @@ const Create = () => {
                                                     value={accountType}
                                                     options={accountTypeArr} 
                                                     onChange={handleAccountType}
+                                                    isDisabled={disableForm}
                                                 />
                                             </div>
                                         </div>
@@ -319,8 +476,8 @@ const Create = () => {
                                                     value={paymentTerms}
                                                     options={paymentTermsArr} 
                                                     onChange={handlePaymentTerms}
+                                                    isDisabled={disableForm}
                                                 />
-
                                             </div>
                                         </div>
                                         <div className="col-md-6">
@@ -330,6 +487,7 @@ const Create = () => {
                                                     value={soa}
                                                     options={soaTypeArr} 
                                                     onChange={handleSoa}
+                                                    isDisabled={disableForm}
                                                 />
                                             </div>
                                         </div>
@@ -349,4 +507,4 @@ const Create = () => {
 }
 
 
-export default Create
+export default Update
