@@ -13,6 +13,8 @@ import TableCell from '@mui/material/TableCell';
 import IconButton from "@mui/material/IconButton";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import ReceiptIcon from "@mui/icons-material/Receipt";
 import Tooltip from "@mui/material/Tooltip";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -20,31 +22,6 @@ import 'react-toastify/dist/ReactToastify.css';
 const Index = () => {
 
     const [data,setData] = useState([]);
-
-
-    // const getData = async () => {
-
-    //     try {
-    //         const result = await axios.get('/api/getVendorList');
-
-    //         setData(result.data);
-    //     } 
-    //     catch (error) {
-            
-    //         toast.error('Unable to connect to server. Please try again.', {
-    //             position: "top-right",
-    //             autoClose: 5000,
-    //             hideProgressBar: false,
-    //             closeOnClick: true,
-    //             pauseOnHover: false,
-    //             draggable: false,
-    //             progress: undefined,
-    //             theme: "dark",
-    //         });
-
-    //         setData([]);
-    //     }
-    // };
 
     useEffect(() => {
 
@@ -82,8 +59,6 @@ const Index = () => {
         }
 
     }, []);
-
-    
 
     const columns = [
         {
@@ -225,13 +200,40 @@ const Index = () => {
                 <TableCell colSpan={colSpan}>
                     <Link 
                         href={{
-                            pathname:'/vendors/update',
+                            pathname:'/rfp/update',
                             query: { id: rowData[0] }
                         }}
+                        title='Update'
                     >  
                         <Tooltip>
                             <IconButton>
                                 <EditIcon  />
+                            </IconButton>
+                        </Tooltip>
+                    </Link>
+                    <Link 
+                        href={{
+                            pathname:'/rfp/request',
+                            query: { id: rowData[0] }
+                        }}
+                        title='Request'
+                    >  
+                        <Tooltip>
+                            <IconButton>
+                                <ReceiptIcon  />
+                            </IconButton>
+                        </Tooltip>
+                    </Link>
+                    <Link 
+                        href={{
+                            pathname:'/rfp/delete',
+                            query: { id: rowData[0] }
+                        }}
+                        title='Delete'
+                    >  
+                        <Tooltip>
+                            <IconButton>
+                                <DeleteIcon  />
                             </IconButton>
                         </Tooltip>
                     </Link>
