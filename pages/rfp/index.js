@@ -93,7 +93,6 @@ const Index = () => {
                 filter: false,
                 sort: false,
                 display:false
-                
             }
         },{
             name: "vendor_name",
