@@ -146,7 +146,7 @@ const Create = () => {
 
     const handleInternalOrder2 = (e) => {
         setInternalOrder2(e.target.value);
-      }
+    }
 
     
 
@@ -272,9 +272,9 @@ const Create = () => {
                                                     isDisabled={true}
                                                 />
                                             </div>
-                                            <div class="inline-editor">
+                                            <div className="inline-editor">
                                               <label className="form-label">Vendor Details</label>
-                                              <ul class="list-unstyled">
+                                              <ul className="list-unstyled">
                                                   <li>Bldg: {vendorDetails.bldg_name}</li>
                                                   <li>Contact#: {vendorDetails.contact_num}</li>
                                                   <li>Code: {vendorDetails.vendor_code}</li>
@@ -293,11 +293,11 @@ const Create = () => {
                                                     isDisabled={disableForm}
                                                 />
                                             </div>
-                                            <div class="inline-editor">
+                                            <div className="inline-editor">
                                               <label className="form-label">Contact Details</label>
-                                              <ul class="list-unstyled">
-                                                  <li><i class="fe fe-smartphone"></i> {skyContact.contact_number}</li>
-                                                  <li><i class="fe fe-mail"></i> {skyContact.email_add}</li>
+                                              <ul className="list-unstyled">
+                                                  <li><i className="fe fe-smartphone"></i> {skyContact.contact_number}</li>
+                                                  <li><i className="fe fe-mail"></i> {skyContact.email_add}</li>
                                               </ul>
                                             </div>
                                         </div>

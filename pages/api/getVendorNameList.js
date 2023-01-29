@@ -7,24 +7,29 @@ export default async function handler(req, res) {
     try {
         const sql = `
         SELECT 
-        id as value, 
-        vendor_name as label, 
-        vendor_code,
-        account,
-        account_type,
-        bldg_name,
-        city,
-        contact_num,
-        contact_person,
-        kam,
-        payment_terms,
-        soa_type,
-        tier_segment 
+        v.id AS value, 
+        v.vendor_name AS label, 
+        v.vendor_code,
+        v.account,
+        v.account_type,
+        v.bldg_name,
+        v.city,
+        v.contact_num,
+        v.contact_person,
+        v.kam,
+        v.payment_terms,
+        v.soa_type,
+        v.tier_segment,
+        v.sky_contact_id,
+        sky.contact_person AS sky_contact_person,
+        sky.contact_number AS sky_contact_number,
+        sky.email_add AS sky_email_add
         FROM 
-        vendors 
+        vendors AS v
+        LEFT JOIN sky_contact_details AS sky ON v.sky_contact_id = sky.id
         WHERE 
-        status = 1 
-        ORDER BY vendor_name ASC
+        v.status = 1 
+        ORDER BY v.vendor_name ASC
         `;
         const valuesParam = [];
 

@@ -12,7 +12,7 @@ export default async function handler(req, res) {
             vendors.vendor_name,
             vendors.bldg_name,
             vendors.contact_num,
-            rfp.tin_num,
+            vendors.tin_num,
             vendors.vendor_code,
             rfp.sky_contact_id,
             sky_contact_details.contact_person,

@@ -14,8 +14,8 @@ import Select from 'react-select';
 const Update = () => {
 
     const router = useRouter();
-
-    const recordId = router.query.id;
+    const pageTitle = "Update Record";
+    const [recordId,setRecordId] = useState(router.query.id);
 
     const [cityArr,setCityArr] = useState([]);
     const [tierArr,setTierArr] = useState([]);
@@ -23,14 +23,24 @@ const Update = () => {
     const [accountTypeArr,setAccountTypeArr] = useState([]);
     const [paymentTermsArr,setPaymentTermsArr] = useState([]);
     const [soaTypeArr,setSoaTypeArr] = useState([]);
-
-    const [submitBtn,setSubmitBtn] = useState('Submit');
-    const [btnDisabled,setBtnDisabled] = useState(false);
+    const [skyContactArr,getSkyContactDetails] = useState([]);
+    const autoRenewSelection = [
+        {value:'Yes',label:'Yes'},
+        {value:'No',label:'No'},
+        {value:'N/A',label:'N/A'}
+    ];
+    const withPenaltySelection = [
+        {value:'Yes',label:'Yes'},
+        {value:'No',label:'No'},
+        {value:'N/A',label:'N/A'}
+    ];
 
     const [vendorName, setVendorName] = useState('');
     const [vendorCode, setVendorCode] = useState('');
     const [bldg, setBldg] = useState('');
     const [city, setCity] = useState('');
+    const [tinNum, setTinNum] = useState('');
+    const [address, setAddress] = useState('');
     const [contactPerson, setContactPerson] = useState('');
     const [contactNum, setContactNum] = useState('');
     const [kam, setKam] = useState('');
@@ -39,11 +49,21 @@ const Update = () => {
     const [accountType, setAccountType] = useState('');
     const [paymentTerms, setPaymentTerms] = useState('');
     const [soa, setSoa] = useState('');
+    const [bankDetail, setBankDetail] = useState('');
+    const [remarks, setRemarks] = useState('');
+    const [moaDuration, setMoaDuration] = useState('');
+    const [terms, setTerms] = useState('');
+    const [moaStatus, setMoaStatus] = useState('');
+    const [autoRenew, setAutoRenew] = useState('');
+    const [withPenalty, setWithPenalty] = useState('');
+    const [skyContactId, setSkyContactId] = useState('');
+    
+    const [submitBtn,setSubmitBtn] = useState('Submit');
+    const [btnDisabled,setBtnDisabled] = useState(false);
+    const [disableForm,SetDisableForm] = useState(false);
     
 
     useEffect(() => {
-
-        // console.log(recordId)
         
         let settingData = true;
         
@@ -52,22 +72,33 @@ const Update = () => {
         })
         .then( (res) => {
 
-            // console.log(res.data[0])
+            // console.log(data)
+            const data = res.data[0];
             
             if(settingData){
-                // setVendorDetails(res.data[0]);
-                setVendorName(res.data[0].vendor_name)
-                setVendorCode(res.data[0].vendor_code)
-                setBldg(res.data[0].bldg_name)
-                setContactPerson(res.data[0].contact_person)
-                setContactNum(res.data[0].contact_num)
-                setKam(res.data[0].kam)
-                setCity({'value':res.data[0].city, 'label':res.data[0].city})
-                setTier({'value':res.data[0].tier_segment, 'label':res.data[0].tier_segment})
-                setAccount({'value':res.data[0].account, 'label':res.data[0].account})
-                setAccountType({'value':res.data[0].account_type, 'label':res.data[0].account_type})
-                setPaymentTerms({'value':res.data[0].payment_terms, 'label':res.data[0].payment_terms})
-                setSoa({'value':res.data[0].soa_type, 'label':res.data[0].soa_type})
+                // setVendorDetails(data);
+                setVendorName(data.vendor_name)
+                setVendorCode(data.vendor_code)
+                setBldg(data.bldg_name)
+                setTinNum(data.tin_num)
+                setAddress(data.address)
+                setContactPerson(data.contact_person)
+                setContactNum(data.contact_num)
+                setKam(data.kam)
+                setCity({'value':data.city, 'label':data.city})
+                setTier({'value':data.tier_segment, 'label':data.tier_segment})
+                setAccount({'value':data.account, 'label':data.account})
+                setAccountType({'value':data.account_type, 'label':data.account_type})
+                setPaymentTerms({'value':data.payment_terms, 'label':data.payment_terms})
+                setSoa({'value':data.soa_type, 'label':data.soa_type})
+                setBankDetail(data.bank_details)
+                setRemarks(data.remarks)
+                setMoaDuration(data.moa_duration)
+                setTerms(data.terms)
+                setMoaStatus(data.moa_status)
+                setAutoRenew({'value':data.auto_renewal, 'label':data.auto_renewal})
+                setWithPenalty({'value':data.with_penalty, 'label':data.with_penalty})
+                setSkyContactId({'value':data.sky_contact_id, 'label':data.sky_contact_person})
             }
         })
         .catch( (err) => {
@@ -94,6 +125,8 @@ const Update = () => {
             setVendorCode('');
             setBldg('');
             setCity('');
+            setTinNum('');
+            setAddress('');
             setContactPerson('');
             setContactNum('');
             setKam('');
@@ -102,6 +135,14 @@ const Update = () => {
             setAccountType('');
             setPaymentTerms('');
             setSoa('');
+            setBankDetail('')
+            setRemarks('')
+            setMoaDuration('')
+            setTerms('')
+            setMoaStatus('')
+            setAutoRenew('')
+            setWithPenalty('')
+            setSkyContactId('')
         }
 
     }, [recordId]);
@@ -150,12 +191,20 @@ const Update = () => {
             setSoaTypeArr(result.data);
         };
 
+        const getSkyContactArr = async () => {
+
+            const result = await axios.get('/api/getSkyContactDetails');
+  
+            getSkyContactDetails(result.data);
+        };
+
         getCityArr();
         getTierArr();
         getAccountArr();
         getAccountTypeArr();
         getPaymentTermsArr();
         getSoaTypeArr();
+        getSkyContactArr();
 
         return () => {
             setCityArr([]);
@@ -164,61 +213,10 @@ const Update = () => {
             setAccountTypeArr([]);
             setPaymentTermsArr([]);
             setSoaTypeArr([]);
+            getSkyContactDetails([]);
         }
 
     }, []);
-
-
-    const [disableForm,SetDisableForm] = useState(false);
-
-    const handleVendorName = (e) => {
-        setVendorName(e.target.value);
-    }
-
-    const handleVendorCode = (e) => {
-        setVendorCode(e.target.value);
-    }
-
-    const handleBldg = (e) => {
-        setBldg(e.target.value);
-    }
-
-    const handleContactPerson = (e) => {
-        setContactPerson(e.target.value);
-    }
-
-    const handleContactNum = (e) => {
-        setContactNum(e.target.value);
-    }
-
-    const handleKam = (e) => {
-        setKam(e.target.value);
-    }
-
-    const handleCity = (val) => {
-        setCity(val);
-    }
-
-    const handleTier = (val) => {
-        setTier(val);
-    }
-
-    const handleAccount = (val) => {
-        setAccount(val);
-    }
-
-    const handleAccountType = (val) => {
-        setAccountType(val);
-    }
-
-    const handlePaymentTerms = (val) => {
-        setPaymentTerms(val);
-    }
-
-    const handleSoa = (val) => {
-        setSoa(val);
-    }
-    
 
     const submitData = async (event) => {
         event.preventDefault();
@@ -231,6 +229,8 @@ const Update = () => {
             id: recordId,
             vendor_name: vendorName,
             vendor_code: vendorCode,
+            tin_num: tinNum,
+            address: address,
             bldg_name: bldg,
             city: city.value,
             contact_person: contactPerson,
@@ -240,19 +240,23 @@ const Update = () => {
             account: account.value,
             account_type: accountType.value,
             payment_terms: paymentTerms.value,
-            soa_type: soa.value
+            soa_type: soa.value,
+            bank_details: bankDetail,
+            remarks: remarks,
+            moa_duration: moaDuration,
+            moa_status: moaStatus,
+            terms: terms,
+            auto_renew: autoRenew.value,
+            with_penalty: withPenalty.value,
+            sky_contact_id: skyContactId.value
         }
 
-        // console.log(data);
-
-        // API endpoint where we send form data.
+        console.log(data);
         const url = '/api/updateVendor'
 
         await axios.post(url, data)
         .then( res => {
-
-            // console.log(res);
-
+            
             if(res.status === 200){
 
                 toast.success('Vendor has been updated', {
@@ -313,7 +317,7 @@ const Update = () => {
                 progress: undefined,
                 theme: "dark",
             });
-        })
+        });
     }
 
     return (
@@ -339,7 +343,7 @@ const Update = () => {
 
                             <form onSubmit={submitData} className="card">
                                 <div className="card-body">
-                                    <div className="card-title">Update vendor {recordId}</div>
+                                    <div className="card-title">{pageTitle}</div>
                                     <div className="row">
                                         <div className="col-md-6">
                                             <div className="form-group">
@@ -349,7 +353,7 @@ const Update = () => {
                                                     id="vendor_name" 
                                                     className="form-control"
                                                     value={vendorName}
-                                                    onChange={handleVendorName}
+                                                    onChange={ (val) => setVendorName(val.target.value) }
                                                     disabled={disableForm}
                                                      /*required*/ 
                                                 />
@@ -363,7 +367,35 @@ const Update = () => {
                                                     id="vendor_code" 
                                                     className="form-control" 
                                                     value={vendorCode}
-                                                    onChange={handleVendorCode}
+                                                    onChange={ (val) => setVendorCode(val.target.value)}
+                                                    disabled={disableForm}
+                                                    /*required*/ 
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label className="form-label">Tin Num</label>
+                                                <input 
+                                                    type="text" 
+                                                    id="tin_num" 
+                                                    className="form-control" 
+                                                    value={tinNum}
+                                                    onChange={ (val) => setTinNum(val.target.value)}
+                                                    disabled={disableForm}
+                                                    /*required*/ 
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label className="form-label">Address</label>
+                                                <input 
+                                                    type="text" 
+                                                    id="address" 
+                                                    className="form-control" 
+                                                    value={address}
+                                                    onChange={ (val) => setAddress(val.target.value)}
                                                     disabled={disableForm}
                                                     /*required*/ 
                                                 />
@@ -377,7 +409,7 @@ const Update = () => {
                                                     id="bldg_name" 
                                                     className="form-control" 
                                                     value={bldg}
-                                                    onChange={handleBldg}
+                                                    onChange={ (val) => setBldg(val.target.value)}
                                                     disabled={disableForm}
                                                     /*required*/ 
                                                 />
@@ -389,7 +421,7 @@ const Update = () => {
                                                 <Select 
                                                     value={city}
                                                     options={cityArr} 
-                                                    onChange={handleCity}
+                                                    onChange={ (val) => setCity(val)}
                                                     isDisabled={disableForm}
                                                 />
                                             </div>
@@ -402,7 +434,7 @@ const Update = () => {
                                                     id="contact_person" 
                                                     className="form-control" 
                                                     value={contactPerson}
-                                                    onChange={handleContactPerson}
+                                                    onChange={ (val) => setContactPerson(val.target.value)}
                                                     disabled={disableForm}
                                                     /*required*/ 
                                                 />
@@ -416,7 +448,7 @@ const Update = () => {
                                                     id="contact_num" 
                                                     className="form-control" 
                                                     value={contactNum}
-                                                    onChange={handleContactNum}
+                                                    onChange={ (val) => setContactNum(val.target.value)}
                                                     disabled={disableForm}
                                                     /*required*/ 
                                                 />
@@ -430,7 +462,7 @@ const Update = () => {
                                                     id="kam" 
                                                     className="form-control" 
                                                     value={kam}
-                                                    onChange={handleKam}
+                                                    onChange={ (val) => setKam(val.target.value)}
                                                     disabled={disableForm}
                                                     /*required*/ 
                                                 />
@@ -442,7 +474,7 @@ const Update = () => {
                                                 <Select 
                                                     value={tier}
                                                     options={tierArr} 
-                                                    onChange={handleTier}
+                                                    onChange={ (val) => setTier(val)}
                                                     isDisabled={disableForm}
                                                 />
                                             </div>
@@ -453,7 +485,7 @@ const Update = () => {
                                                 <Select 
                                                     value={account}
                                                     options={accountArr} 
-                                                    onChange={handleAccount}
+                                                    onChange={ (val) => setAccount(val)}
                                                     isDisabled={disableForm}
                                                 />
                                             </div>
@@ -464,7 +496,7 @@ const Update = () => {
                                                 <Select 
                                                     value={accountType}
                                                     options={accountTypeArr} 
-                                                    onChange={handleAccountType}
+                                                    onChange={ (val) => setAccountType(val)}
                                                     isDisabled={disableForm}
                                                 />
                                             </div>
@@ -475,7 +507,7 @@ const Update = () => {
                                                 <Select 
                                                     value={paymentTerms}
                                                     options={paymentTermsArr} 
-                                                    onChange={handlePaymentTerms}
+                                                    onChange={ (val) => setPaymentTerms(val)}
                                                     isDisabled={disableForm}
                                                 />
                                             </div>
@@ -486,7 +518,109 @@ const Update = () => {
                                                 <Select 
                                                     value={soa}
                                                     options={soaTypeArr} 
-                                                    onChange={handleSoa}
+                                                    onChange={ (val) => setSoa(val)}
+                                                    isDisabled={disableForm}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-12">
+                                            <div className="form-group">
+                                                <label className="form-label">Bank Details</label>
+                                                <input 
+                                                    type="text" 
+                                                    id="bankDetail" 
+                                                    className="form-control" 
+                                                    value={bankDetail}
+                                                    onChange={ (val) => setBankDetail(val.target.value)}
+                                                    disabled={disableForm}
+                                                    /*required*/ 
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-12">
+                                            <div className="form-group">
+                                                <label className="form-label">Remarks</label>
+                                                <textarea 
+                                                    id="remarks" 
+                                                    className="form-control" 
+                                                    value={remarks}
+                                                    onChange={ (val) => setRemarks(val.target.value)}
+                                                    disabled={disableForm}
+                                                    /*required*/ 
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label className="form-label">Moa Duration</label>
+                                                <input 
+                                                    type="text" 
+                                                    id="moaDuration" 
+                                                    className="form-control" 
+                                                    value={moaDuration}
+                                                    onChange={ (val) => setMoaDuration(val.target.value)}
+                                                    disabled={disableForm}
+                                                    /*required*/ 
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label className="form-label">Moa Status</label>
+                                                <input 
+                                                    type="text" 
+                                                    id="moaStatus" 
+                                                    className="form-control" 
+                                                    value={moaStatus}
+                                                    onChange={ (val) => setMoaStatus(val.target.value)}
+                                                    disabled={disableForm}
+                                                    /*required*/ 
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label className="form-label">Terms</label>
+                                                <input 
+                                                    type="text" 
+                                                    id="terms" 
+                                                    className="form-control" 
+                                                    value={terms}
+                                                    onChange={ (val) => setTerms(val.target.value)}
+                                                    disabled={disableForm}
+                                                    /*required*/ 
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label className="form-label">Auto Renewal</label>
+                                                <Select 
+                                                    value={autoRenew}
+                                                    options={autoRenewSelection} 
+                                                    onChange={ (val) => setAutoRenew(val) }
+                                                    isDisabled={disableForm}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label className="form-label">With Penalty</label>
+                                                <Select 
+                                                    value={withPenalty}
+                                                    options={withPenaltySelection} 
+                                                    onChange={ (val) => setWithPenalty(val) }
+                                                    isDisabled={disableForm}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6">
+                                            <div className="form-group">
+                                                <label className="form-label">Sky Contact</label>
+                                                <Select 
+                                                    value={skyContactId}
+                                                    options={skyContactArr} 
+                                                    onChange={ (val) => setSkyContactId(val) }
                                                     isDisabled={disableForm}
                                                 />
                                             </div>

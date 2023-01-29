@@ -24,7 +24,7 @@ const Index = () => {
     const [data,setData] = useState([]);
 
     useEffect(() => {
-
+        
         // getData();
         const cancelToken = axios.CancelToken.source();
         let settingData = true;
@@ -106,7 +106,21 @@ const Index = () => {
             }
         },{
             name: "city",
-            label: "City",
+            label: "Area",
+            options: {
+                filter: true,
+                sort: true,
+            }
+        },{
+            name: "account",
+            label: "System",
+            options: {
+                filter: true,
+                sort: true,
+            }
+        },{
+            name: "rfp_type",
+            label: "RFP Type",
             options: {
                 filter: true,
                 sort: true,
@@ -154,17 +168,122 @@ const Index = () => {
                 sort: true,
             }
         },{
-            name: "city",
-            label: "Area",
+            name: "bill_period",
+            label: "Bill Period",
             options: {
                 filter: true,
                 sort: true,
             }
         },{
-            name: "account",
-            label: "System",
+            name: "bill_month",
+            label: "Bill Month",
             options: {
                 filter: true,
+                sort: true,
+            }
+        },{
+            name: "current_reading",
+            label: "Current Reading",
+            options: {
+                filter: false,
+                sort: true,
+            }
+        },{
+            name: "previous_reading",
+            label: "Prev Reading",
+            options: {
+                filter: false,
+                sort: true,
+            }
+        },{
+            name: "consumption",
+            label: "Consumption",
+            options: {
+                filter: false,
+                sort: true,
+            }
+        },{
+            name: "rate",
+            label: "Rate",
+            options: {
+                filter: false,
+                sort: true,
+            }
+        },{
+            name: "amount",
+            label: "Amount",
+            options: {
+                filter: false,
+                sort: true,
+            }
+        },{
+            name: "vat_amount",
+            label: "VAT Amount",
+            options: {
+                filter: false,
+                sort: true,
+            }
+        },{
+            name: "interest",
+            label: "Interest",
+            options: {
+                filter: false,
+                sort: true,
+            }
+        },{
+            name: "penalty",
+            label: "Penalty",
+            options: {
+                filter: false,
+                sort: true,
+            }
+        },{
+            name: "penalty_over_interest_vat_amount",
+            label: "Penalty/Interest VAT Amount",
+            options: {
+                filter: false,
+                sort: true,
+            }
+        },{
+            name: "surcharge",
+            label: "Surcharge",
+            options: {
+                filter: false,
+                sort: true,
+            }
+        },{
+            name: "miscellaneuos",
+            label: "Miscellaneuos",
+            options: {
+                filter: false,
+                sort: true,
+            }
+        },{
+            name: "total_amount",
+            label: "Total Amount",
+            options: {
+                filter: false,
+                sort: true,
+            }
+        },{
+            name: "date_bill_received",
+            label: "Date Bill Received",
+            options: {
+                filter: false,
+                sort: true,
+            }
+        },{
+            name: "due_date",
+            label: "Due Date",
+            options: {
+                filter: false,
+                sort: true,
+            }
+        },{
+            name: "rfp_date",
+            label: "RFP Date",
+            options: {
+                filter: false,
                 sort: true,
             }
         }
@@ -211,7 +330,7 @@ const Index = () => {
                             </IconButton>
                         </Tooltip>
                     </Link>
-                    <Link 
+                    {/* <Link 
                         href={{
                             pathname:'/rfp/request',
                             query: { id: rowData[0] }
@@ -223,7 +342,7 @@ const Index = () => {
                                 <ReceiptIcon  />
                             </IconButton>
                         </Tooltip>
-                    </Link>
+                    </Link> */}
                     <Link 
                         href={{
                             pathname:'/rfp/delete',
@@ -327,9 +446,6 @@ const Index = () => {
             </div>
         </>
     )
-
-
-
 }
 
 

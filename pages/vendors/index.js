@@ -21,6 +21,8 @@ const Index = () => {
 
     const [data,setData] = useState([]);
 
+    const pageTitle = 'MDU List';
+
 
     // const getData = async () => {
 
@@ -288,7 +290,7 @@ const Index = () => {
                     </div>
                     <div className="section-body">
                         <div className="container-fluid">
-                            <h4>MDU List</h4>
+                            <h4>{pageTitle}</h4>
                             <ThemeProvider theme={theme}>
                                 <MUIDataTable 
                                     title="" 

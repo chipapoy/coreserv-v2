@@ -11,7 +11,7 @@ export default async function handler(req, res) {
             vendors.vendor_name,
             vendors.bldg_name,
             vendors.contact_num,
-            rfp.tin_num,
+            vendors.tin_num,
             vendors.vendor_code,
             sky_contact_details.contact_person,
             sky_contact_details.contact_number,
@@ -19,15 +19,37 @@ export default async function handler(req, res) {
             rfp.internal_order1,
             rfp.internal_order2,
             vendors.city,
-            vendors.account
+            vendors.account,
+            rfp_type_tbl.rfp_type,
+            rfp.bill_period_from,
+            rfp.bill_period_to,
+            CONCAT(rfp.bill_period_from,' ',rfp.bill_period_to) AS bill_period,
+            rfp.bill_month,
+            rfp.current_reading,
+            rfp.previous_reading,
+            rfp.consumption,
+            rfp.rate,
+            rfp.amount,
+            rfp.vat_amount,
+            rfp.interest,
+            rfp.penalty,
+            rfp.penalty_over_interest_vat_amount,
+            rfp.surcharge,
+            rfp.miscellaneuos,
+            rfp.date_bill_received,
+            rfp.due_date,
+            rfp.rfp_date
             FROM 
             rfp,
             vendors,
-            sky_contact_details
+            sky_contact_details,
+            rfp_type_tbl
             WHERE 
             rfp.vendor_id = vendors.id
             AND
             rfp.sky_contact_id = sky_contact_details.id
+            AND
+            rfp.rfp_type_id = rfp_type_tbl.id
             AND
             rfp.status = 1 
             ORDER BY rfp.id DESC
