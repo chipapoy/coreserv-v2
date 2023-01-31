@@ -291,160 +291,160 @@ const Index = () => {
     ];
 
     const options = {
-        filterType: 'multiselect',
-        responsive: 'scroll',
-        selectableRowsHeader: false,
-        selectableRowsHideCheckboxes: true,
-        print: false,
-        onRowClick: function(rowData,meta){
-            console.log(rowData[0])
-            console.log(meta)
-        },
-        expandableRows: true,
-        expandableRowsHeader: false,
-        isRowExpandable: (dataIndex, expandedRows) => {
-            // if (dataIndex === 3 || dataIndex === 4) return false;
+			filterType: 'multiselect',
+			responsive: 'scroll',
+			selectableRowsHeader: false,
+			selectableRowsHideCheckboxes: true,
+			print: false,
+			onRowClick: function(rowData,meta){
+					console.log(rowData[0])
+					console.log(meta)
+			},
+			expandableRows: true,
+			expandableRowsHeader: false,
+			isRowExpandable: (dataIndex, expandedRows) => {
+					// if (dataIndex === 3 || dataIndex === 4) return false;
 
-            // Prevent expand/collapse of any row if there are 4 rows expanded already (but allow those already expanded to be collapsed)
-            if (expandedRows.data.length > 4 && expandedRows.data.filter(d => d.dataIndex === dataIndex).length === 0)
-            return false;
-            return true;
-        },
-        // rowsExpanded: [0, 1],
-        renderExpandableRow: (rowData, rowMeta) => {
-            const colSpan = rowData.length + 1;
+					// Prevent expand/collapse of any row if there are 4 rows expanded already (but allow those already expanded to be collapsed)
+					if (expandedRows.data.length > 4 && expandedRows.data.filter(d => d.dataIndex === dataIndex).length === 0)
+					return false;
+					return true;
+			},
+			// rowsExpanded: [0, 1],
+			renderExpandableRow: (rowData, rowMeta) => {
+					const colSpan = rowData.length + 1;
 
-            return (
-            <TableRow>
-                <TableCell colSpan={colSpan}>
-                    <Link 
-                        href={{
-                            pathname:'/rfp/update',
-                            query: { id: rowData[0] }
-                        }}
-                        title='Update'
-                    >  
-                        <Tooltip>
-                            <IconButton>
-                                <EditIcon  />
-                            </IconButton>
-                        </Tooltip>
-                    </Link>
-                    {/* <Link 
-                        href={{
-                            pathname:'/rfp/request',
-                            query: { id: rowData[0] }
-                        }}
-                        title='Request'
-                    >  
-                        <Tooltip>
-                            <IconButton>
-                                <ReceiptIcon  />
-                            </IconButton>
-                        </Tooltip>
-                    </Link> */}
-                    <Link 
-                        href={{
-                            pathname:'/rfp/delete',
-                            query: { id: rowData[0] }
-                        }}
-                        title='Delete'
-                    >  
-                        <Tooltip>
-                            <IconButton>
-                                <DeleteIcon  />
-                            </IconButton>
-                        </Tooltip>
-                    </Link>
-                </TableCell>
-            </TableRow>
-            );
-        },
-        onRowExpansionChange: (curExpanded, allExpanded, rowsExpanded) =>
-            console.log(allExpanded),
-        customToolbar: () => {
+					return (
+					<TableRow>
+							<TableCell colSpan={colSpan}>
+									<Link 
+											href={{
+													pathname:'/rfp/update',
+													query: { id: rowData[0] }
+											}}
+											title='Update'
+									>  
+											<Tooltip>
+													<IconButton>
+															<EditIcon  />
+													</IconButton>
+											</Tooltip>
+									</Link>
+									{/* <Link 
+											href={{
+													pathname:'/rfp/request',
+													query: { id: rowData[0] }
+											}}
+											title='Request'
+									>  
+											<Tooltip>
+													<IconButton>
+															<ReceiptIcon  />
+													</IconButton>
+											</Tooltip>
+									</Link> */}
+									<Link 
+											href={{
+													pathname:'/rfp/delete',
+													query: { id: rowData[0] }
+											}}
+											title='Delete'
+									>  
+											<Tooltip>
+													<IconButton>
+															<DeleteIcon  />
+													</IconButton>
+											</Tooltip>
+									</Link>
+							</TableCell>
+					</TableRow>
+					);
+			},
+			onRowExpansionChange: (curExpanded, allExpanded, rowsExpanded) =>
+					console.log(allExpanded),
+			customToolbar: () => {
 
-            // const handleClick = () => {
-            //     console.log("clicked on icon!");
-            // }
-            
-            return (
-                <Link href='/rfp/create'>  
-                    <Tooltip title="Create RFP">
-                        <IconButton>
-                            <AddIcon  />
-                        </IconButton>
-                    </Tooltip>
-                </Link>
-                
-            );
-        }
+					// const handleClick = () => {
+					//     console.log("clicked on icon!");
+					// }
+					
+					return (
+							<Link href='/rfp/create'>  
+									<Tooltip title="Create RFP">
+											<IconButton>
+													<AddIcon  />
+											</IconButton>
+									</Tooltip>
+							</Link>
+							
+					);
+			}
     }
 
     const theme = createTheme({
-        components: {
-            MUIDataTableHeadCell: {
-                styleOverrides: {
-                    fixedHeader: {
-                        backgroundColor: '#E35217',
-                        color: '#FFF'
-                    },
-                },
-            },
-            MUIDataTableSelectCell: {
-                styleOverrides: {
-                    headerCell: {
-                        backgroundColor: '#E35217',
-                        color: '#FFF'
-                    },
-                },
-            },
-            MUIDataTableBodyCell: {
-                styleOverrides: {
-                    root: {
-                        fontSize: '11px',
-                    },
-                },
-            }
-        },
+			components: {
+				MUIDataTableHeadCell: {
+					styleOverrides: {
+						fixedHeader: {
+							backgroundColor: '#E35217',
+							color: '#FFF'
+						},
+					},
+				},
+				MUIDataTableSelectCell: {
+					styleOverrides: {
+						headerCell: {
+							backgroundColor: '#E35217',
+							color: '#FFF'
+						},
+					},
+				},
+				MUIDataTableBodyCell: {
+					styleOverrides: {
+						root: {
+							fontSize: '11px',
+						},
+					},
+				}
+			},
     });
 
 
     return (
-        <>
-            <Head>
-                <title>Coreserv</title>
-            </Head>
-            <div id="main_content">
+			<>
+				<Head>
+					<title>Coreserv</title>
+				</Head>
+				<div id="main_content">
 
-                <Sidemenu></Sidemenu>
-                {/* <ToastContainer /> */}
-                <div className="page">
-                    <div id="page_top" className="section-body">
-                        <div className="container-fluid">
-                            <div className="page-header">
-                                <Topmenu></Topmenu>
-                            </div>
-                        </div>
-                    </div>
-                    <div className="section-body">
-                        <div className="container-fluid">
-                            <h4>RFP</h4>
-                            <ThemeProvider theme={theme}>
-                                <MUIDataTable 
-                                    title="" 
-                                    data={data} 
-                                    columns={columns} 
-                                    options={options}
-                                    data-tableid="vendorList" 
-                                    // components={}
-                                />
-                            </ThemeProvider>
-                        </div>
-                    </div>
-                </div>    
-            </div>
-        </>
+						<Sidemenu></Sidemenu>
+						{/* <ToastContainer /> */}
+						<div className="page">
+							<div id="page_top" className="section-body">
+								<div className="container-fluid">
+									<div className="page-header">
+										<Topmenu></Topmenu>
+									</div>
+								</div>
+							</div>
+							<div className="section-body">
+								<div className="container-fluid">
+									<h4>RFP</h4>
+									<ThemeProvider theme={theme}>
+										<MUIDataTable 
+												title="" 
+												data={data} 
+												columns={columns} 
+												options={options}
+												data-tableid="vendorList" 
+												// components={}
+										/>
+									</ThemeProvider>
+								</div>
+							</div>
+						</div>    
+				</div>
+			</>
     )
 }
 

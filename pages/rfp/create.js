@@ -7,11 +7,10 @@ import md5 from 'md5';
 import axios from 'axios';
 import Topmenu from "../../components/Layouts/Topmenu";
 import Sidemenu from "../../components/Layouts/Sidemenu";
-import { toast } from 'react-toastify';
-
 import Select from 'react-select';
 
-import {List,ListItem,ListItemText,Divider,Grid,Button,Box,Tabs,Tab } from '@mui/material';
+import moment from 'moment';
+import {List,ListItem,ListItemText,Divider,Grid,Button,Box,Tabs,Tab,Typography } from '@mui/material';
 
 
 
@@ -28,18 +27,15 @@ const Create = () => {
 
   const [vendor, setVendor] = useState('');
   const [vendorBorder, setVendorBorder] = useState('#ced4da');
-  const [vendorError, setVendorError] = useState(0);
+  const [vendorError, setVendorError] = useState(vendor.value===undefined ? 1 : 0);
+  const [displayErrorVendor, setDisplayErrorVendor] = useState('none');
 
   const [rfpType, setRfpType] = useState('');
   const [rfpTypeBorder, setRfpTypeBorder] = useState('#ced4da');
-  const [rfpTypeError, setRfpTypeError] = useState(0);
+  const [rfpTypeError, setRfpTypeError] = useState(rfpType.value===undefined ? 1 : 0);
+  const [displayErrorRfp, setDisplayErrorRfp] = useState('none');
 
-  
-  const [skyContact, setSkyContact] = useState('');
-  const [skyContactNum, setSkyContactNum] = useState('');
- 
 
-  
 
   const [submitBtn,setSubmitBtn] = useState('Submit');
   const [btnDisabled,setBtnDisabled] = useState(false);
@@ -87,11 +83,13 @@ const Create = () => {
     setVendor(val);
     setVendorBorder('#ced4da');
     setVendorError(0);
+    setDisplayErrorVendor('none');
     
     if(val===null) {
       setVendor([]);
-      setVendorBorder('red');
+      setVendorBorder('#f44336');
       setVendorError(1);
+      setDisplayErrorVendor('block');
     }  
     console.log(val)
   }
@@ -101,24 +99,17 @@ const Create = () => {
     setRfpType(val);
     setRfpTypeBorder('#ced4da');
     setRfpTypeError(0);
+    setDisplayErrorRfp('none');
     
     if(val===null) {
       setRfpType([]);
-      setRfpTypeBorder('red');
+      setRfpTypeBorder('#f44336');
       setRfpTypeError(1);
-    }  
+      setDisplayErrorRfp('block');
+  }  
     console.log(val)
   }
 
-  const handleSkyContactDetails = (val) => {
-      // console.log(val.contact_number)
-      setSkyContact(val);
-      setSkyContactNum(val.contact_num);
-  }
-
-  const handleSkyContactNum = (e) => {
-    setSkyContactNum(e.target.value);
-  }
 
 
   // TAB PANEL
@@ -155,102 +146,99 @@ const Create = () => {
       // setSubmitBtn('Processing');
       // setBtnDisabled(true);
 
-      console.log(vendor);
+      console.log("Vendor " + vendor.value);
+      console.log("Vendor Error " + vendorError);
+      console.log("RFP " + rfpType.value);
+      console.log("RFP Error " + rfpTypeError);
 
-      if(vendor==="" || vendor===null){
-        setVendorBorder('red');
-        setVendorError(1);
-      }
-      else{
-        setVendorBorder('#ced4da');
-        setVendorError(0);
-      }
+      setVendorBorder(vendor.value===undefined ? '#f44336' : '#ced4da');
+      setVendorError(vendor.value===undefined ? 1 : 0);
+      setDisplayErrorVendor(vendor.value===undefined ? 'block' : 'none');
 
-      if(rfpType==="" || rfpType===null){
-        setRfpTypeBorder('red');
-        setRfpTypeError(1);
-      }
-      else{
-        setRfpTypeBorder('#ced4da');
-        setRfpTypeError(0);
-      }
+      setRfpTypeBorder(rfpType.value===undefined ? '#f44336' : '#ced4da');
+      setRfpTypeError(rfpType.value===undefined ? 1 : 0);
+      setDisplayErrorRfp(rfpType.value===undefined ? 'block' : 'none');
 
-      const errorCount = vendorError + rfpTypeError;
+
+      const errorCount = await vendorError + rfpTypeError;
 
       console.log(errorCount);
 
-      const data = {
-          vendor_id: vendor.value,
-          rfp_type_id: rfpType.value
+      if(errorCount === 0){
+        const data = {
+            vendor_id: vendor.value,
+            rfp_type_id: rfpType.value
+        }
+        
+        console.log(data)
+
+        // const url = '/api/createRfp'
+
+        // await axios.post(url, data)
+        // .then( res => {
+
+        //     // console.log(res);
+
+        //     if(res.status === 200){
+
+        //         toast.success('New RFP has been created', {
+        //             position: "top-right",
+        //             autoClose: 5000,
+        //             hideProgressBar: false,
+        //             closeOnClick: true,
+        //             pauseOnHover: false,
+        //             pauseOnFocusLoss: false,
+        //             draggable: false,
+        //             progress: undefined,
+        //             theme: "dark"
+        //         })
+                
+        //         toast.onChange(v => {
+        //             if(v.status === "removed"){
+        //                 router.push("/rfp")
+        //             }
+        //         });
+        //     }  
+        //     else{
+
+        //         setSubmitBtn('Submit');
+        //         setBtnDisabled(false);
+
+        //         toast.error('Unable to connect to server. Please try again.', {
+        //             position: "top-right",
+        //             autoClose: 5000,
+        //             hideProgressBar: false,
+        //             closeOnClick: true,
+        //             pauseOnHover: false,
+        //             pauseOnFocusLoss: false,
+        //             draggable: false,
+        //             progress: undefined,
+        //             theme: "dark",
+        //         });
+        //     }
+
+        // })
+        // .catch(err => {
+
+        //     setSubmitBtn('Submit');
+        //     setBtnDisabled(false);
+
+        //     // console.log(err)
+
+        //     toast.error(err.message, {
+        //         position: "top-right",
+        //         autoClose: 5000,
+        //         hideProgressBar: false,
+        //         closeOnClick: true,
+        //         pauseOnHover: false,
+        //         pauseOnFocusLoss: false,
+        //         draggable: false,
+        //         progress: undefined,
+        //         theme: "dark",
+        //     });
+        // })
+        
       }
-      
-      console.log(data)
-
-      // const url = '/api/createRfp'
-
-      // await axios.post(url, data)
-      // .then( res => {
-
-      //     // console.log(res);
-
-      //     if(res.status === 200){
-
-      //         toast.success('New RFP has been created', {
-      //             position: "top-right",
-      //             autoClose: 5000,
-      //             hideProgressBar: false,
-      //             closeOnClick: true,
-      //             pauseOnHover: false,
-      //             pauseOnFocusLoss: false,
-      //             draggable: false,
-      //             progress: undefined,
-      //             theme: "dark"
-      //         })
-              
-      //         toast.onChange(v => {
-      //             if(v.status === "removed"){
-      //                 router.push("/rfp")
-      //             }
-      //         });
-      //     }  
-      //     else{
-
-      //         setSubmitBtn('Submit');
-      //         setBtnDisabled(false);
-
-      //         toast.error('Unable to connect to server. Please try again.', {
-      //             position: "top-right",
-      //             autoClose: 5000,
-      //             hideProgressBar: false,
-      //             closeOnClick: true,
-      //             pauseOnHover: false,
-      //             pauseOnFocusLoss: false,
-      //             draggable: false,
-      //             progress: undefined,
-      //             theme: "dark",
-      //         });
-      //     }
-
-      // })
-      // .catch(err => {
-
-      //     setSubmitBtn('Submit');
-      //     setBtnDisabled(false);
-
-      //     // console.log(err)
-
-      //     toast.error(err.message, {
-      //         position: "top-right",
-      //         autoClose: 5000,
-      //         hideProgressBar: false,
-      //         closeOnClick: true,
-      //         pauseOnHover: false,
-      //         pauseOnFocusLoss: false,
-      //         draggable: false,
-      //         progress: undefined,
-      //         theme: "dark",
-      //     });
-      // })
   }
 
   return (
@@ -290,6 +278,14 @@ const Create = () => {
                             }),
                           }}
                         />
+                        <Typography 
+                          variant="caption" 
+                          display={displayErrorVendor} 
+                          gutterBottom 
+                          sx={{ color: '#f44336' }}
+                        >
+                            Enter Vendor Name
+                        </Typography>
                       </Grid>
                       <Grid item xs={12} lg={3}>
                         <Select 
@@ -305,6 +301,14 @@ const Create = () => {
                             }),
                           }}
                         />
+                        <Typography 
+                          variant="caption" 
+                          display={displayErrorRfp} 
+                          gutterBottom 
+                          sx={{ color: '#f44336' }}
+                        >
+                            Enter RFP Type
+                        </Typography>
                       </Grid>
                       <Grid item xs={12} lg={2}>
                         <Button 
@@ -324,7 +328,7 @@ const Create = () => {
                       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                         <Tabs value={valueTab} onChange={handleChange} aria-label="">
                           <Tab label="Detail 1" />
-                          <Tab label="Detail 2" />
+                          <Tab label="Detail 2" sx={{display:'inline-flex'}} />
                           <Tab label="Detail 3" />
                         </Tabs>
                       </Box>
@@ -389,7 +393,15 @@ const Create = () => {
                         </nav>
                       </TabPanel>
                       <TabPanel value={valueTab} index={1}>
-                          Item Two
+                      <nav aria-label="main mailbox folders">
+                          <List>
+                            <ListItem divider='true' alignItems="flex-start">
+                              <ListItemText 
+                                  secondary="Bill Date From"
+                              />
+                            </ListItem>
+                          </List>
+                        </nav>
                       </TabPanel>
                       <TabPanel value={valueTab} index={2}>
                           Item Three
