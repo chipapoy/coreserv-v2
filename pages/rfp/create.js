@@ -8,9 +8,15 @@ import axios from 'axios';
 import Topmenu from "../../components/Layouts/Topmenu";
 import Sidemenu from "../../components/Layouts/Sidemenu";
 import Select from 'react-select';
-
+import DateRangePicker from 'react-bootstrap-daterangepicker';
+import 'bootstrap-daterangepicker/daterangepicker.css';
 import moment from 'moment';
-import {List,ListItem,ListItemText,Divider,Grid,Button,Box,Tabs,Tab,Typography } from '@mui/material';
+import PropTypes from 'prop-types';
+import {
+  List,ListItem,ListItemText,Divider,Grid,
+  Button,Box,Tabs,Tab,Typography,Input,
+  TextField,FormControl,InputAdornment
+} from '@mui/material';
 
 
 
@@ -35,46 +41,127 @@ const Create = () => {
   const [rfpTypeError, setRfpTypeError] = useState(rfpType.value===undefined ? 1 : 0);
   const [displayErrorRfp, setDisplayErrorRfp] = useState('none');
 
+  const [currentReading,setCurrentReading] = useState(0);
+  const [prevReading,setPrevReading] = useState(0);
+
+  const [rate,setRate] = useState(0);
+  const [amount,setAmount] = useState(0);
+  const [vatAmount,setVatAmount] = useState(0);
+  const [interest,setInterest] = useState(0);
+  const [penalty,setPenalty] = useState(0);
+  const [penaltyOverInterest,setPenaltyOverInterest] = useState(0);
+  const [surcharge,setSurcharge] = useState(0);
+  const [misc,setMisc] = useState(0);
+  const totalAmount = rate+amount+vatAmount+interest+penalty+penaltyOverInterest+surcharge+misc;
 
 
+  const handleCurrentReading = (e) => {
+    setCurrentReading(e.target.value)
+    console.log(currentReading);
+  }
+  
+
+  const dateRangePickerOptions = {
+    ranges: {
+      Today: [moment().toDate(), moment().toDate()],
+      Yesterday: [
+        moment().subtract(1, 'days').toDate(),
+        moment().subtract(1, 'days').toDate(),
+      ],
+      'Last 7 Days': [
+        moment().subtract(6, 'days').toDate(),
+        moment().toDate(),
+      ],
+      'Last 30 Days': [
+        moment().subtract(29, 'days').toDate(),
+        moment().toDate(),
+      ],
+      'This Month': [
+        moment().startOf('month').toDate(),
+        moment().endOf('month').toDate(),
+      ],
+      'Last Month': [
+        moment().subtract(1, 'month').startOf('month').toDate(),
+        moment().subtract(1, 'month').endOf('month').toDate(),
+      ],
+      'This Year': [
+        moment().startOf('year').toDate(),
+        moment().toDate(), moment().toDate(),
+      ],
+    }
+  }
+
+  const [billDate, setBillDate] = useState({
+    start: moment().format('M/DD/YYYY'),
+    end: moment().format('M/DD/YYYY'),
+  });
+
+  const handleBillDate = (start, end, label) => {
+    // console.log(moment(start).format('YYYY-MM-DD'));
+    start = moment(start).format('M/DD/YYYY');
+    end = moment(end).format('M/DD/YYYY');
+
+    setNextBillDate(moment(end).add(1,'days').format('M/DD/YYYY'))
+
+    setBillDate({ start, end })
+  }
+
+  const [billReceiveDate, setBillReceiveDate] = useState(moment().format('M/DD/YYYY'));
+
+  const handleBillReceiveDate = (date, label) => {
+    date = moment(date).format('M/DD/YYYY');
+    setBillReceiveDate(date)
+  }
+
+  const [dueDate, setDueDate] = useState(moment().format('M/DD/YYYY'));
+
+  const handleDueDate = (date, label) => {
+    date = moment(date).format('M/DD/YYYY');
+    setDueDate(date)
+  }
+
+  const [rfpDate, setRfpDate] = useState(moment().format('M/DD/YYYY'));
+
+  const handleRfpDate = (date, label) => {
+    date = moment(date).format('M/DD/YYYY');
+    setRfpDate(date)
+  }
+
+  const [nextBillDate, setNextBillDate] = useState(moment().format('M/DD/YYYY'));
+
+  // const handleNextBillDate = (date, label) => {
+  //   // date = moment(date).format('M/DD/YYYY');
+  //   setNextBillDate(date)
+  // }
+  
   const [submitBtn,setSubmitBtn] = useState('Submit');
   const [btnDisabled,setBtnDisabled] = useState(false);
 
 
 
   useEffect(() => {
+    
+    const getVendorArr = async () => {
 
+        const result = await axios.get('/api/getVendorNameList');
 
-      const getVendorArr = async () => {
-
-          const result = await axios.get('/api/getVendorNameList');
-
-          setVendorArr(result.data);
-      };
-
-      const getSkyContactArr = async () => {
-
-          const result = await axios.get('/api/getSkyContactDetails');
-
-          setSkyContactArr(result.data);
-      };
-
-      const getRfpTypeArr = async () => {
-
-        const result = await axios.get('/api/getRfpTypeList');
-
-        setRfpTypeArr(result.data);
+        setVendorArr(result.data);
     };
 
-      getVendorArr();
-      getSkyContactArr();
-      getRfpTypeArr();
+    const getRfpTypeArr = async () => {
 
-      return () => {
-          setVendorArr([]);
-          getSkyContactArr([]);
-          getRfpTypeArr([]);
-      }
+      const result = await axios.get('/api/getRfpTypeList');
+
+      setRfpTypeArr(result.data);
+    };
+
+    getVendorArr();
+    getRfpTypeArr();
+
+    return () => {
+        setVendorArr([]);
+        getRfpTypeArr([]);
+    }
 
   }, []);
 
@@ -110,28 +197,14 @@ const Create = () => {
     console.log(val)
   }
 
-
-
   // TAB PANEL
-    function TabPanel(props) {
-      const { children, value, index, ...other } = props;
-    
-      return (
-        <div
-          role="tabpanel"
-          hidden={value !== index}
-          id={`simple-tabpanel-${index}`}
-          aria-labelledby={`simple-tab-${index}`}
-          {...other}
-        >
-          {value === index && (
-            <Box sx={{ p: 3 }}>
-              {children}
-            </Box>
-          )}
-        </div>
-      );
+    const a11yProps = (index) => {
+      return {
+        id: `simple-tab-${index}`,
+        'aria-controls': `simple-tabpanel-${index}`,
+      };
     }
+
     const [valueTab, setValueTab] = useState(0);
 
     const handleChange = (event, newValue) => {
@@ -150,6 +223,8 @@ const Create = () => {
       console.log("Vendor Error " + vendorError);
       console.log("RFP " + rfpType.value);
       console.log("RFP Error " + rfpTypeError);
+      console.log("Billing Date " + billDate);
+      console.log("Current Reading " + currentReading);
 
       setVendorBorder(vendor.value===undefined ? '#f44336' : '#ced4da');
       setVendorError(vendor.value===undefined ? 1 : 0);
@@ -312,12 +387,14 @@ const Create = () => {
                       </Grid>
                       <Grid item xs={12} lg={2}>
                         <Button 
-                          variant="outlined" 
+                          disableElevation
+                          variant="contained" 
                           color="primary" 
                           type="submit"
                         >Save</Button>
                         <Button 
-                          variant="outlined" 
+                          disableElevation
+                          variant="contained" 
                           color="error" 
                           onClick={()=>router.push('/rfp')}
                         >Cancel</Button>
@@ -327,12 +404,20 @@ const Create = () => {
                     <Box sx={{ width: '100%' }}>
                       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                         <Tabs value={valueTab} onChange={handleChange} aria-label="">
-                          <Tab label="Detail 1" />
-                          <Tab label="Detail 2" sx={{display:'inline-flex'}} />
-                          <Tab label="Detail 3" />
+                          <Tab label="Details" {...a11yProps(0)} />
+                          <Tab label="Dates" sx={{display:'inline-flex'}} {...a11yProps(1)} />
+                          <Tab label="Rates" {...a11yProps(2)} />
+                          <Tab label="Upload" {...a11yProps(3)} />
                         </Tabs>
                       </Box>
-                      <TabPanel value={valueTab} index={0}>
+                      <div
+                        index={0}
+                        role="tabpanel"
+                        hidden={valueTab !== 0}
+                        id={`simple-tabpanel-0`}
+                        aria-labelledby={`simple-tab-0`}
+                        value={valueTab}
+                      >
                         <nav aria-label="main mailbox folders">
                           <List>
                             <ListItem divider='true' alignItems="flex-start">
@@ -391,21 +476,301 @@ const Create = () => {
                             </ListItem>
                           </List>
                         </nav>
-                      </TabPanel>
-                      <TabPanel value={valueTab} index={1}>
-                      <nav aria-label="main mailbox folders">
+                      </div>
+                      <div
+                        index={1}
+                        role="tabpanel"
+                        hidden={valueTab !== 1}
+                        id={`simple-tabpanel-1`}
+                        aria-labelledby={`simple-tab-1`}
+                        value={valueTab}
+                      >
+                        <nav aria-label="main mailbox folders">
                           <List>
                             <ListItem divider='true' alignItems="flex-start">
-                              <ListItemText 
-                                  secondary="Bill Date From"
-                              />
+                              <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                              <DateRangePicker
+                                initialSettings={dateRangePickerOptions}
+                                onCallback={handleBillDate}
+                              >
+                                <TextField 
+                                  label="Billing Date" 
+                                  variant="standard" 
+                                  value={billDate.start + ' - ' + billDate.end}
+                                />
+                              </DateRangePicker>
+                              </FormControl>
+                            </ListItem>
+                            <ListItem divider='true' alignItems="flex-start">
+                              <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                <TextField 
+                                  label="Month" 
+                                  variant="standard" 
+                                  aria-readonly={true}
+                                  value={ moment(billDate.start).format('MMM-YYYY') }
+                                />
+                              </FormControl>
+                            </ListItem>
+                            <ListItem divider='true' alignItems="flex-start">
+                              <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                              <DateRangePicker
+                                initialSettings={{
+                                  singleDatePicker: true,
+                                  autoApply: true
+                                }}
+                                onCallback={handleBillReceiveDate}
+                              >
+                                <TextField 
+                                  label="Date Bill Received" 
+                                  variant="standard" 
+                                  value={billReceiveDate}
+                                />
+                              </DateRangePicker>
+                              </FormControl>
+                            </ListItem>
+                            <ListItem divider='true' alignItems="flex-start">
+                              <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                              <DateRangePicker
+                                initialSettings={{
+                                  singleDatePicker: true,
+                                  autoApply: true
+                                }}
+                                onCallback={handleDueDate}
+                              >
+                                <TextField 
+                                  label="Due Date" 
+                                  variant="standard" 
+                                  value={dueDate}
+                                />
+                              </DateRangePicker>
+                              </FormControl>
+                            </ListItem>
+                            <ListItem divider='true' alignItems="flex-start">
+                              <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                              <DateRangePicker
+                                initialSettings={{
+                                  singleDatePicker: true,
+                                  autoApply: true
+                                }}
+                                onCallback={handleRfpDate}
+                              >
+                                <TextField 
+                                  label="RFP Date" 
+                                  variant="standard" 
+                                  value={rfpDate}
+                                />
+                              </DateRangePicker>
+                              </FormControl>
+                            </ListItem>
+                            <ListItem divider='true' alignItems="flex-start">
+                              <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                <TextField 
+                                  label="Next Bill Date" 
+                                  variant="standard" 
+                                  aria-readonly={true}
+                                  value={nextBillDate}
+                                />
+                              </FormControl>
+                            </ListItem>
+                            <ListItem divider='true' alignItems="flex-start">
+                              <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                <TextField
+                                  label="Current Reading" 
+                                  variant="standard" 
+                                  type='number'
+                                  value={currentReading}
+                                  onChange={ e => setCurrentReading(e.target.value) }
+                                  InputProps={{
+                                    startAdornment: <InputAdornment position="start">KwH</InputAdornment>,
+                                  }}
+                                />
+                              </FormControl>
+                              <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                <TextField
+                                  label="Previous Reading" 
+                                  variant="standard" 
+                                  type='number'
+                                  value={prevReading}
+                                  onChange={ e => setPrevReading(e.target.value) }
+                                  InputProps={{
+                                    startAdornment: <InputAdornment position="start">KwH</InputAdornment>,
+                                  }}
+                                />
+                              </FormControl>
+                              <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                <TextField
+                                  label="Consumption" 
+                                  variant="standard" 
+                                  type='number'
+                                  aria-readonly={true}
+                                  value={currentReading - prevReading}
+                                  InputProps={{
+                                    startAdornment: <InputAdornment position="start">KwH</InputAdornment>,
+                                  }}
+                                />
+                              </FormControl>
                             </ListItem>
                           </List>
                         </nav>
-                      </TabPanel>
-                      <TabPanel value={valueTab} index={2}>
-                          Item Three
-                      </TabPanel>
+                      </div>
+                      <div
+                        index={2}
+                        role="tabpanel"
+                        hidden={valueTab !== 2}
+                        id={`simple-tabpanel-2`}
+                        aria-labelledby={`simple-tab-2`}
+                        value={valueTab}
+                      >
+                        <nav aria-label="main mailbox folders">
+                          <List>
+                            <ListItem divider='true' alignItems="flex-start">
+                              <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                <TextField
+                                  label="Rate" 
+                                  variant="standard" 
+                                  type='number'
+                                  value={rate}
+                                  onChange={ e => setRate(parseFloat(e.target.value)) }
+                                  InputProps={{
+                                    startAdornment: <InputAdornment position="start">Php</InputAdornment>,
+                                  }}
+                                />
+                              </FormControl>
+                            </ListItem>
+                            <ListItem divider='true' alignItems="flex-start">
+                              <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                <TextField
+                                  label="Amount" 
+                                  variant="standard" 
+                                  type='number'
+                                  value={amount}
+                                  onChange={ e => setAmount(parseFloat(e.target.value)) }
+                                  InputProps={{
+                                    startAdornment: <InputAdornment position="start">Php</InputAdornment>,
+                                  }}
+                                />
+                              </FormControl>
+                            </ListItem>
+                            <ListItem divider='true' alignItems="flex-start">
+                              <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                <TextField
+                                  label="Vat Amount" 
+                                  variant="standard" 
+                                  type='number'
+                                  value={vatAmount}
+                                  onChange={ e => setVatAmount(parseFloat(e.target.value)) }
+                                  InputProps={{
+                                    startAdornment: <InputAdornment position="start">Php</InputAdornment>,
+                                  }}
+                                />
+                              </FormControl>
+                            </ListItem>
+                            <ListItem divider='true' alignItems="flex-start">
+                              <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                <TextField
+                                  label="Interest" 
+                                  variant="standard" 
+                                  type='number'
+                                  value={interest}
+                                  onChange={ e => setInterest(parseFloat(e.target.value)) }
+                                  InputProps={{
+                                    startAdornment: <InputAdornment position="start">Php</InputAdornment>,
+                                  }}
+                                />
+                              </FormControl>
+                            </ListItem>
+                            <ListItem divider='true' alignItems="flex-start">
+                              <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                <TextField
+                                  label="Penalty" 
+                                  variant="standard" 
+                                  type='number'
+                                  value={penalty}
+                                  onChange={ e => setPenalty(parseFloat(e.target.value)) }
+                                  InputProps={{
+                                    startAdornment: <InputAdornment position="start">Php</InputAdornment>,
+                                  }}
+                                />
+                              </FormControl>
+                            </ListItem>
+                            <ListItem divider='true' alignItems="flex-start">
+                              <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                <TextField
+                                  label="Penalty/Interest Vat Amount" 
+                                  variant="standard" 
+                                  type='number'
+                                  value={penaltyOverInterest}
+                                  onChange={ e => setPenaltyOverInterest(parseFloat(e.target.value)) }
+                                  InputProps={{
+                                    startAdornment: <InputAdornment position="start">Php</InputAdornment>,
+                                  }}
+                                />
+                              </FormControl>
+                            </ListItem>
+                          </List>
+                          <ListItem divider='true' alignItems="flex-start">
+                              <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                <TextField
+                                  label="Surcharge" 
+                                  variant="standard" 
+                                  type='number'
+                                  value={surcharge}
+                                  onChange={ e => setSurcharge(parseFloat(e.target.value)) }
+                                  InputProps={{
+                                    startAdornment: <InputAdornment position="start">Php</InputAdornment>,
+                                  }}
+                                />
+                              </FormControl>
+                            </ListItem>
+                            <ListItem divider='true' alignItems="flex-start">
+                              <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                <TextField
+                                  label="Miscellaneous" 
+                                  variant="standard" 
+                                  type='number'
+                                  value={misc}
+                                  onChange={ e => setMisc(parseFloat(e.target.value)) }
+                                  InputProps={{
+                                    startAdornment: <InputAdornment position="start">Php</InputAdornment>,
+                                  }}
+                                />
+                              </FormControl>
+                            </ListItem>
+                            <ListItem divider='true' alignItems="flex-start">
+                              <Typography variant="h4" gutterBottom>
+                                Total Amount: {totalAmount}
+                              </Typography>
+                            </ListItem>
+                        </nav>
+                      </div>
+                      <div
+                        index={3}
+                        role="tabpanel"
+                        hidden={valueTab !== 3}
+                        id={`simple-tabpanel-3`}
+                        aria-labelledby={`simple-tab-3`}
+                        value={valueTab}
+                      >
+                        <nav aria-label="main mailbox folders">
+                          <List>
+                            <ListItem divider='true' alignItems="flex-start">
+                              <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                <TextField
+                                  label="Rate" 
+                                  variant="standard" 
+                                  type='number'
+                                  value={rate}
+                                  onChange={ e => setRate(parseFloat(e.target.value)) }
+                                  InputProps={{
+                                    startAdornment: <InputAdornment position="start">Php</InputAdornment>,
+                                  }}
+                                />
+                              </FormControl>
+                            </ListItem>
+                            
+                          </List>
+                        </nav>
+                      </div>
                     </Box>
                   </div>
                 </div>
