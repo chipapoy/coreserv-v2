@@ -24,6 +24,7 @@
     "mui-datatables": "^4.3.0",
     "mysql2": "^2.3.3",
     "next": "13.0.5",
+    "next-connect": "^0.13.0",
     "react": "18.2.0",
     "react-bootstrap": "^2.7.0",
     "react-bootstrap-date-picker": "^5.1.0",

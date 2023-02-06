@@ -43,6 +43,7 @@ const Create = () => {
 
   const [currentReading,setCurrentReading] = useState(0);
   const [prevReading,setPrevReading] = useState(0);
+  const [consumption,setConsumption] = useState(currentReading - prevReading);
 
   const [rate,setRate] = useState(0);
   const [amount,setAmount] = useState(0);
@@ -52,7 +53,7 @@ const Create = () => {
   const [penaltyOverInterest,setPenaltyOverInterest] = useState(0);
   const [surcharge,setSurcharge] = useState(0);
   const [misc,setMisc] = useState(0);
-  const totalAmount = rate+amount+vatAmount+interest+penalty+penaltyOverInterest+surcharge+misc;
+  const totalAmount = amount+vatAmount+interest+penalty+penaltyOverInterest+surcharge+misc;
 
 
   const handleCurrentReading = (e) => {
@@ -572,14 +573,32 @@ const Create = () => {
                                 />
                               </FormControl>
                             </ListItem>
-                            <ListItem divider='true' alignItems="flex-start">
+                            
+                          </List>
+                        </nav>
+                      </div>
+                      <div
+                        index={2}
+                        role="tabpanel"
+                        hidden={valueTab !== 2}
+                        id={`simple-tabpanel-2`}
+                        aria-labelledby={`simple-tab-2`}
+                        value={valueTab}
+                      >
+                        <nav aria-label="main mailbox folders">
+                          <List>
+                          <ListItem divider='true' alignItems="flex-start">
                               <FormControl fullWidth sx={{ m: 1 }} variant="standard">
                                 <TextField
                                   label="Current Reading" 
                                   variant="standard" 
                                   type='number'
                                   value={currentReading}
-                                  onChange={ e => setCurrentReading(e.target.value) }
+                                  onChange={ e => {
+                                    setCurrentReading(e.target.value)
+                                    setConsumption(e.target.value - prevReading)
+                                    setAmount((e.target.value - prevReading) * rate)
+                                  }}
                                   InputProps={{
                                     startAdornment: <InputAdornment position="start">KwH</InputAdornment>,
                                   }}
@@ -591,7 +610,11 @@ const Create = () => {
                                   variant="standard" 
                                   type='number'
                                   value={prevReading}
-                                  onChange={ e => setPrevReading(e.target.value) }
+                                  onChange={ e => {
+                                    setPrevReading(e.target.value) 
+                                    setConsumption(currentReading - e.target.value)
+                                    setAmount((currentReading - e.target.value) * rate)
+                                  }}
                                   InputProps={{
                                     startAdornment: <InputAdornment position="start">KwH</InputAdornment>,
                                   }}
@@ -610,19 +633,6 @@ const Create = () => {
                                 />
                               </FormControl>
                             </ListItem>
-                          </List>
-                        </nav>
-                      </div>
-                      <div
-                        index={2}
-                        role="tabpanel"
-                        hidden={valueTab !== 2}
-                        id={`simple-tabpanel-2`}
-                        aria-labelledby={`simple-tab-2`}
-                        value={valueTab}
-                      >
-                        <nav aria-label="main mailbox folders">
-                          <List>
                             <ListItem divider='true' alignItems="flex-start">
                               <FormControl fullWidth sx={{ m: 1 }} variant="standard">
                                 <TextField
@@ -630,7 +640,10 @@ const Create = () => {
                                   variant="standard" 
                                   type='number'
                                   value={rate}
-                                  onChange={ e => setRate(parseFloat(e.target.value)) }
+                                  onChange={ e => {
+                                    setRate(parseFloat(e.target.value)) 
+                                    setAmount(consumption * parseFloat(e.target.value))
+                                  }}
                                   InputProps={{
                                     startAdornment: <InputAdornment position="start">Php</InputAdornment>,
                                   }}
@@ -644,7 +657,7 @@ const Create = () => {
                                   variant="standard" 
                                   type='number'
                                   value={amount}
-                                  onChange={ e => setAmount(parseFloat(e.target.value)) }
+                                  // onChange={ e => setAmount(parseFloat(e.target.value)) }
                                   InputProps={{
                                     startAdornment: <InputAdornment position="start">Php</InputAdornment>,
                                   }}
@@ -754,17 +767,11 @@ const Create = () => {
                         <nav aria-label="main mailbox folders">
                           <List>
                             <ListItem divider='true' alignItems="flex-start">
-                              <FormControl fullWidth sx={{ m: 1 }} variant="standard">
-                                <TextField
-                                  label="Rate" 
-                                  variant="standard" 
-                                  type='number'
-                                  value={rate}
-                                  onChange={ e => setRate(parseFloat(e.target.value)) }
-                                  InputProps={{
-                                    startAdornment: <InputAdornment position="start">Php</InputAdornment>,
-                                  }}
-                                />
+                              <FormControl sx={{ m: 1 }} variant="standard">
+                                <Button variant="contained" component="label">
+                                  Upload
+                                  <input hidden accept="image/*" multiple type="file" />
+                                </Button>
                               </FormControl>
                             </ListItem>
                             
