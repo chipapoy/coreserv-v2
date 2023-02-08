@@ -292,7 +292,7 @@ const Create = () => {
         const data = {
             vendor_id: vendor.value,
             rfp_type_id: rfpType.value,
-
+            
         }
         
         console.log(data)
