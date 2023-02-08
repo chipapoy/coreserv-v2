@@ -14,9 +14,10 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import {
   List,ListItem,ListItemText,Divider,Grid,
-  Button,Box,Tabs,Tab,Typography,Input,
+  Button,ButtonGroup,Box,Tabs,Tab,Typography,Input,
   TextField,FormControl,InputAdornment
 } from '@mui/material';
+import uniqueId from 'uniqid';
 
 
 
@@ -26,6 +27,9 @@ const Create = () => {
   const router = useRouter();
 
   const pageTitle = 'Create RFP'
+
+  // let rfp_id = uniqueId();
+  const [rfp_id,setRfpId] = useState(uniqueId());
 
   const [vendorArr,setVendorArr] = useState([]);
   const [skyContactArr,setSkyContactArr] = useState([]);
@@ -105,6 +109,8 @@ const Create = () => {
     setNextBillDate(moment(end).add(1,'days').format('M/DD/YYYY'))
 
     setBillDate({ start, end })
+
+    console.log(rfp_id);
   }
 
   const [billReceiveDate, setBillReceiveDate] = useState(moment().format('M/DD/YYYY'));
@@ -126,6 +132,8 @@ const Create = () => {
   const handleRfpDate = (date, label) => {
     date = moment(date).format('M/DD/YYYY');
     setRfpDate(date)
+
+    console.log(rfp_id);
   }
 
   const [nextBillDate, setNextBillDate] = useState(moment().format('M/DD/YYYY'));
@@ -134,6 +142,44 @@ const Create = () => {
   //   // date = moment(date).format('M/DD/YYYY');
   //   setNextBillDate(date)
   // }
+  const [fileUpload,setFileUpload] = useState([]);
+
+  const onFileChange = (e) => {
+
+      const fileSize = e.target.files[0].size / (1024 * 1024);
+      console.log(fileSize);
+      
+      setFileUpload({
+          file: e.target.files[0]
+      })
+
+      console.log(rfp_id);
+  }
+
+  const onUpload = (e) => {
+    console.log(fileUpload.file);
+
+    const formData = new FormData();
+
+    formData.append('file',fileUpload.file)
+    formData.append('rfp_id',rfp_id)
+
+    axios.post(
+        '/api/testUpload',
+        formData,
+        {
+            headers: {
+                'content-type': 'multipart/form-data'
+            }
+        }
+    )
+    .then(res => {
+        console.log("Result -> " + res)
+    })
+    .catch(err => {
+        console.log("Error -> " + err)
+    })
+}
   
   const [submitBtn,setSubmitBtn] = useState('Submit');
   const [btnDisabled,setBtnDisabled] = useState(false);
@@ -180,6 +226,8 @@ const Create = () => {
       setDisplayErrorVendor('block');
     }  
     console.log(val)
+
+    console.log(rfp_id);
   }
 
   const handleRfpType = (val) => {
@@ -220,12 +268,12 @@ const Create = () => {
       // setSubmitBtn('Processing');
       // setBtnDisabled(true);
 
-      console.log("Vendor " + vendor.value);
-      console.log("Vendor Error " + vendorError);
-      console.log("RFP " + rfpType.value);
-      console.log("RFP Error " + rfpTypeError);
-      console.log("Billing Date " + billDate);
-      console.log("Current Reading " + currentReading);
+      // console.log("Vendor " + vendor.value);
+      // console.log("Vendor Error " + vendorError);
+      // console.log("RFP " + rfpType.value);
+      // console.log("RFP Error " + rfpTypeError);
+      // console.log("Billing Date " + billDate);
+      // console.log("Current Reading " + currentReading);
 
       setVendorBorder(vendor.value===undefined ? '#f44336' : '#ced4da');
       setVendorError(vendor.value===undefined ? 1 : 0);
@@ -243,7 +291,8 @@ const Create = () => {
       if(errorCount === 0){
         const data = {
             vendor_id: vendor.value,
-            rfp_type_id: rfpType.value
+            rfp_type_id: rfpType.value,
+
         }
         
         console.log(data)
@@ -649,8 +698,6 @@ const Create = () => {
                                   }}
                                 />
                               </FormControl>
-                            </ListItem>
-                            <ListItem divider='true' alignItems="flex-start">
                               <FormControl fullWidth sx={{ m: 1 }} variant="standard">
                                 <TextField
                                   label="Amount" 
@@ -677,8 +724,6 @@ const Create = () => {
                                   }}
                                 />
                               </FormControl>
-                            </ListItem>
-                            <ListItem divider='true' alignItems="flex-start">
                               <FormControl fullWidth sx={{ m: 1 }} variant="standard">
                                 <TextField
                                   label="Interest" 
@@ -705,8 +750,6 @@ const Create = () => {
                                   }}
                                 />
                               </FormControl>
-                            </ListItem>
-                            <ListItem divider='true' alignItems="flex-start">
                               <FormControl fullWidth sx={{ m: 1 }} variant="standard">
                                 <TextField
                                   label="Penalty/Interest Vat Amount" 
@@ -734,8 +777,6 @@ const Create = () => {
                                   }}
                                 />
                               </FormControl>
-                            </ListItem>
-                            <ListItem divider='true' alignItems="flex-start">
                               <FormControl fullWidth sx={{ m: 1 }} variant="standard">
                                 <TextField
                                   label="Miscellaneous" 
@@ -768,13 +809,13 @@ const Create = () => {
                           <List>
                             <ListItem divider='true' alignItems="flex-start">
                               <FormControl sx={{ m: 1 }} variant="standard">
-                                <Button variant="contained" component="label">
-                                  Upload
-                                  <input hidden accept="image/*" multiple type="file" />
-                                </Button>
+
+                                <ButtonGroup variant="contained" aria-label="outlined primary button group" disableElevation>
+                                  <Button variant='text'><input type="file" name="file_upload" onChange={onFileChange} accept=".pdf"  /></Button>
+                                  <Button onClick={onUpload}>Upload</Button>
+                                </ButtonGroup>
                               </FormControl>
                             </ListItem>
-                            
                           </List>
                         </nav>
                       </div>

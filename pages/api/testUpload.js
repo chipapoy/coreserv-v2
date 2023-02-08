@@ -1,15 +1,62 @@
-import nextConnect from 'next-connect';
+import formidable from 'formidable-serverless';
+import { query } from "./connection";
+import uniqueId from 'uniqid';
 
-const apiRoute = nextConnect({
-  // Handle any other HTTP method
-  onNoMatch(req, res) {
-    res.status(405).json({ error: `Method '${req.method}' Not Allowed` });
+export const config = {
+  api: {
+    bodyParser: false,
   },
-});
+};
 
-// Process a POST request
-apiRoute.post((req, res) => {
-  res.status(200).json({ data: 'success' });
-});
+export default async (req, res) => {
 
-export default apiRoute;
+  const form = new formidable.IncomingForm();
+
+  form.uploadDir = "./public/uploads/";
+  form.keepExtensions = true;
+  form.maxFileSize = 5*1024*1024; // 5mb
+  
+
+  form.parse(req, async (err, fields, files) => {
+
+    if (err) {
+      // res.writeHead(err.httpCode || 400, { 'Content-Type': 'text/plain' });
+      // res.end(String(err));
+
+      res.status(500).json({ error: String(err) })
+      return;
+    }
+    // res.writeHead(200, { 'Content-Type': 'application/json' });
+    // res.end(JSON.stringify({ fields, files }, null, 2));
+    // const test = { data: files.file.path.split('\\')[2] };
+    try {
+      const sql = `
+          INSERT INTO upload_tbl 
+          (id,rfp_id,custom_name,file_name,size,file_path) 
+          VALUES (?,?,?,?,?,?)
+      `;
+      const valuesParam = [
+          uniqueId(),
+          fields.rfp_id,
+          files.file.name,
+          files.file.path.split('\\')[2],
+          files.file.size / (1024 * 1024),
+          files.file.path
+      ];
+  
+      const queryResult =  await query({query: sql, values: valuesParam});
+  
+      // res.status(200).json({ message: result })
+      // return { message: result };
+      const result = { message: queryResult };
+
+      res.status(200).json({ fields, files, result });
+  
+    } 
+    catch (error) {
+      res.status(500).json({ message: error.message })
+    }
+
+  });
+  // return;
+};
