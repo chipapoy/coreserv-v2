@@ -24,7 +24,6 @@ export default async (req, res) => {
       // res.end(String(err));
 
       res.status(500).json({ error: String(err) })
-      return;
     }
     // res.writeHead(200, { 'Content-Type': 'application/json' });
     // res.end(JSON.stringify({ fields, files }, null, 2));
@@ -32,11 +31,10 @@ export default async (req, res) => {
     try {
       const sql = `
           INSERT INTO upload_tbl 
-          (id,rfp_id,custom_name,file_name,size,file_path) 
-          VALUES (?,?,?,?,?,?)
+          (rfp_id,custom_name,file_name,size,file_path) 
+          VALUES (?,?,?,?,?)
       `;
       const valuesParam = [
-          uniqueId(),
           fields.rfp_id,
           files.file.name,
           files.file.path.split('\\')[2],
@@ -54,9 +52,8 @@ export default async (req, res) => {
   
     } 
     catch (error) {
-      res.status(500).json({ message: error.message })
+      res.status(500).json({ message: String(err) })
     }
 
   });
-  // return;
 };

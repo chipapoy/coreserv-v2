@@ -5,8 +5,8 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react';
 import md5 from 'md5';
 import axios from 'axios';
-import Topmenu from "../../components/Layouts/Topmenu";
-import Sidemenu from "../../components/Layouts/Sidemenu";
+import Topmenu from "../../../components/Layouts/Topmenu";
+import Sidemenu from "../../../components/Layouts/Sidemenu";
 import Select from 'react-select';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
 import 'bootstrap-daterangepicker/daterangepicker.css';
@@ -27,7 +27,10 @@ const Create = () => {
 
   const router = useRouter();
 
-  const pageTitle = 'Create RFP'
+  const { id } = router.query;
+
+  const pageTitle = 'Update ' + id;
+  
 
   // let rfp_id = uniqid();
   const [rfp_id,setRfpId] = useState(uniqid.process());
