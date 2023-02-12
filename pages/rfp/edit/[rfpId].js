@@ -27,27 +27,19 @@ const Create = () => {
 
   const router = useRouter();
 
-  const { id } = router.query;
+  const { rfpId } = router.query;
 
-  const pageTitle = 'Update ' + id;
+  const pageTitle = 'Update ' + rfpId;
   
-
-  // let rfp_id = uniqid();
-  const [rfp_id,setRfpId] = useState(uniqid.process());
+  
 
   const [vendorArr,setVendorArr] = useState([]);
   const [skyContactArr,setSkyContactArr] = useState([]);
   const [rfpTypeArr,setRfpTypeArr] = useState([]);
 
   const [vendor, setVendor] = useState('');
-  const [vendorBorder, setVendorBorder] = useState('#ced4da');
-  const [vendorError, setVendorError] = useState(vendor.value===undefined ? 1 : 0);
-  const [displayErrorVendor, setDisplayErrorVendor] = useState('none');
 
-  const [rfpType, setRfpType] = useState('');
-  const [rfpTypeBorder, setRfpTypeBorder] = useState('#ced4da');
-  const [rfpTypeError, setRfpTypeError] = useState(rfpType.value===undefined ? 1 : 0);
-  const [displayErrorRfp, setDisplayErrorRfp] = useState('none');
+  const [rfp, setRfp] = useState([]);
 
   const [internalOrder1, setInternalOrder1] = useState('');
   const [internalOrder2, setInternalOrder2] = useState('');
@@ -76,18 +68,6 @@ const Create = () => {
   const dateRangePickerOptions = {
     ranges: {
       Today: [moment().toDate(), moment().toDate()],
-      Yesterday: [
-        moment().subtract(1, 'days').toDate(),
-        moment().subtract(1, 'days').toDate(),
-      ],
-      'Last 7 Days': [
-        moment().subtract(6, 'days').toDate(),
-        moment().toDate(),
-      ],
-      'Last 30 Days': [
-        moment().subtract(29, 'days').toDate(),
-        moment().toDate(),
-      ],
       'This Month': [
         moment().startOf('month').toDate(),
         moment().endOf('month').toDate(),
@@ -95,11 +75,7 @@ const Create = () => {
       'Last Month': [
         moment().subtract(1, 'month').startOf('month').toDate(),
         moment().subtract(1, 'month').endOf('month').toDate(),
-      ],
-      'This Year': [
-        moment().startOf('year').toDate(),
-        moment().toDate(), moment().toDate(),
-      ],
+      ]
     }
   }
 
@@ -216,67 +192,42 @@ const Create = () => {
   const [submitBtn,setSubmitBtn] = useState('Submit');
   const [btnDisabled,setBtnDisabled] = useState(false);
 
-
-
   useEffect(() => {
+
+  //   const getVendor= async () => {
+
+  //     const result = await axios.post('/api/getVendorDetails',{
+  //       id: rfpId
+  //     });
+
+  //     setVendor(result.data);
+  // };
     
-    const getVendorArr = async () => {
+    const getRfp = async () => {
 
-        const result = await axios.get('/api/getVendorNameList');
+      const result = await axios.post('/api/getRfpDetails',{
+        id: rfpId
+      })
+      .then( (res) => {
+        console.log(res)
+      });
 
-        setVendorArr(result.data);
+      // setRfp(result.data);
     };
 
-    const getRfpTypeArr = async () => {
+  //   getVendor();
+  //   getRfp();
 
-      const result = await axios.get('/api/getRfpTypeList');
+  //   return () => {
+  //     getVendor([]);
+  //     getRfp([]);
+  //   }
 
-      setRfpTypeArr(result.data);
-    };
+    
 
-    getVendorArr();
-    getRfpTypeArr();
-
-    return () => {
-        setVendorArr([]);
-        getRfpTypeArr([]);
-    }
+      // setRfp(result.data);
 
   }, []);
-
-  const handleVendorName = (val) => {
-
-    setVendor(val);
-    setVendorBorder('#ced4da');
-    setVendorError(0);
-    setDisplayErrorVendor('none');
-    
-    if(val===null) {
-      setVendor([]);
-      setVendorBorder('#f44336');
-      setVendorError(1);
-      setDisplayErrorVendor('block');
-    }  
-    // console.log( md5(moment().unix()) )
-
-    console.log(rfp_id);
-  }
-
-  const handleRfpType = (val) => {
-
-    setRfpType(val);
-    setRfpTypeBorder('#ced4da');
-    setRfpTypeError(0);
-    setDisplayErrorRfp('none');
-    
-    if(val===null) {
-      setRfpType([]);
-      setRfpTypeBorder('#f44336');
-      setRfpTypeError(1);
-      setDisplayErrorRfp('block');
-  }  
-    console.log(val)
-  }
 
   // TAB PANEL
     const a11yProps = (index) => {
@@ -313,102 +264,102 @@ const Create = () => {
 
       console.log(errorCount);
 
-      if(errorCount === 0){
-        const data = {
-            id: rfp_id,
-            vendor_id: vendor.value,
-            rfp_type_id: rfpType.value,
-            internal_order1: internalOrder1,
-            internal_order2: internalOrder2,
-            bill_period_from: moment(billDate.start).format('YYYY-MM-DD'),
-            bill_period_to: moment(billDate.end).format('YYYY-MM-DD'),
-            bill_month: moment(billDate.start).format('MMM-YYYY'),
-            bill_date_received: billReceiveDate,
-            due_date: dueDate,
-            rfp_date: rfpDate,
-            next_bill_date: rfpDate,
-            current_reading: currentReading,
-            prev_reading: prevReading,
-            consumption: consumption,
-            rate: rate,
-            amount: amount,
-            vat_amount: vatAmount,
-            interest: interest,
-            penalty: penalty,
-            penalty_over_interest: penaltyOverInterest,
-            surcharge: surcharge,
-            misc: misc
-        }
+      // if(errorCount === 0){
+      //   const data = {
+      //       id: rfp_id,
+      //       vendor_id: vendor.value,
+      //       rfp_type_id: rfpType.value,
+      //       internal_order1: internalOrder1,
+      //       internal_order2: internalOrder2,
+      //       bill_period_from: moment(billDate.start).format('YYYY-MM-DD'),
+      //       bill_period_to: moment(billDate.end).format('YYYY-MM-DD'),
+      //       bill_month: moment(billDate.start).format('MMM-YYYY'),
+      //       bill_date_received: billReceiveDate,
+      //       due_date: dueDate,
+      //       rfp_date: rfpDate,
+      //       next_bill_date: rfpDate,
+      //       current_reading: currentReading,
+      //       prev_reading: prevReading,
+      //       consumption: consumption,
+      //       rate: rate,
+      //       amount: amount,
+      //       vat_amount: vatAmount,
+      //       interest: interest,
+      //       penalty: penalty,
+      //       penalty_over_interest: penaltyOverInterest,
+      //       surcharge: surcharge,
+      //       misc: misc
+      //   }
         
-        console.log(data)
+      //   console.log(data)
 
-        const url = '/api/createRfp'
+      //   const url = '/api/createRfp'
 
-        await axios.post(url, data)
-        .then( res => {
+      //   await axios.post(url, data)
+      //   .then( res => {
 
-            // console.log(res);
+      //       // console.log(res);
 
-            if(res.status === 200){
+      //       if(res.status === 200){
 
-                toast.success('New RFP has been created', {
-                    position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: false,
-                    pauseOnFocusLoss: false,
-                    draggable: false,
-                    progress: undefined,
-                    theme: "dark"
-                })
+      //           toast.success('New RFP has been created', {
+      //               position: "top-right",
+      //               autoClose: 5000,
+      //               hideProgressBar: false,
+      //               closeOnClick: true,
+      //               pauseOnHover: false,
+      //               pauseOnFocusLoss: false,
+      //               draggable: false,
+      //               progress: undefined,
+      //               theme: "dark"
+      //           })
                 
-                toast.onChange(v => {
-                    if(v.status === "removed"){
-                        router.push("/rfp")
-                    }
-                });
-            }  
-            else{
+      //           toast.onChange(v => {
+      //               if(v.status === "removed"){
+      //                   router.push("/rfp")
+      //               }
+      //           });
+      //       }  
+      //       else{
 
-                setSubmitBtn('Submit');
-                setBtnDisabled(false);
+      //           setSubmitBtn('Submit');
+      //           setBtnDisabled(false);
 
-                toast.error('Unable to connect to server. Please try again.', {
-                    position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: false,
-                    pauseOnFocusLoss: false,
-                    draggable: false,
-                    progress: undefined,
-                    theme: "dark",
-                });
-            }
+      //           toast.error('Unable to connect to server. Please try again.', {
+      //               position: "top-right",
+      //               autoClose: 5000,
+      //               hideProgressBar: false,
+      //               closeOnClick: true,
+      //               pauseOnHover: false,
+      //               pauseOnFocusLoss: false,
+      //               draggable: false,
+      //               progress: undefined,
+      //               theme: "dark",
+      //           });
+      //       }
 
-        })
-        .catch(err => {
+      //   })
+      //   .catch(err => {
 
-            setSubmitBtn('Submit');
-            setBtnDisabled(false);
+      //       setSubmitBtn('Submit');
+      //       setBtnDisabled(false);
 
-            console.log(err.message)
+      //       console.log(err.message)
 
-            toast.error(err.message, {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: false,
-                pauseOnFocusLoss: false,
-                draggable: false,
-                progress: undefined,
-                theme: "dark",
-            });
-        })
+      //       toast.error(err.message, {
+      //           position: "top-right",
+      //           autoClose: 5000,
+      //           hideProgressBar: false,
+      //           closeOnClick: true,
+      //           pauseOnHover: false,
+      //           pauseOnFocusLoss: false,
+      //           draggable: false,
+      //           progress: undefined,
+      //           theme: "dark",
+      //       });
+      //   })
         
-      }
+      // }
   }
 
   return (
@@ -429,73 +380,12 @@ const Create = () => {
           </div>
           <div className="section-body">
             <div className="container-fluid">
-              <h4>{pageTitle}</h4>
+              <Typography variant="h6" gutterBottom>
+              {pageTitle}
+              </Typography>
               <form onSubmit={submitData}>
                 <div className="card">
                   <div className="card-body">
-                    <Grid container spacing={2}>
-                      <Grid item xs={12} lg={7}>
-                        <Select 
-                          value={vendor}
-                          options={vendorArr} 
-                          onChange={handleVendorName}
-                          isClearable={true}
-                          placeholder="Select Vendor"
-                          styles={{
-                            control:(baseStyles, state) => ({
-                              ...baseStyles,
-                              borderColor: vendorBorder,
-                            }),
-                          }}
-                        />
-                        <Typography 
-                          variant="caption" 
-                          display={displayErrorVendor} 
-                          gutterBottom 
-                          sx={{ color: '#f44336' }}
-                        >
-                            Enter Vendor Name
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={12} lg={3}>
-                        <Select 
-                          value={rfpType}
-                          options={rfpTypeArr} 
-                          onChange={handleRfpType}
-                          isClearable={true}
-                          placeholder="Select RFP Type"
-                          styles={{
-                            control:(baseStyles, state) => ({
-                              ...baseStyles,
-                              borderColor: rfpTypeBorder,
-                            }),
-                          }}
-                        />
-                        <Typography 
-                          variant="caption" 
-                          display={displayErrorRfp} 
-                          gutterBottom 
-                          sx={{ color: '#f44336' }}
-                        >
-                            Enter RFP Type
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={12} lg={2}>
-                        <Button 
-                          disableElevation
-                          variant="contained" 
-                          color="primary" 
-                          type="submit"
-                        >Save</Button>
-                        <Button 
-                          disableElevation
-                          variant="contained" 
-                          color="error" 
-                          onClick={()=>router.push('/rfp')}
-                        >Cancel</Button>
-                      </Grid>
-                    </Grid>
-                    <Divider />
                     <Box sx={{ width: '100%' }}>
                       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                         <Tabs value={valueTab} onChange={handleChange} aria-label="">
@@ -516,6 +406,18 @@ const Create = () => {
                       >
                         <nav aria-label="main mailbox folders">
                           <List>
+                            <ListItem divider='true' alignItems="flex-start">
+                              <ListItemText 
+                                  secondary="Vendor Name"
+                                  primary= { vendor!==null ? vendor.vendor_code : '' } 
+                              />
+                            </ListItem>
+                            <ListItem divider='true' alignItems="flex-start">
+                              <ListItemText 
+                                  secondary="RFP Type"
+                                  primary= { vendor!==null ? vendor.vendor_code : '' } 
+                              />
+                            </ListItem>
                             <ListItem divider='true' alignItems="flex-start">
                               <ListItemText 
                                   secondary="Vendor Code"

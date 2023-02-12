@@ -29,7 +29,7 @@ export default async function handler(req, res) {
             WHERE 
             rfp.vendor_id = vendors.id
             AND
-            rfp.sky_contact_id = sky_contact_details.id
+            vendors.sky_contact_id = sky_contact_details.id
             AND
             rfp.status = 1
             AND
