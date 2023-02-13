@@ -18,7 +18,6 @@ import {
   Button,ButtonGroup,Box,Tabs,Tab,Typography,Input,
   TextField,FormControl,InputAdornment
 } from '@mui/material';
-import uniqid  from 'uniqid';
 
 
 
@@ -30,16 +29,44 @@ const Create = () => {
   const { rfpId } = router.query;
 
   const pageTitle = 'Update ' + rfpId;
-  
-  
 
-  const [vendorArr,setVendorArr] = useState([]);
-  const [skyContactArr,setSkyContactArr] = useState([]);
-  const [rfpTypeArr,setRfpTypeArr] = useState([]);
+  useEffect(() => {
 
-  const [vendor, setVendor] = useState('');
+    const getRfpDetails = async () => {
 
-  const [rfp, setRfp] = useState([]);
+      const result = await axios.post('/api/getRfpDetails',{
+        id : rfpId
+      });
+
+      setBillDate({
+        start: moment(result.data.bill_period_from).format('M/DD/YYYY'),
+        end: moment(result.data.bill_period_to).format('M/DD/YYYY')
+      });
+
+      setRfpData(result.data);
+      setInternalOrder1(result.data.internal_order1);
+      setInternalOrder2(result.data.internal_order2);
+      setCurrentReading(result.data.current_reading);
+      setPrevReading(result.data.previous_reading);
+      setRate(result.data.rate);
+      setVatAmount(result.data.vat_amount);
+      setInterest(result.data.interest);
+      setPenalty(result.data.penalty);
+      setPenaltyOverInterest(result.data.penalty_over_interest_vat_amount);
+      setSurcharge(result.data.surcharge);
+      setMisc(result.data.miscellaneuos);
+      
+    };
+
+    getRfpDetails();
+
+    return () => {
+        getRfpDetails([]);
+    }
+
+  }, []);
+
+  const [rfpData,setRfpData] = useState([]);
 
   const [internalOrder1, setInternalOrder1] = useState('');
   const [internalOrder2, setInternalOrder2] = useState('');
@@ -63,11 +90,9 @@ const Create = () => {
     setCurrentReading(e.target.value)
     console.log(currentReading);
   }
-  
 
   const dateRangePickerOptions = {
     ranges: {
-      Today: [moment().toDate(), moment().toDate()],
       'This Month': [
         moment().startOf('month').toDate(),
         moment().endOf('month').toDate(),
@@ -80,8 +105,8 @@ const Create = () => {
   }
 
   const [billDate, setBillDate] = useState({
-    start: moment().format('M/DD/YYYY'),
-    end: moment().format('M/DD/YYYY'),
+    start: moment().startOf('month').format('M/DD/YYYY'), //moment().format('M/DD/YYYY'),
+    end: moment().endOf('month').format('M/DD/YYYY') //moment().format('M/DD/YYYY'),
   });
 
   const handleBillDate = (start, end, label) => {
@@ -192,42 +217,41 @@ const Create = () => {
   const [submitBtn,setSubmitBtn] = useState('Submit');
   const [btnDisabled,setBtnDisabled] = useState(false);
 
-  useEffect(() => {
+  
 
-  //   const getVendor= async () => {
+  const handleVendorName = (val) => {
 
-  //     const result = await axios.post('/api/getVendorDetails',{
-  //       id: rfpId
-  //     });
-
-  //     setVendor(result.data);
-  // };
+    setVendor(val);
+    setVendorBorder('#ced4da');
+    setVendorError(0);
+    setDisplayErrorVendor('none');
     
-    const getRfp = async () => {
+    if(val===null) {
+      setVendor([]);
+      setVendorBorder('#f44336');
+      setVendorError(1);
+      setDisplayErrorVendor('block');
+    }  
+    // console.log( md5(moment().unix()) )
 
-      const result = await axios.post('/api/getRfpDetails',{
-        id: rfpId
-      })
-      .then( (res) => {
-        console.log(res)
-      });
+    console.log(rfp_id);
+  }
 
-      // setRfp(result.data);
-    };
+  const handleRfpType = (val) => {
 
-  //   getVendor();
-  //   getRfp();
-
-  //   return () => {
-  //     getVendor([]);
-  //     getRfp([]);
-  //   }
-
+    setRfpType(val);
+    setRfpTypeBorder('#ced4da');
+    setRfpTypeError(0);
+    setDisplayErrorRfp('none');
     
-
-      // setRfp(result.data);
-
-  }, []);
+    if(val===null) {
+      setRfpType([]);
+      setRfpTypeBorder('#f44336');
+      setRfpTypeError(1);
+      setDisplayErrorRfp('block');
+  }  
+    console.log(val)
+  }
 
   // TAB PANEL
     const a11yProps = (index) => {
@@ -251,9 +275,9 @@ const Create = () => {
       // setSubmitBtn('Processing');
       // setBtnDisabled(true);
 
-      setVendorBorder(vendor.value===undefined ? '#f44336' : '#ced4da');
-      setVendorError(vendor.value===undefined ? 1 : 0);
-      setDisplayErrorVendor(vendor.value===undefined ? 'block' : 'none');
+      setVendorBorder(rfpData.value===undefined ? '#f44336' : '#ced4da');
+      setVendorError(rfpData.value===undefined ? 1 : 0);
+      setDisplayErrorVendor(rfpData.value===undefined ? 'block' : 'none');
 
       setRfpTypeBorder(rfpType.value===undefined ? '#f44336' : '#ced4da');
       setRfpTypeError(rfpType.value===undefined ? 1 : 0);
@@ -264,102 +288,102 @@ const Create = () => {
 
       console.log(errorCount);
 
-      // if(errorCount === 0){
-      //   const data = {
-      //       id: rfp_id,
-      //       vendor_id: vendor.value,
-      //       rfp_type_id: rfpType.value,
-      //       internal_order1: internalOrder1,
-      //       internal_order2: internalOrder2,
-      //       bill_period_from: moment(billDate.start).format('YYYY-MM-DD'),
-      //       bill_period_to: moment(billDate.end).format('YYYY-MM-DD'),
-      //       bill_month: moment(billDate.start).format('MMM-YYYY'),
-      //       bill_date_received: billReceiveDate,
-      //       due_date: dueDate,
-      //       rfp_date: rfpDate,
-      //       next_bill_date: rfpDate,
-      //       current_reading: currentReading,
-      //       prev_reading: prevReading,
-      //       consumption: consumption,
-      //       rate: rate,
-      //       amount: amount,
-      //       vat_amount: vatAmount,
-      //       interest: interest,
-      //       penalty: penalty,
-      //       penalty_over_interest: penaltyOverInterest,
-      //       surcharge: surcharge,
-      //       misc: misc
-      //   }
+      if(errorCount === 0){
+        const data = {
+            id: rfp_id,
+            vendor_id: rfpData.value,
+            rfp_type_id: rfpType.value,
+            internal_order1: internalOrder1,
+            internal_order2: internalOrder2,
+            bill_period_from: moment(billDate.start).format('YYYY-MM-DD'),
+            bill_period_to: moment(billDate.end).format('YYYY-MM-DD'),
+            bill_month: moment(billDate.start).format('MMM-YYYY'),
+            bill_date_received: billReceiveDate,
+            due_date: dueDate,
+            rfp_date: rfpDate,
+            next_bill_date: rfpDate,
+            current_reading: currentReading,
+            prev_reading: prevReading,
+            consumption: consumption,
+            rate: rate,
+            amount: amount,
+            vat_amount: vatAmount,
+            interest: interest,
+            penalty: penalty,
+            penalty_over_interest: penaltyOverInterest,
+            surcharge: surcharge,
+            misc: misc
+        }
         
-      //   console.log(data)
+        console.log(data)
 
-      //   const url = '/api/createRfp'
+        const url = '/api/createRfp'
 
-      //   await axios.post(url, data)
-      //   .then( res => {
+        await axios.post(url, data)
+        .then( res => {
 
-      //       // console.log(res);
+            // console.log(res);
 
-      //       if(res.status === 200){
+            if(res.status === 200){
 
-      //           toast.success('New RFP has been created', {
-      //               position: "top-right",
-      //               autoClose: 5000,
-      //               hideProgressBar: false,
-      //               closeOnClick: true,
-      //               pauseOnHover: false,
-      //               pauseOnFocusLoss: false,
-      //               draggable: false,
-      //               progress: undefined,
-      //               theme: "dark"
-      //           })
+                toast.success('New RFP has been created', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: false,
+                    pauseOnFocusLoss: false,
+                    draggable: false,
+                    progress: undefined,
+                    theme: "dark"
+                })
                 
-      //           toast.onChange(v => {
-      //               if(v.status === "removed"){
-      //                   router.push("/rfp")
-      //               }
-      //           });
-      //       }  
-      //       else{
+                toast.onChange(v => {
+                    if(v.status === "removed"){
+                        router.push("/rfp")
+                    }
+                });
+            }  
+            else{
 
-      //           setSubmitBtn('Submit');
-      //           setBtnDisabled(false);
+                setSubmitBtn('Submit');
+                setBtnDisabled(false);
 
-      //           toast.error('Unable to connect to server. Please try again.', {
-      //               position: "top-right",
-      //               autoClose: 5000,
-      //               hideProgressBar: false,
-      //               closeOnClick: true,
-      //               pauseOnHover: false,
-      //               pauseOnFocusLoss: false,
-      //               draggable: false,
-      //               progress: undefined,
-      //               theme: "dark",
-      //           });
-      //       }
+                toast.error('Unable to connect to server. Please try again.', {
+                    position: "top-right",
+                    autoClose: 5000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: false,
+                    pauseOnFocusLoss: false,
+                    draggable: false,
+                    progress: undefined,
+                    theme: "dark",
+                });
+            }
 
-      //   })
-      //   .catch(err => {
+        })
+        .catch(err => {
 
-      //       setSubmitBtn('Submit');
-      //       setBtnDisabled(false);
+            setSubmitBtn('Submit');
+            setBtnDisabled(false);
 
-      //       console.log(err.message)
+            console.log(err.message)
 
-      //       toast.error(err.message, {
-      //           position: "top-right",
-      //           autoClose: 5000,
-      //           hideProgressBar: false,
-      //           closeOnClick: true,
-      //           pauseOnHover: false,
-      //           pauseOnFocusLoss: false,
-      //           draggable: false,
-      //           progress: undefined,
-      //           theme: "dark",
-      //       });
-      //   })
+            toast.error(err.message, {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                pauseOnFocusLoss: false,
+                draggable: false,
+                progress: undefined,
+                theme: "dark",
+            });
+        })
         
-      // }
+      }
   }
 
   return (
@@ -380,12 +404,27 @@ const Create = () => {
           </div>
           <div className="section-body">
             <div className="container-fluid">
-              <Typography variant="h6" gutterBottom>
-              {pageTitle}
-              </Typography>
+              <h4>{pageTitle}</h4>
               <form onSubmit={submitData}>
                 <div className="card">
                   <div className="card-body">
+                  <Grid container spacing={2}>
+                      <Grid item xs={12} lg={2}>
+                        <Button 
+                          disableElevation
+                          variant="contained" 
+                          color="primary" 
+                          type="submit"
+                        >Save</Button>
+                        <Button 
+                          disableElevation
+                          variant="contained" 
+                          color="error" 
+                          onClick={()=>router.push('/rfp')}
+                        >Cancel</Button>
+                      </Grid>
+                    </Grid>
+                    <Divider />
                     <Box sx={{ width: '100%' }}>
                       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                         <Tabs value={valueTab} onChange={handleChange} aria-label="">
@@ -396,7 +435,7 @@ const Create = () => {
                           <Tab label="Upload" {...a11yProps(4)} />
                         </Tabs>
                       </Box>
-                      <div
+                      <div // VENDOR DETAILS
                         index={0}
                         role="tabpanel"
                         hidden={valueTab !== 0}
@@ -409,73 +448,73 @@ const Create = () => {
                             <ListItem divider='true' alignItems="flex-start">
                               <ListItemText 
                                   secondary="Vendor Name"
-                                  primary= { vendor!==null ? vendor.vendor_code : '' } 
+                                  primary= { rfpData!==null ? rfpData.vendor_name : '' } 
                               />
                             </ListItem>
                             <ListItem divider='true' alignItems="flex-start">
                               <ListItemText 
                                   secondary="RFP Type"
-                                  primary= { vendor!==null ? vendor.vendor_code : '' } 
+                                  primary= { rfpData!==null ? rfpData.vendor_code : '' } 
                               />
                             </ListItem>
                             <ListItem divider='true' alignItems="flex-start">
                               <ListItemText 
                                   secondary="Vendor Code"
-                                  primary= { vendor!==null ? vendor.vendor_code : '' } 
+                                  primary= { rfpData!==null ? rfpData.vendor_code : '' } 
                               />
                             </ListItem>
                             <ListItem divider='true' alignItems="flex-start">
                               <ListItemText 
                                   secondary="Tin Num" 
-                                  primary= { vendor!==null ? vendor.tin_num : '' } 
+                                  primary= { rfpData!==null ? rfpData.tin_num : '' } 
                               />
                             </ListItem>
                             <ListItem divider='true' alignItems="flex-start">
                               <ListItemText 
                                   secondary="Address" 
-                                  primary= { vendor!==null ? vendor.address : '' } 
+                                  primary= { rfpData!==null ? rfpData.address : '' } 
                               />
                             </ListItem>
                             <ListItem divider='true' alignItems="flex-start">
                               <ListItemText 
                                   secondary="Building Name" 
-                                  primary= { vendor!==null ? vendor.bldg_name : '' } 
+                                  primary= { rfpData!==null ? rfpData.bldg_name : '' } 
                               />
                             </ListItem>
                             <ListItem divider='true' alignItems="flex-start">
                               <ListItemText 
                                   secondary="City" 
-                                  primary= { vendor!==null ? vendor.city : '' } 
+                                  primary= { rfpData!==null ? rfpData.city : '' } 
                               />
                             </ListItem>
                             <ListItem divider='true' alignItems="flex-start">
                               <ListItemText 
                                   secondary="Sky Contact Person" 
-                                  primary= { vendor!==null ? vendor.sky_contact_person : '' } 
+                                  primary= { rfpData!==null ? rfpData.contact_person : '' } 
                               />
                             </ListItem>
                             <ListItem divider='true' alignItems="flex-start">
                               <ListItemText 
                                   secondary="Sky Contact Number" 
-                                  primary= { vendor!==null ? vendor.sky_contact_number : '' } 
+                                  primary= { rfpData!==null ? rfpData.contact_number : '' } 
                               />
                             </ListItem>
                             <ListItem divider='true' alignItems="flex-start">
                               <ListItemText 
                                   secondary="Sky Email Address" 
-                                  primary= { vendor!==null ? vendor.sky_email_add : '' } 
+                                  primary= { rfpData!==null ? rfpData.email_add : '' } 
                               />
                             </ListItem>
                             <ListItem divider='true' alignItems="flex-start">
                               <ListItemText 
                                   secondary="KAM" 
-                                  primary= { vendor!==null ? vendor.kam : '' } 
+                                  primary= { rfpData!==null ? rfpData.kam : '' } 
                               />
                             </ListItem>
                           </List>
                         </nav>
                       </div>
-                      <div
+                      <div // INTERNAL ORDERS
                         index={1}
                         role="tabpanel"
                         hidden={valueTab !== 1}
@@ -512,7 +551,7 @@ const Create = () => {
                           </List>
                         </nav>
                       </div>
-                      <div
+                      <div //DATES
                         index={2}
                         role="tabpanel"
                         hidden={valueTab !== 2}
@@ -611,7 +650,7 @@ const Create = () => {
                           </List>
                         </nav>
                       </div>
-                      <div
+                      <div // RATES
                         index={3}
                         role="tabpanel"
                         hidden={valueTab !== 3}
@@ -794,7 +833,6 @@ const Create = () => {
                           <List>
                             <ListItem divider='true' alignItems="flex-start">
                               <FormControl sx={{ m: 1 }} variant="standard">
-
                                 <ButtonGroup variant="contained" aria-label="outlined primary button group" disableElevation>
                                   <Button variant='text'><input type="file" name="file_upload" onChange={onFileChange} accept=".pdf,.jpg"  /></Button>
                                   <Button onClick={onUpload} disabled={uploadBtnDisabled} >Upload</Button>
