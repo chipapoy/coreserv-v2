@@ -72,19 +72,6 @@ const Create = () => {
 
   const dateRangePickerOptions = {
     ranges: {
-      Today: [moment().toDate(), moment().toDate()],
-      Yesterday: [
-        moment().subtract(1, 'days').toDate(),
-        moment().subtract(1, 'days').toDate(),
-      ],
-      'Last 7 Days': [
-        moment().subtract(6, 'days').toDate(),
-        moment().toDate(),
-      ],
-      'Last 30 Days': [
-        moment().subtract(29, 'days').toDate(),
-        moment().toDate(),
-      ],
       'This Month': [
         moment().startOf('month').toDate(),
         moment().endOf('month').toDate(),
@@ -92,11 +79,7 @@ const Create = () => {
       'Last Month': [
         moment().subtract(1, 'month').startOf('month').toDate(),
         moment().subtract(1, 'month').endOf('month').toDate(),
-      ],
-      'This Year': [
-        moment().startOf('year').toDate(),
-        moment().toDate(), moment().toDate(),
-      ],
+      ]
     }
   }
 
@@ -320,10 +303,10 @@ const Create = () => {
             bill_period_from: moment(billDate.start).format('YYYY-MM-DD'),
             bill_period_to: moment(billDate.end).format('YYYY-MM-DD'),
             bill_month: moment(billDate.start).format('MMM-YYYY'),
-            bill_date_received: billReceiveDate,
-            due_date: dueDate,
-            rfp_date: rfpDate,
-            next_bill_date: rfpDate,
+            bill_date_received: moment(billReceiveDate).format('YYYY-MM-DD'),
+            due_date: moment(dueDate).format('YYYY-MM-DD'),
+            rfp_date: moment(rfpDate).format('YYYY-MM-DD'),
+            next_bill_date: moment(nextBillDate).format('YYYY-MM-DD'),
             current_reading: currentReading,
             prev_reading: prevReading,
             consumption: consumption,

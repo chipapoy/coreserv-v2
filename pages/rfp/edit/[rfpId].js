@@ -18,7 +18,6 @@ import {
   Button,ButtonGroup,Box,Tabs,Tab,Typography,Input,
   TextField,FormControl,InputAdornment
 } from '@mui/material';
-import uniqid  from 'uniqid';
 
 
 
@@ -27,27 +26,47 @@ const Create = () => {
 
   const router = useRouter();
 
-  const { id } = router.query;
+  const { rfpId } = router.query;
 
-  const pageTitle = 'Update ' + id;
-  
+  const pageTitle = 'Update ' + rfpId;
 
-  // let rfp_id = uniqid();
-  const [rfp_id,setRfpId] = useState(uniqid.process());
+  useEffect(() => {
 
-  const [vendorArr,setVendorArr] = useState([]);
-  const [skyContactArr,setSkyContactArr] = useState([]);
-  const [rfpTypeArr,setRfpTypeArr] = useState([]);
+    const getRfpDetails = async () => {
 
-  const [vendor, setVendor] = useState('');
-  const [vendorBorder, setVendorBorder] = useState('#ced4da');
-  const [vendorError, setVendorError] = useState(vendor.value===undefined ? 1 : 0);
-  const [displayErrorVendor, setDisplayErrorVendor] = useState('none');
+      const result = await axios.post('/api/getRfpDetails',{
+        id : rfpId
+      });
 
-  const [rfpType, setRfpType] = useState('');
-  const [rfpTypeBorder, setRfpTypeBorder] = useState('#ced4da');
-  const [rfpTypeError, setRfpTypeError] = useState(rfpType.value===undefined ? 1 : 0);
-  const [displayErrorRfp, setDisplayErrorRfp] = useState('none');
+      setBillDate({
+        start: moment(result.data.bill_period_from).format('M/DD/YYYY'),
+        end: moment(result.data.bill_period_to).format('M/DD/YYYY')
+      });
+
+      setRfpData(result.data);
+      setInternalOrder1(result.data.internal_order1);
+      setInternalOrder2(result.data.internal_order2);
+      setCurrentReading(result.data.current_reading);
+      setPrevReading(result.data.previous_reading);
+      setRate(result.data.rate);
+      setVatAmount(result.data.vat_amount);
+      setInterest(result.data.interest);
+      setPenalty(result.data.penalty);
+      setPenaltyOverInterest(result.data.penalty_over_interest_vat_amount);
+      setSurcharge(result.data.surcharge);
+      setMisc(result.data.miscellaneuos);
+      
+    };
+
+    getRfpDetails();
+
+    return () => {
+        getRfpDetails([]);
+    }
+
+  }, []);
+
+  const [rfpData,setRfpData] = useState([]);
 
   const [internalOrder1, setInternalOrder1] = useState('');
   const [internalOrder2, setInternalOrder2] = useState('');
@@ -71,23 +90,9 @@ const Create = () => {
     setCurrentReading(e.target.value)
     console.log(currentReading);
   }
-  
 
   const dateRangePickerOptions = {
     ranges: {
-      Today: [moment().toDate(), moment().toDate()],
-      Yesterday: [
-        moment().subtract(1, 'days').toDate(),
-        moment().subtract(1, 'days').toDate(),
-      ],
-      'Last 7 Days': [
-        moment().subtract(6, 'days').toDate(),
-        moment().toDate(),
-      ],
-      'Last 30 Days': [
-        moment().subtract(29, 'days').toDate(),
-        moment().toDate(),
-      ],
       'This Month': [
         moment().startOf('month').toDate(),
         moment().endOf('month').toDate(),
@@ -95,17 +100,13 @@ const Create = () => {
       'Last Month': [
         moment().subtract(1, 'month').startOf('month').toDate(),
         moment().subtract(1, 'month').endOf('month').toDate(),
-      ],
-      'This Year': [
-        moment().startOf('year').toDate(),
-        moment().toDate(), moment().toDate(),
-      ],
+      ]
     }
   }
 
   const [billDate, setBillDate] = useState({
-    start: moment().format('M/DD/YYYY'),
-    end: moment().format('M/DD/YYYY'),
+    start: moment().startOf('month').format('M/DD/YYYY'), //moment().format('M/DD/YYYY'),
+    end: moment().endOf('month').format('M/DD/YYYY') //moment().format('M/DD/YYYY'),
   });
 
   const handleBillDate = (start, end, label) => {
@@ -216,33 +217,7 @@ const Create = () => {
   const [submitBtn,setSubmitBtn] = useState('Submit');
   const [btnDisabled,setBtnDisabled] = useState(false);
 
-
-
-  useEffect(() => {
-    
-    const getVendorArr = async () => {
-
-        const result = await axios.get('/api/getVendorNameList');
-
-        setVendorArr(result.data);
-    };
-
-    const getRfpTypeArr = async () => {
-
-      const result = await axios.get('/api/getRfpTypeList');
-
-      setRfpTypeArr(result.data);
-    };
-
-    getVendorArr();
-    getRfpTypeArr();
-
-    return () => {
-        setVendorArr([]);
-        getRfpTypeArr([]);
-    }
-
-  }, []);
+  
 
   const handleVendorName = (val) => {
 
@@ -300,9 +275,9 @@ const Create = () => {
       // setSubmitBtn('Processing');
       // setBtnDisabled(true);
 
-      setVendorBorder(vendor.value===undefined ? '#f44336' : '#ced4da');
-      setVendorError(vendor.value===undefined ? 1 : 0);
-      setDisplayErrorVendor(vendor.value===undefined ? 'block' : 'none');
+      setVendorBorder(rfpData.value===undefined ? '#f44336' : '#ced4da');
+      setVendorError(rfpData.value===undefined ? 1 : 0);
+      setDisplayErrorVendor(rfpData.value===undefined ? 'block' : 'none');
 
       setRfpTypeBorder(rfpType.value===undefined ? '#f44336' : '#ced4da');
       setRfpTypeError(rfpType.value===undefined ? 1 : 0);
@@ -316,7 +291,7 @@ const Create = () => {
       if(errorCount === 0){
         const data = {
             id: rfp_id,
-            vendor_id: vendor.value,
+            vendor_id: rfpData.value,
             rfp_type_id: rfpType.value,
             internal_order1: internalOrder1,
             internal_order2: internalOrder2,
@@ -433,53 +408,7 @@ const Create = () => {
               <form onSubmit={submitData}>
                 <div className="card">
                   <div className="card-body">
-                    <Grid container spacing={2}>
-                      <Grid item xs={12} lg={7}>
-                        <Select 
-                          value={vendor}
-                          options={vendorArr} 
-                          onChange={handleVendorName}
-                          isClearable={true}
-                          placeholder="Select Vendor"
-                          styles={{
-                            control:(baseStyles, state) => ({
-                              ...baseStyles,
-                              borderColor: vendorBorder,
-                            }),
-                          }}
-                        />
-                        <Typography 
-                          variant="caption" 
-                          display={displayErrorVendor} 
-                          gutterBottom 
-                          sx={{ color: '#f44336' }}
-                        >
-                            Enter Vendor Name
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={12} lg={3}>
-                        <Select 
-                          value={rfpType}
-                          options={rfpTypeArr} 
-                          onChange={handleRfpType}
-                          isClearable={true}
-                          placeholder="Select RFP Type"
-                          styles={{
-                            control:(baseStyles, state) => ({
-                              ...baseStyles,
-                              borderColor: rfpTypeBorder,
-                            }),
-                          }}
-                        />
-                        <Typography 
-                          variant="caption" 
-                          display={displayErrorRfp} 
-                          gutterBottom 
-                          sx={{ color: '#f44336' }}
-                        >
-                            Enter RFP Type
-                        </Typography>
-                      </Grid>
+                  <Grid container spacing={2}>
                       <Grid item xs={12} lg={2}>
                         <Button 
                           disableElevation
@@ -506,7 +435,7 @@ const Create = () => {
                           <Tab label="Upload" {...a11yProps(4)} />
                         </Tabs>
                       </Box>
-                      <div
+                      <div // VENDOR DETAILS
                         index={0}
                         role="tabpanel"
                         hidden={valueTab !== 0}
@@ -518,62 +447,74 @@ const Create = () => {
                           <List>
                             <ListItem divider='true' alignItems="flex-start">
                               <ListItemText 
+                                  secondary="Vendor Name"
+                                  primary= { rfpData!==null ? rfpData.vendor_name : '' } 
+                              />
+                            </ListItem>
+                            <ListItem divider='true' alignItems="flex-start">
+                              <ListItemText 
+                                  secondary="RFP Type"
+                                  primary= { rfpData!==null ? rfpData.vendor_code : '' } 
+                              />
+                            </ListItem>
+                            <ListItem divider='true' alignItems="flex-start">
+                              <ListItemText 
                                   secondary="Vendor Code"
-                                  primary= { vendor!==null ? vendor.vendor_code : '' } 
+                                  primary= { rfpData!==null ? rfpData.vendor_code : '' } 
                               />
                             </ListItem>
                             <ListItem divider='true' alignItems="flex-start">
                               <ListItemText 
                                   secondary="Tin Num" 
-                                  primary= { vendor!==null ? vendor.tin_num : '' } 
+                                  primary= { rfpData!==null ? rfpData.tin_num : '' } 
                               />
                             </ListItem>
                             <ListItem divider='true' alignItems="flex-start">
                               <ListItemText 
                                   secondary="Address" 
-                                  primary= { vendor!==null ? vendor.address : '' } 
+                                  primary= { rfpData!==null ? rfpData.address : '' } 
                               />
                             </ListItem>
                             <ListItem divider='true' alignItems="flex-start">
                               <ListItemText 
                                   secondary="Building Name" 
-                                  primary= { vendor!==null ? vendor.bldg_name : '' } 
+                                  primary= { rfpData!==null ? rfpData.bldg_name : '' } 
                               />
                             </ListItem>
                             <ListItem divider='true' alignItems="flex-start">
                               <ListItemText 
                                   secondary="City" 
-                                  primary= { vendor!==null ? vendor.city : '' } 
+                                  primary= { rfpData!==null ? rfpData.city : '' } 
                               />
                             </ListItem>
                             <ListItem divider='true' alignItems="flex-start">
                               <ListItemText 
                                   secondary="Sky Contact Person" 
-                                  primary= { vendor!==null ? vendor.sky_contact_person : '' } 
+                                  primary= { rfpData!==null ? rfpData.contact_person : '' } 
                               />
                             </ListItem>
                             <ListItem divider='true' alignItems="flex-start">
                               <ListItemText 
                                   secondary="Sky Contact Number" 
-                                  primary= { vendor!==null ? vendor.sky_contact_number : '' } 
+                                  primary= { rfpData!==null ? rfpData.contact_number : '' } 
                               />
                             </ListItem>
                             <ListItem divider='true' alignItems="flex-start">
                               <ListItemText 
                                   secondary="Sky Email Address" 
-                                  primary= { vendor!==null ? vendor.sky_email_add : '' } 
+                                  primary= { rfpData!==null ? rfpData.email_add : '' } 
                               />
                             </ListItem>
                             <ListItem divider='true' alignItems="flex-start">
                               <ListItemText 
                                   secondary="KAM" 
-                                  primary= { vendor!==null ? vendor.kam : '' } 
+                                  primary= { rfpData!==null ? rfpData.kam : '' } 
                               />
                             </ListItem>
                           </List>
                         </nav>
                       </div>
-                      <div
+                      <div // INTERNAL ORDERS
                         index={1}
                         role="tabpanel"
                         hidden={valueTab !== 1}
@@ -610,7 +551,7 @@ const Create = () => {
                           </List>
                         </nav>
                       </div>
-                      <div
+                      <div //DATES
                         index={2}
                         role="tabpanel"
                         hidden={valueTab !== 2}
@@ -709,7 +650,7 @@ const Create = () => {
                           </List>
                         </nav>
                       </div>
-                      <div
+                      <div // RATES
                         index={3}
                         role="tabpanel"
                         hidden={valueTab !== 3}
@@ -892,7 +833,6 @@ const Create = () => {
                           <List>
                             <ListItem divider='true' alignItems="flex-start">
                               <FormControl sx={{ m: 1 }} variant="standard">
-
                                 <ButtonGroup variant="contained" aria-label="outlined primary button group" disableElevation>
                                   <Button variant='text'><input type="file" name="file_upload" onChange={onFileChange} accept=".pdf,.jpg"  /></Button>
                                   <Button onClick={onUpload} disabled={uploadBtnDisabled} >Upload</Button>
