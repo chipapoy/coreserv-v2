@@ -23,8 +23,8 @@ export default async function handler(req, res) {
             sky_contact_details.email_add,
             rfp.internal_order1,
             rfp.internal_order2,
-            rfp.bill_period_from,
-            rfp.bill_period_to,
+            DATE_FORMAT(rfp.bill_period_from,'%Y-%m-%d') AS bill_period_from,
+            DATE_FORMAT(rfp.bill_period_to,'%Y-%m-%d') AS bill_period_to,
             rfp.bill_month,
             rfp.current_reading,
             rfp.previous_reading,
@@ -37,9 +37,9 @@ export default async function handler(req, res) {
             rfp.penalty_over_interest_vat_amount,
             rfp.surcharge,
             rfp.miscellaneuos,
-            rfp.date_bill_received,
-            rfp.due_date,
-            rfp.rfp_date
+            DATE_FORMAT(rfp.date_bill_received,'%Y-%m-%d') AS date_bill_received,
+            DATE_FORMAT(rfp.due_date,'%Y-%m-%d') AS due_date,
+            DATE_FORMAT(rfp.rfp_date,'%Y-%m-%d') AS rfp_date
             FROM 
             rfp,
             vendors,

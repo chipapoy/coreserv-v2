@@ -14,7 +14,7 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import { ToastContainer, toast } from 'react-toastify';
 import {
-  List,ListItem,ListItemText,Divider,Grid,
+  List,ListItem,ListItemText,Divider,Grid,Stack,
   Button,ButtonGroup,Box,Tabs,Tab,Typography,Input,
   TextField,FormControl,InputAdornment
 } from '@mui/material';
@@ -461,18 +461,20 @@ const Create = () => {
                         </Typography>
                       </Grid>
                       <Grid item xs={12} lg={2}>
-                        <Button 
-                          disableElevation
-                          variant="contained" 
-                          color="primary" 
-                          type="submit"
-                        >Save</Button>
-                        <Button 
-                          disableElevation
-                          variant="contained" 
-                          color="error" 
-                          onClick={()=>router.push('/rfp')}
-                        >Cancel</Button>
+                        <Stack spacing={2} direction="row">
+                          <Button 
+                            disableElevation
+                            variant="outlined" 
+                            color="primary" 
+                            type="submit"
+                          >Save</Button>
+                          <Button 
+                            disableElevation
+                            variant="outlined" 
+                            color="error" 
+                            onClick={()=>router.push('/rfp')}
+                          >Cancel</Button>
+                        </Stack>
                       </Grid>
                     </Grid>
                     <Divider />
@@ -873,7 +875,7 @@ const Create = () => {
                             <ListItem divider='true' alignItems="flex-start">
                               <FormControl sx={{ m: 1 }} variant="standard">
 
-                                <ButtonGroup variant="contained" aria-label="outlined primary button group" disableElevation>
+                                <ButtonGroup variant="outlined" aria-label="outlined primary button group" disableElevation>
                                   <Button variant='text'><input type="file" name="file_upload" onChange={onFileChange} accept=".pdf,.jpg"  /></Button>
                                   <Button onClick={onUpload} disabled={uploadBtnDisabled} >Upload</Button>
                                 </ButtonGroup>

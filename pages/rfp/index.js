@@ -76,14 +76,6 @@ const Index = () => {
               sort: true
           }
       },
-      // {
-      //     name: "address",
-      //     label: "Address",
-      //     options: {
-      //         filter: true,
-      //         sort: true,
-      //     }
-      // },
       {
           name: "contact_num",
           label: "Contact #",
