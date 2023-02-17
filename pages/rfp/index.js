@@ -75,21 +75,6 @@ const Index = () => {
               filter: true,
               sort: true
           }
-      },
-      {
-          name: "contact_num",
-          label: "Contact #",
-          options: {
-              filter: true,
-              sort: true,
-          }
-      },{
-          name: "tin_num",
-          label: "TIN Number",
-          options: {
-              filter: true,
-              sort: true,
-          }
       },{
           name: "vendor_code",
           label: "Code",
@@ -114,6 +99,20 @@ const Index = () => {
       },{
           name: "rfp_type",
           label: "RFP Type",
+          options: {
+              filter: true,
+              sort: true,
+          }
+      },{
+          name: "contact_num",
+          label: "Contact #",
+          options: {
+              filter: true,
+              sort: true,
+          }
+      },{
+          name: "tin_num",
+          label: "TIN Number",
           options: {
               filter: true,
               sort: true,

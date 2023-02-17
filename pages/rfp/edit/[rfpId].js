@@ -266,7 +266,8 @@ const Create = () => {
         penalty: penalty,
         penalty_over_interest: penaltyOverInterest,
         surcharge: surcharge,
-        misc: misc
+        misc: misc,
+        total_amount: totalAmount
     }
     
     console.log(data)

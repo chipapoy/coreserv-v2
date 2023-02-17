@@ -37,6 +37,7 @@ export default async function handler(req, res) {
             rfp.penalty_over_interest_vat_amount,
             rfp.surcharge,
             rfp.miscellaneuos,
+            rfp.total_amount,
             rfp.date_bill_received,
             rfp.due_date,
             rfp.rfp_date

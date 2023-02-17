@@ -12,9 +12,9 @@ export default async function handler(req, res) {
                 bill_period_from,bill_period_to,bill_month,
                 date_bill_received,due_date,rfp_date,current_reading,
                 previous_reading,consumption,rate,amount,vat_amount,interest,penalty,
-                penalty_over_interest_vat_amount,surcharge,miscellaneuos
+                penalty_over_interest_vat_amount,surcharge,miscellaneuos,total_amount
             ) 
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
         `;
         const valuesParam = [
             req.body.id,
@@ -38,7 +38,8 @@ export default async function handler(req, res) {
             req.body.penalty,
             req.body.penalty_over_interest,
             req.body.surcharge,
-            req.body.misc
+            req.body.misc,
+            req.body.total_amount
         ];
 
         const result = await query({query: sql, values: valuesParam});

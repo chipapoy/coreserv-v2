@@ -46,6 +46,14 @@ const Create = () => {
   const [rfpTypeError, setRfpTypeError] = useState(rfpType.value===undefined ? 1 : 0);
   const [displayErrorRfp, setDisplayErrorRfp] = useState('none');
 
+  const [displayTab,setDisplayTab] = useState({
+    display: 'inline-flex',
+    disabled: false
+  });
+
+  const [displayField,setDisplayField] = useState('none');
+  
+
   const [internalOrder1, setInternalOrder1] = useState('');
   const [internalOrder2, setInternalOrder2] = useState('');
 
@@ -248,13 +256,27 @@ const Create = () => {
     setRfpTypeBorder('#ced4da');
     setRfpTypeError(0);
     setDisplayErrorRfp('none');
+    setValueTab(0)
     
     if(val===null) {
       setRfpType([]);
       setRfpTypeBorder('#f44336');
       setRfpTypeError(1);
       setDisplayErrorRfp('block');
-  }  
+    }  
+
+    setDisplayTab({
+      display: val.label === 'Electrical' ? 'inline-flex' : 'none',
+      disabled: val.label === 'Electrical' ? false : true
+    });
+
+    setDisplayField(val.label === 'Electrical' ? 'flex' : 'none');
+
+    // setDispRentRfp({
+    //   display: val.label === 'Rental' ? 'inline-flex' : 'none',
+    //   disabled: val.label === 'Rental' ? false : true
+    // })
+    
     console.log(val)
   }
 
@@ -317,7 +339,8 @@ const Create = () => {
             penalty: penalty,
             penalty_over_interest: penaltyOverInterest,
             surcharge: surcharge,
-            misc: misc
+            misc: misc,
+            total_amount: totalAmount
         }
         
         console.log(data)
@@ -482,13 +505,13 @@ const Create = () => {
                       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                         <Tabs value={valueTab} onChange={handleChange} aria-label="">
                           <Tab label="Details" {...a11yProps(0)} />
-                          <Tab label="Internal Orders" sx={{display:'inline-flex'}} {...a11yProps(1)} />
-                          <Tab label="Dates" sx={{display:'inline-flex'}} {...a11yProps(2)} />
-                          <Tab label="Rates" {...a11yProps(3)} />
+                          <Tab label="Internal Orders" {...a11yProps(1)} />
+                          <Tab label="Dates" {...a11yProps(2)} />
+                          <Tab label="Rates" sx={{display:displayTab.display}} {...a11yProps(3)} />
                           <Tab label="Upload" {...a11yProps(4)} />
                         </Tabs>
                       </Box>
-                      <div
+                      <div // VENDOR DETAILS
                         index={0}
                         role="tabpanel"
                         hidden={valueTab !== 0}
@@ -555,7 +578,7 @@ const Create = () => {
                           </List>
                         </nav>
                       </div>
-                      <div
+                      <div // INTERNAL ORDERS
                         index={1}
                         role="tabpanel"
                         hidden={valueTab !== 1}
@@ -592,7 +615,7 @@ const Create = () => {
                           </List>
                         </nav>
                       </div>
-                      <div
+                      <div // DATES
                         index={2}
                         role="tabpanel"
                         hidden={valueTab !== 2}
@@ -691,7 +714,7 @@ const Create = () => {
                           </List>
                         </nav>
                       </div>
-                      <div
+                      <div // RATES
                         index={3}
                         role="tabpanel"
                         hidden={valueTab !== 3}
@@ -862,7 +885,7 @@ const Create = () => {
                             </ListItem>
                         </nav>
                       </div>
-                      <div
+                      <div // UPLOAD
                         index={4}
                         role="tabpanel"
                         hidden={valueTab !== 4}

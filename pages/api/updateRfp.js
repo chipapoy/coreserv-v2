@@ -25,7 +25,8 @@ export default async function handler(req, res) {
             penalty = ?,
             penalty_over_interest_vat_amount = ?,
             surcharge = ?,
-            miscellaneuos = ?
+            miscellaneuos = ?,
+            total_amount = ?
             WHERE
             id = ?
         `;
@@ -49,6 +50,7 @@ export default async function handler(req, res) {
             req.body.penalty_over_interest,
             req.body.surcharge,
             req.body.misc,
+            req.body.total_amount,
             req.body.id
         ];
 
