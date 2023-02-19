@@ -29,7 +29,7 @@ const Index = () => {
     const cancelToken = axios.CancelToken.source();
     let settingData = true;
     
-    axios.get('/api/getRfpList', {cancelToken:cancelToken.token})
+    axios.get('/api/rfp_request/getRfpList', {cancelToken:cancelToken.token})
     .then( (res) => {
       if(settingData){
           setData(res.data);

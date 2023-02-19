@@ -1,5 +1,5 @@
 import formidable from 'formidable-serverless';
-import { query } from "./connection";
+import { query } from "./connection/connection";
 import uniqueId from 'uniqid';
 
 export const config = {

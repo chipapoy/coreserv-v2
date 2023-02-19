@@ -10,6 +10,11 @@ import Sidemenu from "../../components/Layouts/Sidemenu";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Select from 'react-select';
+import {
+  List,ListItem,ListItemText,Divider,Grid,Stack,
+  Button,ButtonGroup,Box,Tabs,Tab,Typography,Input,
+  TextField,FormControl,InputAdornment
+} from '@mui/material';
 
 const Create = () => {
 
@@ -242,240 +247,247 @@ const Create = () => {
                     </div>
                     <div className="section-body">
                         <div className="container-fluid">
-                            <h4></h4>
-
-                            <form onSubmit={submitData} className="card">
+                            <h4>Create new vendor</h4>
+                            <form onSubmit={submitData}>
+                              <div className="card">
                                 <div className="card-body">
-                                    <div className="card-title">Create new vendor</div>
-                                    <div className="row">
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label className="form-label">Vendor Name</label>
-                                                <input type="text" id="vendorName" className="form-control" /*required*/ />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label className="form-label">Vendor Code</label>
-                                                <input type="text" id="vendorCode" className="form-control" /*required*/ />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label className="form-label">Tin Num</label>
-                                                <input 
-                                                    id="tinNum" 
-                                                    type="text" 
-                                                    className="form-control" 
-                                                    disabled={disableForm}
-                                                    /*required*/ 
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label className="form-label">Address</label>
-                                                <input 
-                                                    id="address" 
-                                                    type="text" 
-                                                    className="form-control" 
-                                                    disabled={disableForm}
-                                                    /*required*/ 
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label className="form-label">Building Name</label>
-                                                <input type="text" id="bldg" className="form-control" /*required*/ />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label className="form-label">City</label>
-                                                <Select 
-                                                    value={city}
-                                                    options={cityArr} 
-                                                    onChange={ (val) => setCity(val)}
-                                                    isClearable={true}
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label className="form-label">Contact Person</label>
-                                                <input type="text" id="contactPerson" className="form-control" /*required*/ />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label className="form-label">Contact #</label>
-                                                <input type="text" id="contactNum" className="form-control" /*required*/ />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label className="form-label">KAM</label>
-                                                <input type="text" id="kam" className="form-control" /*required*/ />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label className="form-label">Tier</label>
-                                                <Select 
-                                                    value={tier}
-                                                    options={tierArr} 
-                                                    onChange={ (val) => setTier(val)}
-                                                    isClearable={true}
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label className="form-label">Account</label>
-                                                <Select 
-                                                    value={account}
-                                                    options={accountArr} 
-                                                    onChange={ (val) => setAccount(val)}
-                                                    isClearable={true}
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label className="form-label">Account Type</label>
-                                                <Select 
-                                                    value={accountType}
-                                                    options={accountTypeArr} 
-                                                    onChange={ (val) => setAccountType(val)}
-                                                    isClearable={true}
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label className="form-label">Payment Terms</label>
-                                                <Select 
-                                                    value={paymentTerms}
-                                                    options={paymentTermsArr} 
-                                                    onChange={ (val) => setPaymentTerms(val)}
-                                                    isClearable={true}
-                                                />
-
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label className="form-label">SOA Type</label>
-                                                <Select 
-                                                    value={soa}
-                                                    options={soaTypeArr} 
-                                                    onChange={ (val) => setSoa(val)}
-                                                    isClearable={true}
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-12">
-                                            <div className="form-group">
-                                                <label className="form-label">Bank Details</label>
-                                                <input 
-                                                    id="bankDetails"
-                                                    type="text" 
-                                                    className="form-control" 
-                                                    disabled={disableForm}
-                                                    /*required*/ 
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-12">
-                                            <div className="form-group">
-                                                <label className="form-label">Remarks</label>
-                                                <textarea 
-                                                    id="remarks" 
-                                                    className="form-control" 
-                                                    disabled={disableForm}
-                                                    /*required*/ 
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label className="form-label">Moa Duration</label>
-                                                <input 
-                                                    id="moaDuration" 
-                                                    type="text" 
-                                                    className="form-control" 
-                                                    disabled={disableForm}
-                                                    /*required*/ 
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label className="form-label">Moa Status</label>
-                                                <input 
-                                                    id="moaStatus" 
-                                                    type="text" 
-                                                    className="form-control" 
-                                                    disabled={disableForm}
-                                                    /*required*/ 
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label className="form-label">Terms</label>
-                                                <input  
-                                                    id="terms"
-                                                    type="text" 
-                                                    className="form-control" 
-                                                    disabled={disableForm}
-                                                    /*required*/ 
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label className="form-label">Auto Renewal</label>
-                                                <Select 
-                                                    value={autoRenew}
-                                                    options={autoRenewSelection} 
-                                                    onChange={ (val) => setAutoRenew(val) }
-                                                    isDisabled={disableForm}
-                                                    isClearable={true}
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label className="form-label">With Penalty</label>
-                                                <Select 
-                                                    value={withPenalty}
-                                                    options={withPenaltySelection} 
-                                                    onChange={ (val) => setWithPenalty(val) }
-                                                    isDisabled={disableForm}
-                                                    isClearable={true}
-                                                />
-                                            </div>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <div className="form-group">
-                                                <label className="form-label">Sky Contact</label>
-                                                <Select 
-                                                    value={skyContactId}
-                                                    options={skyContactArr} 
-                                                    onChange={ (val) => setSkyContactId(val) }
-                                                    isDisabled={disableForm}
-                                                    isClearable={true}
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="row">
-                                        <button type="submit" className="btn btn-primary" disabled={btnDisabled}>{submitBtn}</button>
-                                        <button type="button" className="btn btn-danger" disabled={btnDisabled} onClick={()=>router.push('/vendors')}>Cancel</button>
-                                    </div>
+                                  <Grid container spacing={2}>
+                                    <Grid item xs={12} lg={2}>
+                                      <Stack spacing={2} direction="row">
+                                        <Button 
+                                          disableElevation
+                                          variant="outlined" 
+                                          color="primary" 
+                                          type="submit"
+                                        >Save</Button>
+                                        <Button 
+                                          disableElevation
+                                          variant="outlined" 
+                                          color="error" 
+                                          onClick={()=>router.push('/vendors')}
+                                        >Cancel</Button>
+                                      </Stack>
+                                    </Grid>
+                                  </Grid>
+                                  <Divider />
+                                  <List>
+                                    <ListItem divider='true' alignItems="flex-start">
+                                      <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                        <TextField 
+                                          id="vendorName"
+                                          label="Vendor Name" 
+                                          variant="standard" 
+                                          disabled={disableForm}
+                                        />
+                                      </FormControl>
+                                      <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                        <TextField 
+                                          id="vendorCode"
+                                          label="Vendor Code" 
+                                          variant="standard" 
+                                          disabled={disableForm}
+                                        />
+                                      </FormControl>
+                                    </ListItem>
+                                    <ListItem divider='true' alignItems="flex-start">
+                                      <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                        <TextField 
+                                          id="tinNum"
+                                          label="Tin Num" 
+                                          variant="standard" 
+                                          disabled={disableForm}
+                                        />
+                                      </FormControl>
+                                      <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                        <TextField 
+                                          id="address"
+                                          label="Address" 
+                                          variant="standard" 
+                                          disabled={disableForm}
+                                        />
+                                      </FormControl>
+                                    </ListItem>
+                                    <ListItem divider='true' alignItems="flex-start">
+                                      <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                        <TextField 
+                                          id="bldg"
+                                          label="Building Name" 
+                                          variant="standard" 
+                                          disabled={disableForm}
+                                        />
+                                      </FormControl>
+                                      <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                        <label className="form-label">City</label>
+                                        <Select 
+                                            value={city}
+                                            options={cityArr} 
+                                            onChange={ (val) => setCity(val)}
+                                            isClearable={true}
+                                        />
+                                      </FormControl>
+                                    </ListItem>
+                                    <ListItem divider='true' alignItems="flex-start">
+                                      <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                        <TextField 
+                                          id="contactPerson"
+                                          label="Contact Person" 
+                                          variant="standard" 
+                                          disabled={disableForm}
+                                        />
+                                      </FormControl>
+                                      <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                        <TextField 
+                                          id="contactNum"
+                                          label="Contact #" 
+                                          variant="standard" 
+                                          disabled={disableForm}
+                                        />
+                                      </FormControl>
+                                    </ListItem>
+                                    <ListItem divider='true' alignItems="flex-start">
+                                      <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                        <TextField 
+                                          id="kam"
+                                          label="KAM" 
+                                          variant="standard" 
+                                          disabled={disableForm}
+                                        />
+                                      </FormControl>
+                                      <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                        <label className="form-label">Tier</label>
+                                        <Select 
+                                            value={tier}
+                                            options={tierArr} 
+                                            onChange={ (val) => setTier(val)}
+                                            isClearable={true}
+                                        />
+                                      </FormControl>
+                                    </ListItem>
+                                    <ListItem divider='true' alignItems="flex-start">
+                                      <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                        <label className="form-label">Account</label>
+                                        <Select 
+                                            value={account}
+                                            options={accountArr} 
+                                            onChange={ (val) => setAccount(val)}
+                                            isDisabled={disableForm}
+                                        />
+                                      </FormControl>
+                                      <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                        <label className="form-label">Account Type</label>
+                                        <Select 
+                                            value={accountType}
+                                            options={accountTypeArr} 
+                                            onChange={ (val) => setAccountType(val)}
+                                            isClearable={true}
+                                        />
+                                      </FormControl>
+                                    </ListItem>
+                                    <ListItem divider='true' alignItems="flex-start">
+                                      <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                        <label className="form-label">Payment Terms</label>
+                                        <Select 
+                                            value={paymentTerms}
+                                            options={paymentTermsArr} 
+                                            onChange={ (val) => setPaymentTerms(val)}
+                                            isClearable={true}
+                                        />
+                                      </FormControl>
+                                      <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                        <label className="form-label">SOA Type</label>
+                                        <Select 
+                                            value={soa}
+                                            options={soaTypeArr} 
+                                            onChange={ (val) => setSoa(val)}
+                                            isClearable={true}
+                                        />
+                                      </FormControl>
+                                    </ListItem>
+                                    <ListItem divider='true' alignItems="flex-start">
+                                      <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                        <TextField 
+                                          id="bankDetails"
+                                          label="Bank Details" 
+                                          variant="standard" 
+                                          multiline
+                                          maxRows={4}
+                                          disabled={disableForm}
+                                        />
+                                      </FormControl>
+                                      <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                        <TextField 
+                                          id="remarks"
+                                          label="Remarks" 
+                                          variant="standard" 
+                                          multiline
+                                          maxRows={4}
+                                          disabled={disableForm}
+                                        />
+                                      </FormControl>
+                                    </ListItem>
+                                    <ListItem divider='true' alignItems="flex-start">
+                                      <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                        <TextField 
+                                          id="moaDuration"
+                                          label="Moa Duration" 
+                                          variant="standard" 
+                                          disabled={disableForm}
+                                        />
+                                      </FormControl>
+                                      <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                        <TextField 
+                                          id="moaStatus"
+                                          label="Moa Status" 
+                                          variant="standard" 
+                                          disabled={disableForm}
+                                        />
+                                      </FormControl>
+                                    </ListItem>
+                                    <ListItem divider='true' alignItems="flex-start">
+                                      <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                        <TextField 
+                                          id="terms"
+                                          label="Terms" 
+                                          variant="standard" 
+                                          disabled={disableForm}
+                                        />
+                                      </FormControl>
+                                      <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                        <label className="form-label">Auto Renewal</label>
+                                        <Select 
+                                            value={autoRenew}
+                                            options={autoRenewSelection} 
+                                            onChange={ (val) => setAutoRenew(val) }
+                                            isDisabled={disableForm}
+                                            isClearable={true}
+                                        />
+                                      </FormControl>
+                                    </ListItem>
+                                    <ListItem divider='true' alignItems="flex-start">
+                                      <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                        <label className="form-label">With Penalty</label>
+                                        <Select 
+                                            value={withPenalty}
+                                            options={withPenaltySelection} 
+                                            onChange={ (val) => setWithPenalty(val) }
+                                            isDisabled={disableForm}
+                                            isClearable={true}
+                                        />
+                                      </FormControl>
+                                      <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                        <label className="form-label">Sky Contact</label>
+                                        <Select 
+                                            value={skyContactId}
+                                            options={skyContactArr} 
+                                            onChange={ (val) => setSkyContactId(val) }
+                                            isDisabled={disableForm}
+                                            isClearable={true}
+                                        />
+                                      </FormControl>
+                                    </ListItem>
+                                  </List>
                                 </div>
+                              </div>
                             </form>
                         </div>
                     </div>

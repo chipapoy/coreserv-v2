@@ -1,5 +1,5 @@
 // import mysql from 'mysql2/promise';
-import { query } from "./connection";
+import { query } from "../connection/connection";
 
 export default async function handler(req, res) {
 

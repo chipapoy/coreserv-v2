@@ -5,8 +5,8 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react';
 import md5 from 'md5';
 import axios from 'axios';
-import Topmenu from "../../components/Layouts/Topmenu";
-import Sidemenu from "../../components/Layouts/Sidemenu";
+import Topmenu from "../../../components/Layouts/Topmenu";
+import Sidemenu from "../../../components/Layouts/Sidemenu";
 import { ToastContainer, toast } from 'react-toastify';
 import {
   List,ListItem,ListItemText,Divider,Grid,Stack,
@@ -20,7 +20,8 @@ const Update = () => {
 
     const router = useRouter();
     const pageTitle = "Update Vendor";
-    const [recordId,setRecordId] = useState(router.query.id);
+    // const [recordId,setRecordId] = useState(router.query.id);
+    const { vendorId } = router.query;
 
     const [cityArr,setCityArr] = useState([]);
     const [tierArr,setTierArr] = useState([]);
@@ -73,7 +74,7 @@ const Update = () => {
         let settingData = true;
         
         axios.post('/api/getVendorDetails', {
-            id: recordId
+            id: vendorId
         })
         .then( (res) => {
 
@@ -150,7 +151,7 @@ const Update = () => {
             setSkyContactId('')
         }
 
-    }, [recordId]);
+    }, [vendorId]);
 
     useEffect(() => {
 
@@ -231,7 +232,7 @@ const Update = () => {
         SetDisableForm(true)
 
         const data = {
-            id: recordId,
+            id: vendorId,
             vendor_name: vendorName,
             vendor_code: vendorCode,
             tin_num: tinNum,

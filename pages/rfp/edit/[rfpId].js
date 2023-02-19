@@ -28,13 +28,15 @@ const Create = () => {
 
   const { rfpId } = router.query;
 
-  const pageTitle = 'Update ' + rfpId;
+  const pageTitle = 'Update RFP';
 
   useEffect(() => {
 
     const getRfpDetails = async () => {
 
-      const result = await axios.post('/api/getRfpDetails',{
+      console.log(rfpId);
+
+      const result = await axios.post('/api/rfp_request/getRfpDetails',{
         id : rfpId
       });
 
@@ -170,8 +172,10 @@ const Create = () => {
       console.log(rfpId);
   }
 
-  const onUpload = (e) => {
+  const onUpload = e => {
     // console.log(fileUpload.file);
+    e.preventDefault();
+
 
     const formData = new FormData();
 
@@ -195,6 +199,7 @@ const Create = () => {
         setUploadBtnDisabled(true);
 
         toast.success('File has been uploaded', {
+          toastId: 'uploadFile',
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -205,11 +210,18 @@ const Create = () => {
           progress: undefined,
           theme: "dark"
         });
+
+        // toast.onChange(v => {
+        //   if(v.status === "removed"){
+        //     return
+        //   }
+        // });
         
     })
     .catch(err => {
         // console.log(err)
         toast.error(err.response.data.error, {
+          toastId: 'uploadFile',
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -242,90 +254,151 @@ const Create = () => {
     };
   //
 
-  const submitData = async (event) => {
+  // const submitData = async (event) => {
     
-    event.preventDefault();
+  //   event.preventDefault();
       
-    const data = {
-        id: rfpId,
-        internal_order1: internalOrder1,
-        internal_order2: internalOrder2,
-        bill_period_from: moment(billDate.start).format('YYYY-MM-DD'),
-        bill_period_to: moment(billDate.end).format('YYYY-MM-DD'),
-        bill_month: moment(billDate.start).format('MMM-YYYY'),
-        bill_date_received: moment(billReceiveDate).format('YYYY-MM-DD'),
-        due_date: moment(dueDate).format('YYYY-MM-DD'),
-        rfp_date: moment(rfpDate).format('YYYY-MM-DD'),
-        current_reading: currentReading,
-        prev_reading: prevReading,
-        consumption: consumption,
-        rate: rate,
-        amount: amount,
-        vat_amount: vatAmount,
-        interest: interest,
-        penalty: penalty,
-        penalty_over_interest: penaltyOverInterest,
-        surcharge: surcharge,
-        misc: misc,
-        total_amount: totalAmount
-    }
+  //   const data = {
+  //       id: rfpId,
+  //       internal_order1: internalOrder1,
+  //       internal_order2: internalOrder2,
+  //       bill_period_from: moment(billDate.start).format('YYYY-MM-DD'),
+  //       bill_period_to: moment(billDate.end).format('YYYY-MM-DD'),
+  //       bill_month: moment(billDate.start).format('MMM-YYYY'),
+  //       bill_date_received: moment(billReceiveDate).format('YYYY-MM-DD'),
+  //       due_date: moment(dueDate).format('YYYY-MM-DD'),
+  //       rfp_date: moment(rfpDate).format('YYYY-MM-DD'),
+  //       current_reading: currentReading,
+  //       prev_reading: prevReading,
+  //       consumption: consumption,
+  //       rate: rate,
+  //       amount: amount,
+  //       vat_amount: vatAmount,
+  //       interest: interest,
+  //       penalty: penalty,
+  //       penalty_over_interest: penaltyOverInterest,
+  //       surcharge: surcharge,
+  //       misc: misc,
+  //       total_amount: totalAmount
+  //   }
     
-    console.log(data)
+  //   console.log(data)
 
-    const url = '/api/updateRfp'
+  //   const url = '/api/rfp_request/updateRfp'
 
-    await axios.post(url, data)
-    .then( res => {
+  //   await axios.post(url, data)
+  //   .then( res => {
 
-        // console.log(res);
+  //     if(res.status === 200){
 
-        if(res.status === 200){
+  //       toast.success('RFP has been updated', {
+  //         toastId: 'updateRfp',
+  //         position: "top-right",
+  //         autoClose: 5000,
+  //         hideProgressBar: false,
+  //         closeOnClick: true,
+  //         pauseOnHover: false,
+  //         pauseOnFocusLoss: false,
+  //         draggable: false,
+  //         progress: undefined,
+  //         theme: "dark"
+  //       })
+        
+  //       toast.onChange(v => {
+  //         if(v.status === "removed"){
+  //           router.push("/rfp")
+  //         }
+  //       });
+  //     }  
+  //     else{
 
-            toast.success('RFP has been updated', {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: false,
-                pauseOnFocusLoss: false,
-                draggable: false,
-                progress: undefined,
-                theme: "dark"
-            })
-            
-            toast.onChange(v => {
-                if(v.status === "removed"){
-                    router.push("/rfp")
-                }
-            });
-        }  
-        else{
+  //         setSubmitBtn('Submit');
+  //         setBtnDisabled(false);
 
-            setSubmitBtn('Submit');
-            setBtnDisabled(false);
+  //         toast.error('Unable to connect to server. Please try again.', {
+  //             toastId: 'updateRfp',
+  //             position: "top-right",
+  //             autoClose: 5000,
+  //             hideProgressBar: false,
+  //             closeOnClick: true,
+  //             pauseOnHover: false,
+  //             pauseOnFocusLoss: false,
+  //             draggable: false,
+  //             progress: undefined,
+  //             theme: "dark",
+  //         });
+  //     }
+  //   })
+  //   .catch(err => {
 
-            toast.error('Unable to connect to server. Please try again.', {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: false,
-                pauseOnFocusLoss: false,
-                draggable: false,
-                progress: undefined,
-                theme: "dark",
-            });
+  //     setSubmitBtn('Submit');
+  //     setBtnDisabled(false);
+
+  //     console.log(err.message)
+
+  //     toast.error(err.message, {
+  //         position: "top-right",
+  //         autoClose: 5000,
+  //         hideProgressBar: false,
+  //         closeOnClick: true,
+  //         pauseOnHover: false,
+  //         pauseOnFocusLoss: false,
+  //         draggable: false,
+  //         progress: undefined,
+  //         theme: "dark",
+  //     });
+  //   })
+  // }
+
+    const submitData = e => {
+
+      e.preventDefault();
+
+      const rfpUpdate = new Promise(resolve => {
+
+        const url = '/api/rfp_request/updateRfp'
+        const data = {
+          id: rfpId,
+          internal_order1: internalOrder1,
+          internal_order2: internalOrder2,
+          bill_period_from: moment(billDate.start).format('YYYY-MM-DD'),
+          bill_period_to: moment(billDate.end).format('YYYY-MM-DD'),
+          bill_month: moment(billDate.start).format('MMM-YYYY'),
+          bill_date_received: moment(billReceiveDate).format('YYYY-MM-DD'),
+          due_date: moment(dueDate).format('YYYY-MM-DD'),
+          rfp_date: moment(rfpDate).format('YYYY-MM-DD'),
+          current_reading: currentReading,
+          prev_reading: prevReading,
+          consumption: consumption,
+          rate: rate,
+          amount: amount,
+          vat_amount: vatAmount,
+          interest: interest,
+          penalty: penalty,
+          penalty_over_interest: penaltyOverInterest,
+          surcharge: surcharge,
+          misc: misc,
+          total_amount: totalAmount
         }
 
-    })
-    .catch(err => {
+        axios.post(url, data)
+        .then( res => {
+          
+          if(res.status === 200){
+            resolve();
+          }
+        })
 
-        setSubmitBtn('Submit');
-        setBtnDisabled(false);
+      });
 
-        console.log(err.message)
-
-        toast.error(err.message, {
+      toast.promise(
+        rfpUpdate,
+        {
+          pending: 'Updating...',
+          success: {
+            render(){
+              return "RFP has been updated"
+            },
             position: "top-right",
             autoClose: 5000,
             hideProgressBar: false,
@@ -335,9 +408,14 @@ const Create = () => {
             draggable: false,
             progress: undefined,
             theme: "dark",
-        });
-    })
-  }
+            onClose: () => {
+              router.push("/rfp")
+            }
+          },
+          error: 'Something went wrong. Please try again.'
+        }
+      )
+    }
 
   return (
     <>
@@ -369,6 +447,7 @@ const Create = () => {
                             variant="outlined" 
                             color="primary" 
                             type="submit"
+                            // onClick={submitData}
                           >Update</Button>
                           <Button 
                             disableElevation
@@ -409,7 +488,7 @@ const Create = () => {
                             <ListItem divider='true' alignItems="flex-start">
                               <ListItemText 
                                   secondary="RFP Type"
-                                  primary= { rfpData!==null ? rfpData.vendor_code : '' } 
+                                  primary= { rfpData!==null ? rfpData.rfp_type : '' } 
                               />
                             </ListItem>
                             <ListItem divider='true' alignItems="flex-start">

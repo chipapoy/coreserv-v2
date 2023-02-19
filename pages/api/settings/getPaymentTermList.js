@@ -1,11 +1,11 @@
 // import mysql from 'mysql2/promise';
-import { query } from "./connection";
+import { query } from "./connection/connection";
 
 export default async function handler(req, res) {
 
 
     try {
-        const sql = "SELECT account_type as value, account_type as label FROM account_type_tbl ORDER BY account_type ASC";
+        const sql = "SELECT terms as value, terms as label FROM payment_terms_tbl ORDER BY terms ASC";
         const valuesParam = [];
 
         const result = await query({query: sql, values: valuesParam});

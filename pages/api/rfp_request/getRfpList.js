@@ -1,30 +1,30 @@
 // import mysql from 'mysql2/promise';
-import { query } from "./connection";
+import { query } from "../connection/connection";
 
 export default async function handler(req, res) {
 
-    
+
     try {
         const sql = `
             SELECT 
             rfp.id,
-            rfp.vendor_id,
             vendors.vendor_name,
             vendors.bldg_name,
+            vendors.address,
             vendors.contact_num,
             vendors.tin_num,
             vendors.vendor_code,
-            vendors.city,
-            vendors.account,
-            vendors.kam,
-            rfp.sky_contact_id,
             sky_contact_details.contact_person,
             sky_contact_details.contact_number,
             sky_contact_details.email_add,
             rfp.internal_order1,
             rfp.internal_order2,
-            DATE_FORMAT(rfp.bill_period_from,'%Y-%m-%d') AS bill_period_from,
-            DATE_FORMAT(rfp.bill_period_to,'%Y-%m-%d') AS bill_period_to,
+            vendors.city,
+            vendors.account,
+            rfp_type_tbl.rfp_type,
+            rfp.bill_period_from,
+            rfp.bill_period_to,
+            CONCAT(rfp.bill_period_from,' ',rfp.bill_period_to) AS bill_period,
             rfp.bill_month,
             rfp.current_reading,
             rfp.previous_reading,
@@ -37,29 +37,30 @@ export default async function handler(req, res) {
             rfp.penalty_over_interest_vat_amount,
             rfp.surcharge,
             rfp.miscellaneuos,
-            DATE_FORMAT(rfp.date_bill_received,'%Y-%m-%d') AS date_bill_received,
-            DATE_FORMAT(rfp.due_date,'%Y-%m-%d') AS due_date,
-            DATE_FORMAT(rfp.rfp_date,'%Y-%m-%d') AS rfp_date
+            rfp.total_amount,
+            rfp.date_bill_received,
+            rfp.due_date,
+            rfp.rfp_date
             FROM 
             rfp,
             vendors,
-            sky_contact_details
+            sky_contact_details,
+            rfp_type_tbl
             WHERE 
             rfp.vendor_id = vendors.id
             AND
             vendors.sky_contact_id = sky_contact_details.id
             AND
-            rfp.status = 1
+            rfp.rfp_type_id = rfp_type_tbl.id
             AND
-            rfp.id = ?
+            rfp.status = 1 
+            ORDER BY rfp.id DESC
         `;
-        const valuesParam = [
-            req.body.id
-        ];
+        const valuesParam = [];
 
         const result = await query({query: sql, values: valuesParam});
 
-        res.status(200).json(result[0])
+        res.status(200).json(result)
 
     } 
     catch (error) {

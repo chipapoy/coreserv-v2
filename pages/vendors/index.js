@@ -207,9 +207,9 @@ const Index = () => {
                 <TableCell colSpan={colSpan}>
                     <Link 
                         href={{
-                            pathname:'/vendors/update',
-                            query: { id: rowData[0] }
+                            pathname:'/vendors/edit/'+rowData[0]
                         }}
+                        title='Update'
                     >  
                         <Tooltip>
                             <IconButton>

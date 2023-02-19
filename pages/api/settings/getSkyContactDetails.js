@@ -1,11 +1,22 @@
 // import mysql from 'mysql2/promise';
-import { query } from "./connection";
+import { query } from "./connection/connection";
 
 export default async function handler(req, res) {
 
 
     try {
-        const sql = "SELECT city as value, city as label FROM city_tbl ORDER BY city ASC";
+        const sql = `
+        SELECT 
+        id as value,
+        contact_person as label,
+        contact_number,
+        email_add
+        FROM 
+        sky_contact_details 
+        WHERE 
+        status = 1 
+        ORDER BY contact_person ASC
+        `;
         const valuesParam = [];
 
         const result = await query({query: sql, values: valuesParam});

@@ -207,17 +207,19 @@ const Create = () => {
 
 
   useEffect(() => {
+
+    console.clear();
     
     const getVendorArr = async () => {
 
-        const result = await axios.get('/api/getVendorNameList');
+        const result = await axios.get('/api/vendor_request/getVendorNameList');
 
         setVendorArr(result.data);
     };
 
     const getRfpTypeArr = async () => {
 
-      const result = await axios.get('/api/getRfpTypeList');
+      const result = await axios.get('/api/rfp_request/getRfpTypeList');
 
       setRfpTypeArr(result.data);
     };
@@ -295,27 +297,32 @@ const Create = () => {
     };
   //
 
-  const submitData = async (event) => {
+  const submitData = e => {
     
-      event.preventDefault();
+    e.preventDefault();
 
-      // setSubmitBtn('Processing');
-      // setBtnDisabled(true);
+    setVendorBorder(vendor.value===undefined ? '#f44336' : '#ced4da');
+    setVendorError(vendor.value===undefined ? 1 : 0);
+    setDisplayErrorVendor(vendor.value===undefined ? 'block' : 'none');
 
-      setVendorBorder(vendor.value===undefined ? '#f44336' : '#ced4da');
-      setVendorError(vendor.value===undefined ? 1 : 0);
-      setDisplayErrorVendor(vendor.value===undefined ? 'block' : 'none');
+    setRfpTypeBorder(rfpType.value===undefined ? '#f44336' : '#ced4da');
+    setRfpTypeError(rfpType.value===undefined ? 1 : 0);
+    setDisplayErrorRfp(rfpType.value===undefined ? 'block' : 'none');
 
-      setRfpTypeBorder(rfpType.value===undefined ? '#f44336' : '#ced4da');
-      setRfpTypeError(rfpType.value===undefined ? 1 : 0);
-      setDisplayErrorRfp(rfpType.value===undefined ? 'block' : 'none');
+    
 
+    const errorCount =  vendorError + rfpTypeError;
 
-      const errorCount =  vendorError + rfpTypeError;
+    // const insertData = () => {
 
       console.log(errorCount);
 
       if(errorCount === 0){
+
+        setBtnDisabled(true);
+
+        const id = toast.loading("Please wait...");
+
         const data = {
             id: rfp_id,
             vendor_id: vendor.value,
@@ -343,75 +350,99 @@ const Create = () => {
             total_amount: totalAmount
         }
         
-        console.log(data)
+        // console.log(data)
 
-        const url = '/api/createRfp'
+        const url = '/api/rfp_request/createRfp'
 
-        await axios.post(url, data)
+        axios.post(url, data)
         .then( res => {
-
-            // console.log(res);
-
-            if(res.status === 200){
-
-                toast.success('New RFP has been created', {
-                    position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: false,
-                    pauseOnFocusLoss: false,
-                    draggable: false,
-                    progress: undefined,
-                    theme: "dark"
-                })
-                
-                toast.onChange(v => {
-                    if(v.status === "removed"){
-                        router.push("/rfp")
-                    }
-                });
-            }  
-            else{
-
-                setSubmitBtn('Submit');
-                setBtnDisabled(false);
-
-                toast.error('Unable to connect to server. Please try again.', {
-                    position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: false,
-                    pauseOnFocusLoss: false,
-                    draggable: false,
-                    progress: undefined,
-                    theme: "dark",
-                });
+          // resolve(res);
+          toast.update(id, {
+            render: "New RFP has been created", 
+            type: 'success',
+            isLoading: false,
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: false,
+            pauseOnFocusLoss: false,
+            draggable: false,
+            progress: undefined,
+            theme: "dark",
+            onClose: () => {
+              router.push("/rfp");
             }
-
+          });
         })
         .catch(err => {
-
-            setSubmitBtn('Submit');
-            setBtnDisabled(false);
-
-            console.log(err.message)
-
-            toast.error(err.message, {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: false,
-                pauseOnFocusLoss: false,
-                draggable: false,
-                progress: undefined,
-                theme: "dark",
-            });
-        })
+          // resolve(err);
+          toast.update(id, {
+            render: "Something went wrong. Please try again.", 
+            type: 'error',
+            isLoading: false,
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: false,
+            pauseOnFocusLoss: false,
+            draggable: false,
+            progress: undefined,
+            theme: "dark",
+            onClose: () => {
+              setBtnDisabled(false);
+            }
+          });
+        });
         
       }
+    
+    // };
+
+    // if(errorCount === 'testtt'){
+    //   toast.promise(insertData,{
+    //       pending: {
+    //         render(){
+    //           return "Processing..."
+    //         },
+    //         position: "top-right",
+    //         theme: "dark",
+    //         onClose: () => {
+    //           setBtnDisabled(false);
+    //         }
+    //       },
+    //       success: {
+    //         render(){
+    //           return "New RFP has been created"
+    //         },
+    //         position: "top-right",
+    //         autoClose: 5000,
+    //         hideProgressBar: false,
+    //         closeOnClick: true,
+    //         pauseOnHover: false,
+    //         pauseOnFocusLoss: false,
+    //         draggable: false,
+    //         progress: undefined,
+    //         theme: "dark",
+    //         onClose: () => {
+    //           router.push("/rfp");
+    //         }
+    //       },
+    //       error: {
+    //         render(){
+    //           return 'Something went wrong. Please try again.'
+    //         },
+    //         position: "top-right",
+    //         theme: "dark",
+    //         onClose: () => {
+    //           setBtnDisabled(false);
+    //         }
+    //       },
+    //     }
+    //   )
+    // }
+    
   }
 
   return (
@@ -490,11 +521,13 @@ const Create = () => {
                             variant="outlined" 
                             color="primary" 
                             type="submit"
+                            disabled={btnDisabled}
                           >Save</Button>
                           <Button 
                             disableElevation
                             variant="outlined" 
                             color="error" 
+                            disabled={btnDisabled}
                             onClick={()=>router.push('/rfp')}
                           >Cancel</Button>
                         </Stack>
