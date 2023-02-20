@@ -237,8 +237,8 @@ const Create = () => {
   
   const [submitBtn,setSubmitBtn] = useState('Submit');
   const [btnDisabled,setBtnDisabled] = useState(false);
+  const [disableForm,setDisableForm] = useState(false);
 
-  
   // TAB PANEL
     const a11yProps = (index) => {
       return {
@@ -354,7 +354,10 @@ const Create = () => {
 
       e.preventDefault();
 
-      const rfpUpdate = new Promise(resolve => {
+      setBtnDisabled(true);
+      setDisableForm(true);
+
+      // const rfpUpdate = new Promise(resolve => {
 
         const url = '/api/rfp_request/updateRfp'
         const data = {
@@ -381,40 +384,56 @@ const Create = () => {
           total_amount: totalAmount
         }
 
+        const notifId = toast.loading("Please wait...");
+
         axios.post(url, data)
         .then( res => {
-          
-          if(res.status === 200){
-            resolve();
-          }
+          setTimeout(() => {
+            toast.update(notifId, {
+              render: "Record has been updated", 
+              type: 'success',
+              isLoading: false,
+              delay:undefined,
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: false,
+              pauseOnFocusLoss: false,
+              draggable: false,
+              progress: undefined,
+              theme: "dark",
+              onClose: () => {
+                router.push("/rfp");
+              }
+            });
+          }, 2000);
         })
+        .catch(err => {
 
-      });
+          setTimeout(() => {
+            toast.update(notifId, {
+              render: "Something went wrong. Please try again.", 
+              type: 'error',
+              isLoading: false,
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: false,
+              pauseOnFocusLoss: false,
+              draggable: false,
+              progress: undefined,
+              theme: "dark",
+              onClose: () => {
+                setBtnDisabled(false);
+                setDisableForm(false);
+              }
+            });
+          }, 2000);
+        });
 
-      toast.promise(
-        rfpUpdate,
-        {
-          pending: 'Updating...',
-          success: {
-            render(){
-              return "RFP has been updated"
-            },
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: false,
-            pauseOnFocusLoss: false,
-            draggable: false,
-            progress: undefined,
-            theme: "dark",
-            onClose: () => {
-              router.push("/rfp")
-            }
-          },
-          error: 'Something went wrong. Please try again.'
-        }
-      )
+      // });
     }
 
   return (
@@ -566,6 +585,7 @@ const Create = () => {
                                   multiline
                                   maxRows={4}
                                   value={internalOrder1}
+                                  disabled={disableForm}
                                   onChange={ e => setInternalOrder1(e.target.value) }
                                 />
                               </FormControl>
@@ -578,6 +598,7 @@ const Create = () => {
                                   multiline
                                   maxRows={4}
                                   value={internalOrder2}
+                                  disabled={disableForm}
                                   onChange={ e => setInternalOrder2(e.target.value) }
                                 />
                               </FormControl>
@@ -605,6 +626,7 @@ const Create = () => {
                                   label="Billing Date" 
                                   variant="standard" 
                                   value={billDate.start + ' - ' + billDate.end}
+                                  disabled={disableForm}
                                 />
                               </DateRangePicker>
                               </FormControl>
@@ -616,6 +638,7 @@ const Create = () => {
                                   variant="standard" 
                                   aria-readonly={true}
                                   value={ moment(billDate.start).format('MMM-YYYY') }
+                                  disabled={disableForm}
                                 />
                               </FormControl>
                             </ListItem>
@@ -632,6 +655,7 @@ const Create = () => {
                                   label="Date Bill Received" 
                                   variant="standard" 
                                   value={billReceiveDate}
+                                  disabled={disableForm}
                                 />
                               </DateRangePicker>
                               </FormControl>
@@ -649,6 +673,7 @@ const Create = () => {
                                   label="Due Date" 
                                   variant="standard" 
                                   value={dueDate}
+                                  disabled={disableForm}
                                 />
                               </DateRangePicker>
                               </FormControl>
@@ -666,6 +691,7 @@ const Create = () => {
                                   label="RFP Date" 
                                   variant="standard" 
                                   value={rfpDate}
+                                  disabled={disableForm}
                                 />
                               </DateRangePicker>
                               </FormControl>
@@ -677,6 +703,7 @@ const Create = () => {
                                   variant="standard" 
                                   aria-readonly={true}
                                   value={nextBillDate}
+                                  disabled={disableForm}
                                 />
                               </FormControl>
                             </ListItem>
@@ -701,6 +728,7 @@ const Create = () => {
                                   variant="standard" 
                                   type='number'
                                   value={currentReading}
+                                  disabled={disableForm}
                                   onChange={ e => {
                                     setCurrentReading(e.target.value)
                                     setConsumption(e.target.value - prevReading)
@@ -717,6 +745,7 @@ const Create = () => {
                                   variant="standard" 
                                   type='number'
                                   value={prevReading}
+                                  disabled={disableForm}
                                   onChange={ e => {
                                     setPrevReading(e.target.value) 
                                     setConsumption(currentReading - e.target.value)
@@ -734,6 +763,7 @@ const Create = () => {
                                   type='number'
                                   aria-readonly={true}
                                   value={currentReading - prevReading}
+                                  disabled={disableForm}
                                   InputProps={{
                                     startAdornment: <InputAdornment position="start">KwH</InputAdornment>,
                                   }}
@@ -747,6 +777,7 @@ const Create = () => {
                                   variant="standard" 
                                   type='number'
                                   value={rate}
+                                  disabled={disableForm}
                                   onChange={ e => {
                                     setRate(parseFloat(e.target.value)) 
                                     setAmount(consumption * parseFloat(e.target.value))
@@ -762,6 +793,7 @@ const Create = () => {
                                   variant="standard" 
                                   type='number'
                                   value={amount}
+                                  disabled={disableForm}
                                   // onChange={ e => setAmount(parseFloat(e.target.value)) }
                                   InputProps={{
                                     startAdornment: <InputAdornment position="start">Php</InputAdornment>,
@@ -776,6 +808,7 @@ const Create = () => {
                                   variant="standard" 
                                   type='number'
                                   value={vatAmount}
+                                  disabled={disableForm}
                                   onChange={ e => setVatAmount(parseFloat(e.target.value)) }
                                   InputProps={{
                                     startAdornment: <InputAdornment position="start">Php</InputAdornment>,
@@ -788,6 +821,7 @@ const Create = () => {
                                   variant="standard" 
                                   type='number'
                                   value={interest}
+                                  disabled={disableForm}
                                   onChange={ e => setInterest(parseFloat(e.target.value)) }
                                   InputProps={{
                                     startAdornment: <InputAdornment position="start">Php</InputAdornment>,
@@ -802,6 +836,7 @@ const Create = () => {
                                   variant="standard" 
                                   type='number'
                                   value={penalty}
+                                  disabled={disableForm}
                                   onChange={ e => setPenalty(parseFloat(e.target.value)) }
                                   InputProps={{
                                     startAdornment: <InputAdornment position="start">Php</InputAdornment>,
@@ -814,6 +849,7 @@ const Create = () => {
                                   variant="standard" 
                                   type='number'
                                   value={penaltyOverInterest}
+                                  disabled={disableForm}
                                   onChange={ e => setPenaltyOverInterest(parseFloat(e.target.value)) }
                                   InputProps={{
                                     startAdornment: <InputAdornment position="start">Php</InputAdornment>,
@@ -829,6 +865,7 @@ const Create = () => {
                                   variant="standard" 
                                   type='number'
                                   value={surcharge}
+                                  disabled={disableForm}
                                   onChange={ e => setSurcharge(parseFloat(e.target.value)) }
                                   InputProps={{
                                     startAdornment: <InputAdornment position="start">Php</InputAdornment>,
@@ -841,6 +878,7 @@ const Create = () => {
                                   variant="standard" 
                                   type='number'
                                   value={misc}
+                                  disabled={disableForm}
                                   onChange={ e => setMisc(parseFloat(e.target.value)) }
                                   InputProps={{
                                     startAdornment: <InputAdornment position="start">Php</InputAdornment>,

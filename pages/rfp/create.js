@@ -56,6 +56,8 @@ const Create = () => {
 
   const [internalOrder1, setInternalOrder1] = useState('');
   const [internalOrder2, setInternalOrder2] = useState('');
+  const [particulars, setParticulars] = useState('');
+  const [particularsDisplay, setParticularsDisplay] = useState('none');
 
   const [currentReading,setCurrentReading] = useState(0);
   const [prevReading,setPrevReading] = useState(0);
@@ -203,7 +205,7 @@ const Create = () => {
   
   const [submitBtn,setSubmitBtn] = useState('Submit');
   const [btnDisabled,setBtnDisabled] = useState(false);
-
+  const [disableForm,setDisableForm] = useState(false);
 
 
   useEffect(() => {
@@ -274,11 +276,17 @@ const Create = () => {
 
     setDisplayField(val.label === 'Electrical' ? 'flex' : 'none');
 
-    // setDispRentRfp({
-    //   display: val.label === 'Rental' ? 'inline-flex' : 'none',
-    //   disabled: val.label === 'Rental' ? false : true
+    setParticularsDisplay(val.label === 'Electrical' ? 'none' : 'block')
+
+    // setParticulars({
+    //   value:
     // })
-    
+
+    // const [particulars, setParticulars] = useState({
+    //   value: '',
+    //   display: false
+    // });
+
     console.log(val)
   }
 
@@ -313,22 +321,21 @@ const Create = () => {
 
     const errorCount =  vendorError + rfpTypeError;
 
-    // const insertData = () => {
-
       console.log(errorCount);
 
       if(errorCount === 0){
 
         setBtnDisabled(true);
-
-        const id = toast.loading("Please wait...");
-
+        setDisableForm(true);
+        
+        const url = '/api/rfp_request/createRfp'
         const data = {
             id: rfp_id,
             vendor_id: vendor.value,
             rfp_type_id: rfpType.value,
             internal_order1: internalOrder1,
             internal_order2: internalOrder2,
+            particulars: rfpType.value == 1 ? null : particulars,
             bill_period_from: moment(billDate.start).format('YYYY-MM-DD'),
             bill_period_to: moment(billDate.end).format('YYYY-MM-DD'),
             bill_month: moment(billDate.start).format('MMM-YYYY'),
@@ -336,113 +343,76 @@ const Create = () => {
             due_date: moment(dueDate).format('YYYY-MM-DD'),
             rfp_date: moment(rfpDate).format('YYYY-MM-DD'),
             next_bill_date: moment(nextBillDate).format('YYYY-MM-DD'),
-            current_reading: currentReading,
-            prev_reading: prevReading,
-            consumption: consumption,
-            rate: rate,
-            amount: amount,
-            vat_amount: vatAmount,
-            interest: interest,
-            penalty: penalty,
-            penalty_over_interest: penaltyOverInterest,
-            surcharge: surcharge,
-            misc: misc,
-            total_amount: totalAmount
+            current_reading: rfpType.value == 1 ? currentReading : 0,
+            prev_reading: rfpType.value == 1 ? prevReading : 0,
+            consumption: rfpType.value == 1 ? consumption : 0,
+            rate: rfpType.value == 1 ? rate : 0,
+            amount: rfpType.value == 1 ? amount : 0,
+            vat_amount: rfpType.value == 1 ? vatAmount : 0,
+            interest: rfpType.value == 1 ? interest : 0,
+            penalty: rfpType.value == 1 ? penalty : 0,
+            penalty_over_interest: rfpType.value == 1 ? penaltyOverInterest : 0,
+            surcharge: rfpType.value == 1 ? surcharge: 0,
+            misc: rfpType.value == 1 ? misc : 0,
+            total_amount: rfpType.value == 1 ? totalAmount : 0
         }
         
         // console.log(data)
-
-        const url = '/api/rfp_request/createRfp'
-
+        const notifId = toast.loading("Please wait...");
+        
         axios.post(url, data)
         .then( res => {
           // resolve(res);
-          toast.update(id, {
-            render: "New RFP has been created", 
-            type: 'success',
-            isLoading: false,
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: false,
-            pauseOnFocusLoss: false,
-            draggable: false,
-            progress: undefined,
-            theme: "dark",
-            onClose: () => {
-              router.push("/rfp");
-            }
-          });
+          setTimeout(() => {
+            toast.update(notifId, {
+              render: "New RFP has been created", 
+              type: 'success',
+              isLoading: false,
+              delay:undefined,
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: false,
+              pauseOnFocusLoss: false,
+              draggable: false,
+              progress: undefined,
+              theme: "dark",
+              onClose: () => {
+                router.push("/rfp");
+              }
+            });
+          }, 2000);
+
+            
         })
         .catch(err => {
-          // resolve(err);
-          toast.update(id, {
-            render: "Something went wrong. Please try again.", 
-            type: 'error',
-            isLoading: false,
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: false,
-            pauseOnFocusLoss: false,
-            draggable: false,
-            progress: undefined,
-            theme: "dark",
-            onClose: () => {
-              setBtnDisabled(false);
-            }
-          });
+
+          setTimeout(() => {
+            toast.update(notifId, {
+              render: "Something went wrong. Please try again.", 
+              type: 'error',
+              isLoading: false,
+              position: "top-right",
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: false,
+              pauseOnFocusLoss: false,
+              draggable: false,
+              progress: undefined,
+              theme: "dark",
+              onClose: () => {
+                setBtnDisabled(false);
+                setDisableForm(false);
+              }
+            });
+          }, 2000);
+
+
         });
         
       }
-    
-    // };
-
-    // if(errorCount === 'testtt'){
-    //   toast.promise(insertData,{
-    //       pending: {
-    //         render(){
-    //           return "Processing..."
-    //         },
-    //         position: "top-right",
-    //         theme: "dark",
-    //         onClose: () => {
-    //           setBtnDisabled(false);
-    //         }
-    //       },
-    //       success: {
-    //         render(){
-    //           return "New RFP has been created"
-    //         },
-    //         position: "top-right",
-    //         autoClose: 5000,
-    //         hideProgressBar: false,
-    //         closeOnClick: true,
-    //         pauseOnHover: false,
-    //         pauseOnFocusLoss: false,
-    //         draggable: false,
-    //         progress: undefined,
-    //         theme: "dark",
-    //         onClose: () => {
-    //           router.push("/rfp");
-    //         }
-    //       },
-    //       error: {
-    //         render(){
-    //           return 'Something went wrong. Please try again.'
-    //         },
-    //         position: "top-right",
-    //         theme: "dark",
-    //         onClose: () => {
-    //           setBtnDisabled(false);
-    //         }
-    //       },
-    //     }
-    //   )
-    // }
-    
   }
 
   return (
@@ -475,6 +445,7 @@ const Create = () => {
                           onChange={handleVendorName}
                           isClearable={true}
                           placeholder="Select Vendor"
+                          isDisabled={disableForm}
                           styles={{
                             control:(baseStyles, state) => ({
                               ...baseStyles,
@@ -498,6 +469,7 @@ const Create = () => {
                           onChange={handleRfpType}
                           isClearable={true}
                           placeholder="Select RFP Type"
+                          isDisabled={disableForm}
                           styles={{
                             control:(baseStyles, state) => ({
                               ...baseStyles,
@@ -630,6 +602,7 @@ const Create = () => {
                                   maxRows={4}
                                   value={internalOrder1}
                                   onChange={ e => setInternalOrder1(e.target.value) }
+                                  disabled={disableForm}
                                 />
                               </FormControl>
                             </ListItem>
@@ -642,6 +615,20 @@ const Create = () => {
                                   maxRows={4}
                                   value={internalOrder2}
                                   onChange={ e => setInternalOrder2(e.target.value) }
+                                  disabled={disableForm}
+                                />
+                              </FormControl>
+                            </ListItem>
+                            <ListItem divider='true' alignItems="flex-start" sx={{display:particularsDisplay}}>
+                              <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                <TextField 
+                                  label="Particulars" 
+                                  variant="standard" 
+                                  multiline
+                                  maxRows={4}
+                                  value={particulars}
+                                  onChange={ e => setParticulars(e.target.value) }
+                                  disabled={disableForm}
                                 />
                               </FormControl>
                             </ListItem>
@@ -668,6 +655,7 @@ const Create = () => {
                                   label="Billing Date" 
                                   variant="standard" 
                                   value={billDate.start + ' - ' + billDate.end}
+                                  disabled={disableForm}
                                 />
                               </DateRangePicker>
                               </FormControl>
@@ -679,6 +667,7 @@ const Create = () => {
                                   variant="standard" 
                                   aria-readonly={true}
                                   value={ moment(billDate.start).format('MMM-YYYY') }
+                                  disabled={disableForm}
                                 />
                               </FormControl>
                             </ListItem>
@@ -695,6 +684,7 @@ const Create = () => {
                                   label="Date Bill Received" 
                                   variant="standard" 
                                   value={billReceiveDate}
+                                  disabled={disableForm}
                                 />
                               </DateRangePicker>
                               </FormControl>
@@ -712,6 +702,7 @@ const Create = () => {
                                   label="Due Date" 
                                   variant="standard" 
                                   value={dueDate}
+                                  disabled={disableForm}
                                 />
                               </DateRangePicker>
                               </FormControl>
@@ -729,6 +720,7 @@ const Create = () => {
                                   label="RFP Date" 
                                   variant="standard" 
                                   value={rfpDate}
+                                  disabled={disableForm}
                                 />
                               </DateRangePicker>
                               </FormControl>
@@ -740,6 +732,7 @@ const Create = () => {
                                   variant="standard" 
                                   aria-readonly={true}
                                   value={nextBillDate}
+                                  disabled={disableForm}
                                 />
                               </FormControl>
                             </ListItem>
@@ -764,6 +757,7 @@ const Create = () => {
                                   variant="standard" 
                                   type='number'
                                   value={currentReading}
+                                  disabled={disableForm}
                                   onChange={ e => {
                                     setCurrentReading(e.target.value)
                                     setConsumption(e.target.value - prevReading)
@@ -780,6 +774,7 @@ const Create = () => {
                                   variant="standard" 
                                   type='number'
                                   value={prevReading}
+                                  disabled={disableForm}
                                   onChange={ e => {
                                     setPrevReading(e.target.value) 
                                     setConsumption(currentReading - e.target.value)
@@ -797,6 +792,7 @@ const Create = () => {
                                   type='number'
                                   aria-readonly={true}
                                   value={currentReading - prevReading}
+                                  disabled={disableForm}
                                   InputProps={{
                                     startAdornment: <InputAdornment position="start">KwH</InputAdornment>,
                                   }}
@@ -810,6 +806,7 @@ const Create = () => {
                                   variant="standard" 
                                   type='number'
                                   value={rate}
+                                  disabled={disableForm}
                                   onChange={ e => {
                                     setRate(parseFloat(e.target.value)) 
                                     setAmount(consumption * parseFloat(e.target.value))
@@ -825,6 +822,7 @@ const Create = () => {
                                   variant="standard" 
                                   type='number'
                                   value={amount}
+                                  disabled={disableForm}
                                   // onChange={ e => setAmount(parseFloat(e.target.value)) }
                                   InputProps={{
                                     startAdornment: <InputAdornment position="start">Php</InputAdornment>,
@@ -839,6 +837,7 @@ const Create = () => {
                                   variant="standard" 
                                   type='number'
                                   value={vatAmount}
+                                  disabled={disableForm}
                                   onChange={ e => setVatAmount(parseFloat(e.target.value)) }
                                   InputProps={{
                                     startAdornment: <InputAdornment position="start">Php</InputAdornment>,
@@ -851,6 +850,7 @@ const Create = () => {
                                   variant="standard" 
                                   type='number'
                                   value={interest}
+                                  disabled={disableForm}
                                   onChange={ e => setInterest(parseFloat(e.target.value)) }
                                   InputProps={{
                                     startAdornment: <InputAdornment position="start">Php</InputAdornment>,
@@ -865,6 +865,7 @@ const Create = () => {
                                   variant="standard" 
                                   type='number'
                                   value={penalty}
+                                  disabled={disableForm}
                                   onChange={ e => setPenalty(parseFloat(e.target.value)) }
                                   InputProps={{
                                     startAdornment: <InputAdornment position="start">Php</InputAdornment>,
@@ -877,6 +878,7 @@ const Create = () => {
                                   variant="standard" 
                                   type='number'
                                   value={penaltyOverInterest}
+                                  disabled={disableForm}
                                   onChange={ e => setPenaltyOverInterest(parseFloat(e.target.value)) }
                                   InputProps={{
                                     startAdornment: <InputAdornment position="start">Php</InputAdornment>,
@@ -892,6 +894,7 @@ const Create = () => {
                                   variant="standard" 
                                   type='number'
                                   value={surcharge}
+                                  disabled={disableForm}
                                   onChange={ e => setSurcharge(parseFloat(e.target.value)) }
                                   InputProps={{
                                     startAdornment: <InputAdornment position="start">Php</InputAdornment>,
@@ -904,6 +907,7 @@ const Create = () => {
                                   variant="standard" 
                                   type='number'
                                   value={misc}
+                                  disabled={disableForm}
                                   onChange={ e => setMisc(parseFloat(e.target.value)) }
                                   InputProps={{
                                     startAdornment: <InputAdornment position="start">Php</InputAdornment>,

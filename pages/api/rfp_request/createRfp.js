@@ -8,13 +8,13 @@ export default async function handler(req, res) {
         const sql = `
             INSERT INTO rfp 
             (
-                id,vendor_id,rfp_type_id,internal_order1,internal_order2,
+                id,vendor_id,rfp_type_id,internal_order1,internal_order2,particulars,
                 bill_period_from,bill_period_to,bill_month,
                 date_bill_received,due_date,rfp_date,current_reading,
                 previous_reading,consumption,rate,amount,vat_amount,interest,penalty,
                 penalty_over_interest_vat_amount,surcharge,miscellaneuos,total_amount
             ) 
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
         `;
         const valuesParam = [
             req.body.id,
@@ -22,6 +22,7 @@ export default async function handler(req, res) {
             req.body.rfp_type_id,
             req.body.internal_order1,
             req.body.internal_order2,
+            req.body.particulars,
             req.body.bill_period_from,
             req.body.bill_period_to,
             req.body.bill_month,
