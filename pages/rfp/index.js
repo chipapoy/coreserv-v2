@@ -18,6 +18,7 @@ import ReceiptIcon from "@mui/icons-material/Receipt";
 import Tooltip from "@mui/material/Tooltip";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import moment from 'moment';
 
 const Index = () => {
 
@@ -59,6 +60,7 @@ const Index = () => {
     }
   }, []);
 
+
   const columns = [
       {
           name: "id",
@@ -73,7 +75,15 @@ const Index = () => {
           label: "Vendor",
           options: {
               filter: true,
-              sort: true
+              sort: true,
+              setCellProps: () => ({style: {whiteSpace:'nowrap'}})
+              // customHeadRender: ({index, ...column}) => {
+              //   return (
+              //     <TableCell key={index} style={columnStyleWithWidth}>
+              //         {column.label}
+              //     </TableCell>
+              //   )
+              // }
           }
       },{
           name: "vendor_code",
@@ -102,6 +112,7 @@ const Index = () => {
           options: {
               filter: true,
               sort: true,
+              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
           }
       },{
           name: "contact_num",
@@ -109,6 +120,7 @@ const Index = () => {
           options: {
               filter: true,
               sort: true,
+              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
           }
       },{
           name: "tin_num",
@@ -116,6 +128,7 @@ const Index = () => {
           options: {
               filter: true,
               sort: true,
+              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
           }
       },{
           name: "contact_person",
@@ -123,6 +136,7 @@ const Index = () => {
           options: {
               filter: true,
               sort: true,
+              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}})
           }
       },{
           name: "contact_number",
@@ -130,6 +144,7 @@ const Index = () => {
           options: {
               filter: true,
               sort: true,
+              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}})
           }
       },{
           name: "email_add",
@@ -137,13 +152,7 @@ const Index = () => {
           options: {
               filter: true,
               sort: true,
-          }
-      },{
-          name: "email_add",
-          label: "Sky Email Address",
-          options: {
-              filter: true,
-              sort: true,
+              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
           }
       },{
           name: "internal_order1",
@@ -151,6 +160,7 @@ const Index = () => {
           options: {
               filter: true,
               sort: true,
+              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
           }
       },{
           name: "internal_order2",
@@ -158,6 +168,7 @@ const Index = () => {
           options: {
               filter: true,
               sort: true,
+              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
           }
       },{
           name: "bill_period",
@@ -165,6 +176,14 @@ const Index = () => {
           options: {
               filter: true,
               sort: true,
+              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
+              setCellProps: () => ({style: {whiteSpace:'nowrap'}}),
+              customBodyRenderLite: (dataIndex, rowIndex) => {
+
+                const dateArr = data[dataIndex].bill_period.split(' ');
+
+                return moment(dateArr[0]).format('DD-MMM-YY') + ' to ' + moment(dateArr[1]).format('DD-MMM-YY') ;
+              }
           }
       },{
           name: "bill_month",
@@ -172,6 +191,7 @@ const Index = () => {
           options: {
               filter: true,
               sort: true,
+              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}})
           }
       },{
           name: "current_reading",
@@ -179,6 +199,10 @@ const Index = () => {
           options: {
               filter: false,
               sort: true,
+              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
+              customBodyRenderLite: (dataIndex, rowIndex) => {
+                return data[dataIndex].rfp_type === 'Rental' ? 'N/A' : data[dataIndex].current_reading;
+              }
           }
       },{
           name: "previous_reading",
@@ -186,6 +210,10 @@ const Index = () => {
           options: {
               filter: false,
               sort: true,
+              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
+              customBodyRenderLite: (dataIndex, rowIndex) => {
+                return data[dataIndex].rfp_type === 'Rental' ? 'N/A' : data[dataIndex].previous_reading;
+              }
           }
       },{
           name: "consumption",
@@ -193,6 +221,9 @@ const Index = () => {
           options: {
               filter: false,
               sort: true,
+              customBodyRenderLite: (dataIndex, rowIndex) => {
+                return data[dataIndex].rfp_type === 'Rental' ? 'N/A' : data[dataIndex].consumption;
+              }
           }
       },{
           name: "rate",
@@ -200,6 +231,9 @@ const Index = () => {
           options: {
               filter: false,
               sort: true,
+              customBodyRenderLite: (dataIndex, rowIndex) => {
+                return data[dataIndex].rfp_type === 'Rental' ? 'N/A' : data[dataIndex].rate;
+              }
           }
       },{
           name: "amount",
@@ -207,6 +241,9 @@ const Index = () => {
           options: {
               filter: false,
               sort: true,
+              customBodyRenderLite: (dataIndex, rowIndex) => {
+                return data[dataIndex].rfp_type === 'Rental' ? 'N/A' : data[dataIndex].amount;
+              }
           }
       },{
           name: "vat_amount",
@@ -214,6 +251,10 @@ const Index = () => {
           options: {
               filter: false,
               sort: true,
+              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
+              customBodyRenderLite: (dataIndex, rowIndex) => {
+                return data[dataIndex].rfp_type === 'Rental' ? 'N/A' : data[dataIndex].vat_amount;
+              }
           }
       },{
           name: "interest",
@@ -221,6 +262,9 @@ const Index = () => {
           options: {
               filter: false,
               sort: true,
+              customBodyRenderLite: (dataIndex, rowIndex) => {
+                return data[dataIndex].rfp_type === 'Rental' ? 'N/A' : data[dataIndex].interest;
+              }
           }
       },{
           name: "penalty",
@@ -228,6 +272,9 @@ const Index = () => {
           options: {
               filter: false,
               sort: true,
+              customBodyRenderLite: (dataIndex, rowIndex) => {
+                return data[dataIndex].rfp_type === 'Rental' ? 'N/A' : data[dataIndex].penalty;
+              }
           }
       },{
           name: "penalty_over_interest_vat_amount",
@@ -235,6 +282,9 @@ const Index = () => {
           options: {
               filter: false,
               sort: true,
+              customBodyRenderLite: (dataIndex, rowIndex) => {
+                return data[dataIndex].rfp_type === 'Rental' ? 'N/A' : data[dataIndex].penalty_over_interest_vat_amount;
+              }
           }
       },{
           name: "surcharge",
@@ -242,6 +292,9 @@ const Index = () => {
           options: {
               filter: false,
               sort: true,
+              customBodyRenderLite: (dataIndex, rowIndex) => {
+                return data[dataIndex].rfp_type === 'Rental' ? 'N/A' : data[dataIndex].surcharge;
+              }
           }
       },{
           name: "miscellaneuos",
@@ -249,6 +302,9 @@ const Index = () => {
           options: {
               filter: false,
               sort: true,
+              customBodyRenderLite: (dataIndex, rowIndex) => {
+                return data[dataIndex].rfp_type === 'Rental' ? 'N/A' : data[dataIndex].miscellaneuos;
+              }
           }
       },{
           name: "total_amount",
@@ -256,6 +312,10 @@ const Index = () => {
           options: {
               filter: false,
               sort: true,
+              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
+              customBodyRenderLite: (dataIndex, rowIndex) => {
+                return data[dataIndex].rfp_type === 'Rental' ? 'N/A' : data[dataIndex].total_amount;
+              }
           }
       },{
           name: "date_bill_received",
@@ -263,6 +323,10 @@ const Index = () => {
           options: {
               filter: false,
               sort: true,
+              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
+              customBodyRenderLite: (dataIndex, rowIndex) => {
+                return moment(data[dataIndex].date_bill_received).format('DD-MMM-YY');
+              }
           }
       },{
           name: "due_date",
@@ -270,6 +334,10 @@ const Index = () => {
           options: {
               filter: false,
               sort: true,
+              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
+              customBodyRenderLite: (dataIndex, rowIndex) => {
+                return moment(data[dataIndex].due_date).format('DD-MMM-YY');
+              }
           }
       },{
           name: "rfp_date",
@@ -277,6 +345,10 @@ const Index = () => {
           options: {
               filter: false,
               sort: true,
+              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
+              customBodyRenderLite: (dataIndex, rowIndex) => {
+                return moment(data[dataIndex].rfp_date).format('DD-MMM-YY');
+              }
           }
       }
 
@@ -284,7 +356,11 @@ const Index = () => {
 
   const options = {
     filterType: 'multiselect',
-    responsive: 'scroll',
+    responsive: 'standard',
+    fixedHeader: true,
+    fixedSelectColumn: true,
+    tableBodyHeight: '70vh',
+    elevation: 0,
     selectableRowsHeader: false,
     selectableRowsHideCheckboxes: true,
     print: false,
@@ -372,7 +448,8 @@ const Index = () => {
           fixedHeader: {
             backgroundColor: '#E35217',
             color: '#FFF',
-            lineHeight: 0
+            lineHeight: 0,
+            padding: '12px'
           },
         },
       },

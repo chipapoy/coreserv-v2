@@ -57,49 +57,49 @@ const Create = () => {
 
         const getCityArr = async () => {
 
-            const result = await axios.get('/api/getCityList');
+            const result = await axios.get('/api/settings/getCityList');
 
             setCityArr(result.data);
         };
 
         const getTierArr = async () => {
 
-            const result = await axios.get('/api/getTierList');
+            const result = await axios.get('/api/settings/getTierList');
 
             setTierArr(result.data);
         };
 
         const getAccountArr = async () => {
 
-            const result = await axios.get('/api/getAccountList');
+            const result = await axios.get('/api/settings/getAccountList');
 
             setAccountArr(result.data);
         };
 
         const getAccountTypeArr = async () => {
 
-            const result = await axios.get('/api/getAccountTypeList');
+            const result = await axios.get('/api/settings/getAccountTypeList');
 
             setAccountTypeArr(result.data);
         };
 
         const getPaymentTermsArr = async () => {
 
-            const result = await axios.get('/api/getPaymentTermList');
+            const result = await axios.get('/api/settings/getPaymentTermList');
 
             setPaymentTermsArr(result.data);
         };
 
         const getSoaTypeArr = async () => {
 
-            const result = await axios.get('/api/getSoaTypeList');
+            const result = await axios.get('/api/settings/getSoaTypeList');
 
             setSoaTypeArr(result.data);
         };
 
         const getSkyContactArr = async () => {
 
-            const result = await axios.get('/api/getSkyContactDetails');
+            const result = await axios.get('/api/settings/getSkyContactDetails');
   
             getSkyContactDetails(result.data);
         };
@@ -157,7 +157,7 @@ const Create = () => {
 
         // console.log(data);
         // API endpoint where we send form data.
-        const url = '/api/createVendor'
+        const url = '/api/vendor_request/createVendor'
 
         await axios.post(url, data)
         .then( res => {

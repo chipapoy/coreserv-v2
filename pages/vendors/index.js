@@ -54,7 +54,7 @@ const Index = () => {
         const cancelToken = axios.CancelToken.source();
         let settingData = true;
         
-        axios.get('/api/getVendorList', {cancelToken:cancelToken.token})
+        axios.get('/api/vendor_request/getVendorList', {cancelToken:cancelToken.token})
         .then( (res) => {
             if(settingData){
                 setData(res.data);
@@ -180,7 +180,11 @@ const Index = () => {
 
     const options = {
         filterType: 'multiselect',
-        responsive: 'scroll',
+        responsive: 'standard',
+        fixedHeader: true,
+        fixedSelectColumn: true,
+        tableBodyHeight: '70vh',
+        elevation: 0,
         selectableRowsHeader: false,
         selectableRowsHideCheckboxes: true,
         print: false,
