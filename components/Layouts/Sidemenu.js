@@ -14,8 +14,10 @@ const Sidemenu = () => {
                         </Link>
                         <div className="dropdown">
                             <Link href="/dashboard" className="nav-link icon create_page xs-hide"><i className="fe fe-pie-chart" data-toggle="tooltip" data-placement="right" title="Dashboard"></i></Link>
-                            <Link href="/rfp" className="nav-link icon create_page xs-hide"><i className="fe fe-file" data-toggle="tooltip" data-placement="right" title="RFP"></i></Link>
+                            <Link href="/dispatch" className="nav-link icon create_page xs-hide"><i className="fa fa-truck" data-toggle="tooltip" data-placement="right" title="Dispatch"></i></Link>
+                            <Link href="/rfp" className="nav-link icon create_page xs-hide"><i className="fa fa-credit-card" data-toggle="tooltip" data-placement="right" title="RFP"></i></Link>
                             <Link href="/vendors" className="nav-link icon create_page xs-hide"><i className="fa fa-building" data-toggle="tooltip" data-placement="right" title="Vendor"></i></Link>
+                            
                         </div>
                     </div>
                     <div className="hright">

@@ -31,15 +31,16 @@ export default async (req, res) => {
     try {
       const sql = `
           INSERT INTO upload_tbl 
-          (rfp_id,custom_name,file_name,size,file_path) 
-          VALUES (?,?,?,?,?)
+          (rfp_id,original_name,file_name,size,file_path,upload_by) 
+          VALUES (?,?,?,?,?,?)
       `;
       const valuesParam = [
           fields.rfp_id,
           files.file.name,
           files.file.path.split('\\')[2],
           files.file.size / (1024 * 1024),
-          files.file.path
+          files.file.path,
+          'admin'
       ];
   
       const queryResult =  await query({query: sql, values: valuesParam});

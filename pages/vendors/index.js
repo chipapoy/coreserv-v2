@@ -285,13 +285,7 @@ const Index = () => {
                 <Sidemenu></Sidemenu>
                 {/* <ToastContainer /> */}
                 <div className="page">
-                    <div id="page_top" className="section-body">
-                        <div className="container-fluid">
-                            <div className="page-header">
-                                <Topmenu></Topmenu>
-                            </div>
-                        </div>
-                    </div>
+                    <Topmenu></Topmenu>
                     <div className="section-body">
                         <div className="container-fluid">
                             <h4>{pageTitle}</h4>

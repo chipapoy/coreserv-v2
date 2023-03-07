@@ -14,6 +14,7 @@ export default async function handler(req, res) {
             vendors.contact_num,
             vendors.tin_num,
             vendors.vendor_code,
+            vendors.address,
             vendors.city,
             vendors.account,
             vendors.kam,
@@ -23,6 +24,7 @@ export default async function handler(req, res) {
             sky_contact_details.email_add,
             rfp.internal_order1,
             rfp.internal_order2,
+            rfp.particulars,
             DATE_FORMAT(rfp.bill_period_from,'%Y-%m-%d') AS bill_period_from,
             DATE_FORMAT(rfp.bill_period_to,'%Y-%m-%d') AS bill_period_to,
             rfp.bill_month,
@@ -37,6 +39,7 @@ export default async function handler(req, res) {
             rfp.penalty_over_interest_vat_amount,
             rfp.surcharge,
             rfp.miscellaneuos,
+            rfp.total_amount,
             rfp.rfp_type_id,
             rfp_type_tbl.rfp_type,
             DATE_FORMAT(rfp.date_bill_received,'%Y-%m-%d') AS date_bill_received,
@@ -68,6 +71,6 @@ export default async function handler(req, res) {
 
     } 
     catch (error) {
-        res.status(500).json({ error: error.message })
+        res.status(500).json({ error: error.message, id: req.body })
     }
 }

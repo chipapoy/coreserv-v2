@@ -11,34 +11,34 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import IconButton from "@mui/material/IconButton";
+import CachedIcon from '@mui/icons-material/Cached';
+import PaymentIcon from '@mui/icons-material/Payment';
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ReceiptIcon from "@mui/icons-material/Receipt";
+import SendTimeExtensionIcon from '@mui/icons-material/SendTimeExtension';
 import Tooltip from "@mui/material/Tooltip";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import moment from 'moment';
+import Activity from "../../components/Activity/Dispatch";
 
 const Index = () => {
 
   const [data,setData] = useState([]);
 
-  useEffect(() => {
-      
-    // getData();
+  const pageTitle = 'Request for Payment'
+
+  const getData = async () => {
+
     const cancelToken = axios.CancelToken.source();
-    let settingData = true;
-    
     axios.get('/api/rfp_request/getRfpList', {cancelToken:cancelToken.token})
     .then( (res) => {
-      if(settingData){
           setData(res.data);
-      }
     })
     .catch( (err) => {
 
-      if(settingData){
         toast.error('Unable to connect to server. Please try again.', {
           position: "top-right",
           autoClose: 5000,
@@ -50,13 +50,16 @@ const Index = () => {
           progress: undefined,
           theme: "dark",
         });
-      }
     })
+  }
+
+  useEffect(() => {
+      
+    getData();
 
     return () => {
-      settingData = false;
-      cancelToken.cancel();
-      setData([]);
+      setData([])
+      // setData([]);
     }
   }, []);
 
@@ -98,6 +101,7 @@ const Index = () => {
           options: {
               filter: true,
               sort: true,
+              setCellProps: () => ({style: {whiteSpace:'nowrap'}})
           }
       },{
           name: "account",
@@ -105,6 +109,7 @@ const Index = () => {
           options: {
               filter: true,
               sort: true,
+              setCellProps: () => ({style: {whiteSpace:'nowrap'}})
           }
       },{
           name: "rfp_type",
@@ -397,19 +402,30 @@ const Index = () => {
               </IconButton>
             </Tooltip>
           </Link>
-          {/* <Link 
-              href={{
-                  pathname:'/rfp/request',
-                  query: { id: rowData[0] }
-              }}
-              title='Request'
+          <Link 
+            href="#"
+            title='Dispatch'
           >  
-              <Tooltip>
-                  <IconButton>
-                      <ReceiptIcon  />
-                  </IconButton>
-              </Tooltip>
-          </Link> */}
+            <Tooltip>
+              <IconButton>
+                {/* <SendTimeExtensionIcon /> */}
+                <Activity data={rowData} />
+              </IconButton>
+            </Tooltip>
+          </Link>
+          <Link 
+            href={{
+                pathname:'/rfp/view/'+rowData[0]
+            }}
+            target='_blank'
+            title='View RFP'
+          >  
+            <Tooltip>
+              <IconButton>
+                <PaymentIcon />
+              </IconButton>
+            </Tooltip>
+          </Link>
           <Link 
             href={{
                 pathname:'/rfp/delete',
@@ -430,13 +446,20 @@ const Index = () => {
     onRowExpansionChange: (curExpanded, allExpanded, rowsExpanded) => console.log(allExpanded),
     customToolbar: () => { 
       return (
-        <Link href='/rfp/create'>  
-          <Tooltip title="Create RFP">
-            <IconButton>
-              <AddIcon  />
+        <>
+          <Link href='/rfp/create'>  
+            <Tooltip title="Create RFP">
+              <IconButton>
+                <AddIcon  />
+              </IconButton>
+            </Tooltip>
+          </Link>
+          <Tooltip title="Refresh Data">
+            <IconButton onClick={testReload}>
+              <CachedIcon  />
             </IconButton>
           </Tooltip>
-        </Link>
+        </>
       );
     }
   }
@@ -472,6 +495,10 @@ const Index = () => {
     },
   });
 
+  const testReload = () => {
+    getData();
+    console.log("test");
+  }
 
   return (
     <>
@@ -480,19 +507,14 @@ const Index = () => {
       </Head>
       <div id="main_content">
 
-          <Sidemenu></Sidemenu>
+          <Sidemenu />
           {/* <ToastContainer /> */}
           <div className="page">
-            <div id="page_top" className="section-body">
-              <div className="container-fluid">
-                <div className="page-header">
-                  <Topmenu></Topmenu>
-                </div>
-              </div>
-            </div>
+            <Topmenu />
             <div className="section-body">
               <div className="container-fluid">
-                <h4>RFP</h4>
+                <h4>{pageTitle}</h4>
+                
                 <ThemeProvider theme={theme}>
                   <MUIDataTable 
                       title="" 

@@ -158,7 +158,9 @@ const Create = () => {
     const formData = new FormData();
 
     formData.append('file',fileUpload.file)
-    formData.append('rfp_id',rfp_id)
+    formData.append('rfp_id',rfp_id);
+
+    const uploadId = toast.loading("Uploading...");
 
     axios.post(
         '/api/testUpload',
@@ -174,33 +176,51 @@ const Create = () => {
         e.target.value = "";
         setUploadBtnDisabled(true);
 
-        toast.success('File has been uploaded', {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: false,
-          pauseOnFocusLoss: false,
-          draggable: false,
-          progress: undefined,
-          theme: "dark"
-        });
+        setTimeout(() => {
+          toast.update(uploadId, {
+            render: "File has been uploaded", 
+            type: 'success',
+            isLoading: false,
+            delay:undefined,
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: false,
+            pauseOnFocusLoss: false,
+            draggable: false,
+            progress: undefined,
+            theme: "dark",
+            onClose: () => {
+              // router.push("/rfp");
+            }
+          });
+        }, 2000);
         
     })
     .catch(err => {
         // console.log(err)
-        toast.error(err.response.data.error, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: false,
-          pauseOnFocusLoss: false,
-          draggable: false,
-          progress: undefined,
-          theme: "dark",
-        });
-    })
+        setTimeout(() => {
+          toast.update(uploadId, {
+            render: "Something went wrong. Please try again. " + err.response.data.error, 
+            type: 'error',
+            isLoading: false,
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: false,
+            pauseOnFocusLoss: false,
+            draggable: false,
+            progress: undefined,
+            theme: "dark",
+            onClose: () => {
+              // setBtnDisabled(false);
+              // setDisableForm(false);
+            }
+          });
+        }, 2000);
+    });
   }
   
   const [submitBtn,setSubmitBtn] = useState('Submit');
@@ -421,16 +441,10 @@ const Create = () => {
         <title>Coreserv</title>
       </Head>
       <div id="main_content">
-        <Sidemenu></Sidemenu>
+        <Sidemenu />
         
         <div className="page">
-          <div id="page_top" className="section-body">
-            <div className="container-fluid">
-              <div className="page-header">
-                <Topmenu></Topmenu>
-              </div>
-            </div>
-          </div>
+          <Topmenu />
           <div className="section-body">
             <div className="container-fluid">
               <h4>{pageTitle}</h4>
@@ -494,14 +508,16 @@ const Create = () => {
                             color="primary" 
                             type="submit"
                             disabled={btnDisabled}
-                          >Save</Button>
+                            children="Save"
+                          />
                           <Button 
                             disableElevation
                             variant="outlined" 
                             color="error" 
                             disabled={btnDisabled}
                             onClick={()=>router.push('/rfp')}
-                          >Cancel</Button>
+                            children="Cancel"
+                          />
                         </Stack>
                       </Grid>
                     </Grid>
@@ -936,8 +952,8 @@ const Create = () => {
                               <FormControl sx={{ m: 1 }} variant="standard">
 
                                 <ButtonGroup variant="outlined" aria-label="outlined primary button group" disableElevation>
-                                  <Button variant='text'><input type="file" name="file_upload" onChange={onFileChange} accept=".pdf,.jpg"  /></Button>
-                                  <Button onClick={onUpload} disabled={uploadBtnDisabled} >Upload</Button>
+                                  <Button variant='text' children={<input type="file" name="file_upload" onChange={onFileChange} accept=".pdf,.jpg"  />} />
+                                  <Button onClick={onUpload} disabled={uploadBtnDisabled} children="Upload" />
                                 </ButtonGroup>
                               </FormControl>
                             </ListItem>

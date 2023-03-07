@@ -9,6 +9,7 @@ export default async function handler(req, res) {
             UPDATE rfp SET
             internal_order1 = ?,
             internal_order2 = ?,
+            particulars = ?,
             bill_period_from = ?,
             bill_period_to = ?,
             bill_month = ?,
@@ -33,6 +34,7 @@ export default async function handler(req, res) {
         const valuesParam = [
             req.body.internal_order1,
             req.body.internal_order2,
+            req.body.particulars,
             req.body.bill_period_from,
             req.body.bill_period_to,
             req.body.bill_month,

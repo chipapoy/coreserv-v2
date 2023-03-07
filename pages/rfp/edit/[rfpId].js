@@ -12,12 +12,21 @@ import DateRangePicker from 'react-bootstrap-daterangepicker';
 import 'bootstrap-daterangepicker/daterangepicker.css';
 import moment from 'moment';
 import PropTypes from 'prop-types';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import {
   List,ListItem,ListItemText,Divider,Grid,Stack,
   Button,ButtonGroup,Box,Tabs,Tab,Typography,Input,
-  TextField,FormControl,InputAdornment
+  TextField,FormControl,InputAdornment,ListItemIcon,IconButton
 } from '@mui/material';
+import FolderIcon from '@mui/icons-material/Folder';
+import DownloadIcon from '@mui/icons-material/Download';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
 
 
 
@@ -30,55 +39,15 @@ const Create = () => {
 
   const pageTitle = 'Update RFP';
 
-  useEffect(() => {
-
-    const getRfpDetails = async () => {
-
-      console.log(rfpId);
-
-      const result = await axios.post('/api/rfp_request/getRfpDetails',{
-        id : rfpId
-      });
-
-      setBillDate({
-        start: moment(result.data.bill_period_from).format('M/DD/YYYY'),
-        end: moment(result.data.bill_period_to).format('M/DD/YYYY')
-      });
-      
-      setBillReceiveDate(moment(result.data.date_bill_received).format('M/DD/YYYY'));
-      setDueDate(moment(result.data.due_date).format('M/DD/YYYY'));
-      setRfpDate(moment(result.data.rfp_date).format('M/DD/YYYY'));
-      setNextBillDate(moment(result.data.bill_period_to).add(1,'days').format('M/DD/YYYY'))
-
-      setRfpData(result.data);
-      setInternalOrder1(result.data.internal_order1);
-      setInternalOrder2(result.data.internal_order2);
-      setCurrentReading(result.data.current_reading);
-      setPrevReading(result.data.previous_reading);
-      setRate(result.data.rate);
-      setVatAmount(result.data.vat_amount);
-      setInterest(result.data.interest);
-      setPenalty(result.data.penalty);
-      setPenaltyOverInterest(result.data.penalty_over_interest_vat_amount);
-      setSurcharge(result.data.surcharge);
-      setMisc(result.data.miscellaneuos);
-      setConsumption(result.data.current_reading - result.data.previous_reading);
-      setAmount((result.data.current_reading - result.data.previous_reading) * result.data.rate);
-      
-    };
-
-    getRfpDetails();
-
-    return () => {
-        getRfpDetails([]);
-    }
-
-  }, []);
-
   const [rfpData,setRfpData] = useState([]);
+  const [rfpType,setRfpType] = useState('');
+
+  const [rfpUploads,setRfpUpload] = useState([]);
 
   const [internalOrder1, setInternalOrder1] = useState('');
   const [internalOrder2, setInternalOrder2] = useState('');
+  const [particulars, setParticulars] = useState('');
+  const [particularsDisplay, setParticularsDisplay] = useState('none');
 
   const [currentReading,setCurrentReading] = useState(0);
   const [prevReading,setPrevReading] = useState(0);
@@ -93,6 +62,90 @@ const Create = () => {
   const [surcharge,setSurcharge] = useState(0);
   const [misc,setMisc] = useState(0);
   const totalAmount = amount+vatAmount+interest+penalty+penaltyOverInterest+surcharge+misc;
+
+  const [displayTab,setDisplayTab] = useState({
+    display: 'inline-flex',
+    disabled: false
+  });
+
+  const getRfpUpload = async (rfpId) => {
+
+    console.log('called from function');
+
+    await axios.post('/api/rfp_request/getRfpUpload',{
+      rfp_id : rfpId
+    })
+    .then( (result) => {
+      setRfpUpload(result.data);
+    })
+    .catch( (err) => {
+      console.log(err);
+      setRfpUpload([]);
+    });
+
+    
+    
+  };
+
+  const getRfpDetails = async (rfpId) => {
+
+    await axios.post('/api/rfp_request/getRfpDetails',{
+      id : rfpId
+    })
+    .then( (result) => {
+
+      setBillDate({
+        start: moment(result.data.bill_period_from).format('M/DD/YYYY'),
+        end: moment(result.data.bill_period_to).format('M/DD/YYYY')
+      });
+      
+      setRfpData(result.data);
+
+      setRfpType(result.data.rfp_type);
+      setBillReceiveDate(moment(result.data.date_bill_received).format('M/DD/YYYY'));
+      setDueDate(moment(result.data.due_date).format('M/DD/YYYY'));
+      setRfpDate(moment(result.data.rfp_date).format('M/DD/YYYY'));
+      setNextBillDate(moment(result.data.bill_period_to).add(1,'days').format('M/DD/YYYY'));
+      
+      setInternalOrder1(result.data.internal_order1);
+      setInternalOrder2(result.data.internal_order2);
+      setCurrentReading(result.data.current_reading);
+      setPrevReading(result.data.previous_reading);
+      setRate(result.data.rate);
+      setVatAmount(result.data.vat_amount);
+      setInterest(result.data.interest);
+      setPenalty(result.data.penalty);
+      setPenaltyOverInterest(result.data.penalty_over_interest_vat_amount);
+      setSurcharge(result.data.surcharge);
+      setMisc(result.data.miscellaneuos);
+      setConsumption(result.data.current_reading - result.data.previous_reading);
+      setAmount((result.data.current_reading - result.data.previous_reading) * result.data.rate);
+
+      setParticulars(result.data.particulars);
+
+      setParticularsDisplay(result.data.rfp_type === 'Electrical' ? 'none' : 'block');
+
+      setDisplayTab({
+        display: result.data.rfp_type === 'Electrical' ? 'inline-flex' : 'none',
+        disabled: result.data.rfp_type === 'Electrical' ? false : true
+      });
+    })
+    .catch( (err) => {
+      console.log(err);
+    });
+  };
+
+  useEffect(() => {
+
+    getRfpDetails(rfpId);
+    getRfpUpload(rfpId);
+
+    return () => {
+        // getRfpDetails([]);
+        setRfpUpload([]);
+    }
+
+  }, [rfpId]);
 
 
   const handleCurrentReading = (e) => {
@@ -182,6 +235,8 @@ const Create = () => {
     formData.append('file',fileUpload.file)
     formData.append('rfp_id',rfpId)
 
+    const uploadId = toast.loading("Uploading...");
+
     console.log(formData)
 
     axios.post(
@@ -198,40 +253,51 @@ const Create = () => {
         e.target.value = "";
         setUploadBtnDisabled(true);
 
-        toast.success('File has been uploaded', {
-          toastId: 'uploadFile',
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: false,
-          pauseOnFocusLoss: false,
-          draggable: false,
-          progress: undefined,
-          theme: "dark"
-        });
-
-        // toast.onChange(v => {
-        //   if(v.status === "removed"){
-        //     return
-        //   }
-        // });
-        
+        setTimeout(() => {
+          toast.update(uploadId, {
+            render: "File has been uploaded", 
+            type: 'success',
+            isLoading: false,
+            delay:undefined,
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: false,
+            pauseOnFocusLoss: false,
+            draggable: false,
+            progress: undefined,
+            theme: "dark",
+            onClose: () => {
+              // router.push("/rfp");
+              getRfpUpload(rfpId);
+            }
+          });
+        }, 2000);
     })
     .catch(err => {
         // console.log(err)
-        toast.error(err.response.data.error, {
-          toastId: 'uploadFile',
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: false,
-          pauseOnFocusLoss: false,
-          draggable: false,
-          progress: undefined,
-          theme: "dark",
-        });
+        setTimeout(() => {
+          toast.update(uploadId, {
+            render: "Something went wrong. Please try again. " + err.response.data.error, 
+            type: 'error',
+            isLoading: false,
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: false,
+            pauseOnFocusLoss: false,
+            draggable: false,
+            progress: undefined,
+            theme: "dark",
+            onClose: () => {
+              // setBtnDisabled(false);
+              // setDisableForm(false);
+              getRfpUpload(rfpId);
+            }
+          });
+        }, 2000);
     })
   }
   
@@ -252,103 +318,6 @@ const Create = () => {
     const handleChange = (event, newValue) => {
         setValueTab(newValue);
     };
-  //
-
-  // const submitData = async (event) => {
-    
-  //   event.preventDefault();
-      
-  //   const data = {
-  //       id: rfpId,
-  //       internal_order1: internalOrder1,
-  //       internal_order2: internalOrder2,
-  //       bill_period_from: moment(billDate.start).format('YYYY-MM-DD'),
-  //       bill_period_to: moment(billDate.end).format('YYYY-MM-DD'),
-  //       bill_month: moment(billDate.start).format('MMM-YYYY'),
-  //       bill_date_received: moment(billReceiveDate).format('YYYY-MM-DD'),
-  //       due_date: moment(dueDate).format('YYYY-MM-DD'),
-  //       rfp_date: moment(rfpDate).format('YYYY-MM-DD'),
-  //       current_reading: currentReading,
-  //       prev_reading: prevReading,
-  //       consumption: consumption,
-  //       rate: rate,
-  //       amount: amount,
-  //       vat_amount: vatAmount,
-  //       interest: interest,
-  //       penalty: penalty,
-  //       penalty_over_interest: penaltyOverInterest,
-  //       surcharge: surcharge,
-  //       misc: misc,
-  //       total_amount: totalAmount
-  //   }
-    
-  //   console.log(data)
-
-  //   const url = '/api/rfp_request/updateRfp'
-
-  //   await axios.post(url, data)
-  //   .then( res => {
-
-  //     if(res.status === 200){
-
-  //       toast.success('RFP has been updated', {
-  //         toastId: 'updateRfp',
-  //         position: "top-right",
-  //         autoClose: 5000,
-  //         hideProgressBar: false,
-  //         closeOnClick: true,
-  //         pauseOnHover: false,
-  //         pauseOnFocusLoss: false,
-  //         draggable: false,
-  //         progress: undefined,
-  //         theme: "dark"
-  //       })
-        
-  //       toast.onChange(v => {
-  //         if(v.status === "removed"){
-  //           router.push("/rfp")
-  //         }
-  //       });
-  //     }  
-  //     else{
-
-  //         setSubmitBtn('Submit');
-  //         setBtnDisabled(false);
-
-  //         toast.error('Unable to connect to server. Please try again.', {
-  //             toastId: 'updateRfp',
-  //             position: "top-right",
-  //             autoClose: 5000,
-  //             hideProgressBar: false,
-  //             closeOnClick: true,
-  //             pauseOnHover: false,
-  //             pauseOnFocusLoss: false,
-  //             draggable: false,
-  //             progress: undefined,
-  //             theme: "dark",
-  //         });
-  //     }
-  //   })
-  //   .catch(err => {
-
-  //     setSubmitBtn('Submit');
-  //     setBtnDisabled(false);
-
-  //     console.log(err.message)
-
-  //     toast.error(err.message, {
-  //         position: "top-right",
-  //         autoClose: 5000,
-  //         hideProgressBar: false,
-  //         closeOnClick: true,
-  //         pauseOnHover: false,
-  //         pauseOnFocusLoss: false,
-  //         draggable: false,
-  //         progress: undefined,
-  //         theme: "dark",
-  //     });
-  //   })
-  // }
 
     const submitData = e => {
 
@@ -357,83 +326,80 @@ const Create = () => {
       setBtnDisabled(true);
       setDisableForm(true);
 
-      // const rfpUpdate = new Promise(resolve => {
+      const url = '/api/rfp_request/updateRfp'
+      const data = {
+        id: rfpId,
+        internal_order1: internalOrder1,
+        internal_order2: internalOrder2,
+        particulars: rfpType == 'Electrical' ? null : particulars,
+        bill_period_from: moment(billDate.start).format('YYYY-MM-DD'),
+        bill_period_to: moment(billDate.end).format('YYYY-MM-DD'),
+        bill_month: moment(billDate.start).format('MMM-YYYY'),
+        bill_date_received: moment(billReceiveDate).format('YYYY-MM-DD'),
+        due_date: moment(dueDate).format('YYYY-MM-DD'),
+        rfp_date: moment(rfpDate).format('YYYY-MM-DD'),
+        current_reading: rfpType == 'Electrical' ? currentReading : 0,
+        prev_reading: rfpType == 'Electrical' ? prevReading : 0,
+        consumption: rfpType == 'Electrical' ? consumption : 0,
+        rate: rfpType == 'Electrical' ? rate : 0,
+        amount: rfpType == 'Electrical' ? amount : 0,
+        vat_amount: rfpType == 'Electrical' ? vatAmount : 0,
+        interest: rfpType == 'Electrical' ? interest : 0,
+        penalty: rfpType == 'Electrical' ? penalty : 0,
+        penalty_over_interest: rfpType == 'Electrical' ? penaltyOverInterest : 0,
+        surcharge: rfpType == 'Electrical' ? surcharge : 0,
+        misc: rfpType == 'Electrical' ? misc : 0,
+        total_amount: rfpType == 'Electrical' ? totalAmount: 0
+      }
 
-        const url = '/api/rfp_request/updateRfp'
-        const data = {
-          id: rfpId,
-          internal_order1: internalOrder1,
-          internal_order2: internalOrder2,
-          bill_period_from: moment(billDate.start).format('YYYY-MM-DD'),
-          bill_period_to: moment(billDate.end).format('YYYY-MM-DD'),
-          bill_month: moment(billDate.start).format('MMM-YYYY'),
-          bill_date_received: moment(billReceiveDate).format('YYYY-MM-DD'),
-          due_date: moment(dueDate).format('YYYY-MM-DD'),
-          rfp_date: moment(rfpDate).format('YYYY-MM-DD'),
-          current_reading: currentReading,
-          prev_reading: prevReading,
-          consumption: consumption,
-          rate: rate,
-          amount: amount,
-          vat_amount: vatAmount,
-          interest: interest,
-          penalty: penalty,
-          penalty_over_interest: penaltyOverInterest,
-          surcharge: surcharge,
-          misc: misc,
-          total_amount: totalAmount
-        }
+      const notifId = toast.loading("Please wait...");
 
-        const notifId = toast.loading("Please wait...");
+      axios.post(url, data)
+      .then( res => {
+        setTimeout(() => {
+          toast.update(notifId, {
+            render: "Record has been updated", 
+            type: 'success',
+            isLoading: false,
+            delay:undefined,
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: false,
+            pauseOnFocusLoss: false,
+            draggable: false,
+            progress: undefined,
+            theme: "dark",
+            onClose: () => {
+              router.push("/rfp");
+            }
+          });
+        }, 2000);
+      })
+      .catch(err => {
 
-        axios.post(url, data)
-        .then( res => {
-          setTimeout(() => {
-            toast.update(notifId, {
-              render: "Record has been updated", 
-              type: 'success',
-              isLoading: false,
-              delay:undefined,
-              position: "top-right",
-              autoClose: 3000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: false,
-              pauseOnFocusLoss: false,
-              draggable: false,
-              progress: undefined,
-              theme: "dark",
-              onClose: () => {
-                router.push("/rfp");
-              }
-            });
-          }, 2000);
-        })
-        .catch(err => {
-
-          setTimeout(() => {
-            toast.update(notifId, {
-              render: "Something went wrong. Please try again.", 
-              type: 'error',
-              isLoading: false,
-              position: "top-right",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: false,
-              pauseOnFocusLoss: false,
-              draggable: false,
-              progress: undefined,
-              theme: "dark",
-              onClose: () => {
-                setBtnDisabled(false);
-                setDisableForm(false);
-              }
-            });
-          }, 2000);
-        });
-
-      // });
+        setTimeout(() => {
+          toast.update(notifId, {
+            render: "Something went wrong. Please try again.", 
+            type: 'error',
+            isLoading: false,
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: false,
+            pauseOnFocusLoss: false,
+            draggable: false,
+            progress: undefined,
+            theme: "dark",
+            onClose: () => {
+              setBtnDisabled(false);
+              setDisableForm(false);
+            }
+          });
+        }, 2000);
+      });
     }
 
   return (
@@ -442,16 +408,10 @@ const Create = () => {
         <title>Coreserv</title>
       </Head>
       <div id="main_content">
-        <Sidemenu></Sidemenu>
+        <Sidemenu />
         
         <div className="page">
-          <div id="page_top" className="section-body">
-            <div className="container-fluid">
-              <div className="page-header">
-                <Topmenu></Topmenu>
-              </div>
-            </div>
-          </div>
+          <Topmenu />
           <div className="section-body">
             <div className="container-fluid">
               <h4>{pageTitle}</h4>
@@ -467,13 +427,15 @@ const Create = () => {
                             color="primary" 
                             type="submit"
                             // onClick={submitData}
-                          >Update</Button>
+                            children="Update"
+                          />
                           <Button 
                             disableElevation
                             variant="outlined" 
                             color="error" 
                             onClick={()=>router.push('/rfp')}
-                          >Cancel</Button>
+                            children="Cancel"
+                          />
                         </Stack>
                       </Grid>
                     </Grid>
@@ -482,9 +444,9 @@ const Create = () => {
                       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                         <Tabs value={valueTab} onChange={handleChange} aria-label="">
                           <Tab label="Details" {...a11yProps(0)} />
-                          <Tab label="Internal Orders" sx={{display:'inline-flex'}} {...a11yProps(1)} />
-                          <Tab label="Dates" sx={{display:'inline-flex'}} {...a11yProps(2)} />
-                          <Tab label="Rates" {...a11yProps(3)} />
+                          <Tab label="Internal Orders" {...a11yProps(1)} />
+                          <Tab label="Dates" {...a11yProps(2)} />
+                          <Tab label="Rates" sx={{display:displayTab.display}} {...a11yProps(3)} />
                           <Tab label="Upload" {...a11yProps(4)} />
                         </Tabs>
                       </Box>
@@ -600,6 +562,19 @@ const Create = () => {
                                   value={internalOrder2}
                                   disabled={disableForm}
                                   onChange={ e => setInternalOrder2(e.target.value) }
+                                />
+                              </FormControl>
+                            </ListItem>
+                            <ListItem divider='true' alignItems="flex-start" sx={{display:particularsDisplay}}>
+                              <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                <TextField 
+                                  label="Particulars" 
+                                  variant="standard" 
+                                  multiline
+                                  maxRows={4}
+                                  value={particulars}
+                                  onChange={ e => setParticulars(e.target.value) }
+                                  disabled={disableForm}
                                 />
                               </FormControl>
                             </ListItem>
@@ -906,12 +881,39 @@ const Create = () => {
                             <ListItem divider='true' alignItems="flex-start">
                               <FormControl sx={{ m: 1 }} variant="standard">
                                 <ButtonGroup variant="outlined" aria-label="outlined primary button group" disableElevation>
-                                  <Button variant='text'><input type="file" name="file_upload" onChange={onFileChange} accept=".pdf,.jpg"  /></Button>
-                                  <Button onClick={onUpload} disabled={uploadBtnDisabled} >Upload</Button>
+                                  <Button variant='text' children={<input type="file" name="file_upload" onChange={onFileChange} accept=".pdf,.jpg"  />} />
+                                  <Button onClick={onUpload} disabled={uploadBtnDisabled} children="Upload" />
                                 </ButtonGroup>
                               </FormControl>
                             </ListItem>
                           </List>
+                          <Grid item xs={4} md={4} lg={4}>
+                          <TableContainer component={Paper}>
+                            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                              <TableHead>
+                                <TableRow>
+                                  <TableCell>File Name</TableCell>
+                                  <TableCell>Upload by</TableCell>
+                                  <TableCell>Date</TableCell>
+                                </TableRow>
+                              </TableHead>
+                              <TableBody>
+                                {rfpUploads.map((row) => (
+                                  <TableRow
+                                    key={row.id}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                  >
+                                    <TableCell component="th" scope="row">
+                                      {row.original_name}
+                                    </TableCell>
+                                    <TableCell>{row.upload_by}</TableCell>
+                                    <TableCell>{row.upload_date}</TableCell>
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </Table>
+                          </TableContainer>
+                          </Grid>
                         </nav>
                       </div>
                     </Box>
