@@ -403,17 +403,6 @@ const Index = () => {
             </Tooltip>
           </Link>
           <Link 
-            href="#"
-            title='Dispatch'
-          >  
-            <Tooltip>
-              <IconButton>
-                {/* <SendTimeExtensionIcon /> */}
-                <Activity data={rowData} />
-              </IconButton>
-            </Tooltip>
-          </Link>
-          <Link 
             href={{
                 pathname:'/rfp/view/'+rowData[0]
             }}

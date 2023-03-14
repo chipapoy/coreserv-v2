@@ -29,13 +29,17 @@ export default async function handler(req, res) {
             dispatch.vendor_id = vendors.id
             AND
             dispatch.is_active = 1 
+            AND
+            dispatch.id = ?
             ORDER BY dispatch.id DESC
         `;
-        const valuesParam = [];
+        const valuesParam = [
+          req.body.id
+        ];
 
         const result = await query({query: sql, values: valuesParam});
 
-        res.status(200).json(result)
+        res.status(200).json(result[0])
 
     } 
     catch (error) {

@@ -1,8 +1,6 @@
 import Link from 'next/link';
-import Image from "next/image";
 import Head from 'next/head'
 import { useEffect, useState } from 'react';
-import md5 from 'md5';
 import axios from 'axios';
 import Topmenu from "../../components/Layouts/Topmenu";
 import Sidemenu from "../../components/Layouts/Sidemenu";
@@ -18,7 +16,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ReceiptIcon from "@mui/icons-material/Receipt";
 import Tooltip from "@mui/material/Tooltip";
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import moment from 'moment';
 
@@ -71,11 +69,11 @@ const Index = () => {
           }
       },{
           name: "check_num",
-          label: "Check#",
+          label: "Check #",
           options: {
               filter: true,
               sort: true,
-              setCellProps: () => ({style: {whiteSpace:'nowrap'}})
+              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}})
           }
       },{
           name: "check_date",
@@ -83,7 +81,7 @@ const Index = () => {
           options: {
               filter: true,
               sort: true,
-              setCellProps: () => ({style: {whiteSpace:'nowrap'}}),
+              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
               customBodyRenderLite: (dataIndex, rowIndex) => {
                 return moment(data[dataIndex].check_date).format('DD-MMM-YY');
               }
@@ -94,7 +92,7 @@ const Index = () => {
           options: {
               filter: true,
               sort: true,
-              setCellProps: () => ({style: {whiteSpace:'nowrap'}})
+              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}})
           }
       },{
           name: "vendor_name",
@@ -102,6 +100,7 @@ const Index = () => {
           options: {
               filter: true,
               sort: true,
+              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
               setCellProps: () => ({style: {whiteSpace:'nowrap'}})
           }
       },{
@@ -119,6 +118,9 @@ const Index = () => {
               filter: true,
               sort: true,
               setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
+              customBodyRenderLite: (dataIndex, rowIndex) => {
+                return moment(data[dataIndex].check_date).format('DD-MMM-YY');
+              }
           }
       },{
           name: "or_num",
@@ -224,7 +226,7 @@ const Index = () => {
         <TableCell colSpan={colSpan}>
           <Link 
             href={{
-                pathname:'/rfp/edit/'+rowData[0]
+                pathname:'/dispatch/edit/'+rowData[0]
             }}
             title='Update'
           >
@@ -236,7 +238,7 @@ const Index = () => {
           </Link>
           <Link 
             href={{
-                pathname:'/rfp/delete',
+                pathname:'/dispatch/delete',
                 query: { id: rowData[0] }
             }}
             title='Delete'
@@ -251,10 +253,18 @@ const Index = () => {
       </TableRow>
       );
     },
-    onRowExpansionChange: (curExpanded, allExpanded, rowsExpanded) => console.log(allExpanded),
+    onRowExpansionChange: (curExpanded, allExpanded, rowsExpanded) => {
+      console.log(allExpanded)
+    },
     customToolbar: () => { 
       return (
-        <>
+        <><Link href='/dispatch/create'>  
+            <Tooltip title="New Dispatch">
+              <IconButton>
+                <AddIcon  />
+              </IconButton>
+            </Tooltip>
+          </Link>
           <Tooltip title="Refresh Data">
             <IconButton onClick={testReload}>
               <CachedIcon  />
@@ -317,12 +327,11 @@ const Index = () => {
                 <h4>Dispatch</h4>
                 <ThemeProvider theme={theme}>
                   <MUIDataTable 
-                      title="" 
-                      data={data} 
-                      columns={columns} 
-                      options={options}
-                      data-tableid="vendorList" 
-                      // components={}
+                    title="" 
+                    data={data} 
+                    columns={columns} 
+                    options={options}
+                    data-tableid="vendorList" 
                   />
                 </ThemeProvider>
               </div>
