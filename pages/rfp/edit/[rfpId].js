@@ -18,6 +18,8 @@ import {
   Button,ButtonGroup,Box,Tabs,Tab,Typography,Input,
   TextField,FormControl,InputAdornment,ListItemIcon,IconButton
 } from '@mui/material';
+import Tooltip from '@mui/material/Tooltip';
+import PreviewIcon from '@mui/icons-material/Preview';
 import FolderIcon from '@mui/icons-material/Folder';
 import DownloadIcon from '@mui/icons-material/Download';
 import Table from '@mui/material/Table';
@@ -27,6 +29,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import Viewfile from "../../../components/Rfp/Viewfile";
 
 
 
@@ -232,8 +235,9 @@ const Create = () => {
 
     const formData = new FormData();
 
-    formData.append('file',fileUpload.file)
-    formData.append('rfp_id',rfpId)
+    formData.append('file',fileUpload.file);
+    formData.append('ref_id',rfpId);
+    formData.append('rec_type','rfp');
 
     const uploadId = toast.loading("Uploading...");
 
@@ -319,88 +323,119 @@ const Create = () => {
         setValueTab(newValue);
     };
 
-    const submitData = e => {
+  // VIEW FILES
 
-      e.preventDefault();
+    const [viewSoa,setViewSoa] = useState(false);
 
-      setBtnDisabled(true);
-      setDisableForm(true);
-
-      const url = '/api/rfp_request/updateRfp'
-      const data = {
-        id: rfpId,
-        internal_order1: internalOrder1,
-        internal_order2: internalOrder2,
-        particulars: rfpType == 'Electrical' ? null : particulars,
-        bill_period_from: moment(billDate.start).format('YYYY-MM-DD'),
-        bill_period_to: moment(billDate.end).format('YYYY-MM-DD'),
-        bill_month: moment(billDate.start).format('MMM-YYYY'),
-        bill_date_received: moment(billReceiveDate).format('YYYY-MM-DD'),
-        due_date: moment(dueDate).format('YYYY-MM-DD'),
-        rfp_date: moment(rfpDate).format('YYYY-MM-DD'),
-        current_reading: rfpType == 'Electrical' ? currentReading : 0,
-        prev_reading: rfpType == 'Electrical' ? prevReading : 0,
-        consumption: rfpType == 'Electrical' ? consumption : 0,
-        rate: rfpType == 'Electrical' ? rate : 0,
-        amount: rfpType == 'Electrical' ? amount : 0,
-        vat_amount: rfpType == 'Electrical' ? vatAmount : 0,
-        interest: rfpType == 'Electrical' ? interest : 0,
-        penalty: rfpType == 'Electrical' ? penalty : 0,
-        penalty_over_interest: rfpType == 'Electrical' ? penaltyOverInterest : 0,
-        surcharge: rfpType == 'Electrical' ? surcharge : 0,
-        misc: rfpType == 'Electrical' ? misc : 0,
-        total_amount: rfpType == 'Electrical' ? totalAmount: 0
-      }
-
-      const notifId = toast.loading("Please wait...");
-
-      axios.post(url, data)
-      .then( res => {
-        setTimeout(() => {
-          toast.update(notifId, {
-            render: "Record has been updated", 
-            type: 'success',
-            isLoading: false,
-            delay:undefined,
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: false,
-            pauseOnFocusLoss: false,
-            draggable: false,
-            progress: undefined,
-            theme: "dark",
-            onClose: () => {
-              router.push("/rfp");
-            }
-          });
-        }, 2000);
-      })
-      .catch(err => {
-
-        setTimeout(() => {
-          toast.update(notifId, {
-            render: "Something went wrong. Please try again.", 
-            type: 'error',
-            isLoading: false,
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: false,
-            pauseOnFocusLoss: false,
-            draggable: false,
-            progress: undefined,
-            theme: "dark",
-            onClose: () => {
-              setBtnDisabled(false);
-              setDisableForm(false);
-            }
-          });
-        }, 2000);
+    const viewSoaCallback = (data) => {
+      setViewSoa({
+        open:data.open,
+        cancel:data.cancel,
+        data: null
       });
     }
+
+    const viewFile = data => {
+      // e.preventDefault();
+      setViewSoa({
+        open: true,
+        cancel: false,
+        data: data
+      });
+      
+      // const props = {
+      //   data: data,
+      //   open: true
+      // }
+
+      // console.log(props);
+
+
+      // return <Viewfile {...props} />
+    }
+
+  const submitData = e => {
+
+    e.preventDefault();
+
+    setBtnDisabled(true);
+    setDisableForm(true);
+
+    const url = '/api/rfp_request/updateRfp'
+    const data = {
+      id: rfpId,
+      internal_order1: internalOrder1,
+      internal_order2: internalOrder2,
+      particulars: rfpType == 'Electrical' ? null : particulars,
+      bill_period_from: moment(billDate.start).format('YYYY-MM-DD'),
+      bill_period_to: moment(billDate.end).format('YYYY-MM-DD'),
+      bill_month: moment(billDate.start).format('MMM-YYYY'),
+      bill_date_received: moment(billReceiveDate).format('YYYY-MM-DD'),
+      due_date: moment(dueDate).format('YYYY-MM-DD'),
+      rfp_date: moment(rfpDate).format('YYYY-MM-DD'),
+      current_reading: rfpType == 'Electrical' ? currentReading : 0,
+      prev_reading: rfpType == 'Electrical' ? prevReading : 0,
+      consumption: rfpType == 'Electrical' ? consumption : 0,
+      rate: rfpType == 'Electrical' ? rate : 0,
+      amount: rfpType == 'Electrical' ? amount : 0,
+      vat_amount: rfpType == 'Electrical' ? vatAmount : 0,
+      interest: rfpType == 'Electrical' ? interest : 0,
+      penalty: rfpType == 'Electrical' ? penalty : 0,
+      penalty_over_interest: rfpType == 'Electrical' ? penaltyOverInterest : 0,
+      surcharge: rfpType == 'Electrical' ? surcharge : 0,
+      misc: rfpType == 'Electrical' ? misc : 0,
+      total_amount: rfpType == 'Electrical' ? totalAmount: 0
+    }
+
+    const notifId = toast.loading("Please wait...");
+
+    axios.post(url, data)
+    .then( res => {
+      setTimeout(() => {
+        toast.update(notifId, {
+          render: "Record has been updated", 
+          type: 'success',
+          isLoading: false,
+          delay:undefined,
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          pauseOnFocusLoss: false,
+          draggable: false,
+          progress: undefined,
+          theme: "dark",
+          onClose: () => {
+            router.push("/rfp");
+          }
+        });
+      }, 2000);
+    })
+    .catch(err => {
+
+      setTimeout(() => {
+        toast.update(notifId, {
+          render: "Something went wrong. Please try again.", 
+          type: 'error',
+          isLoading: false,
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          pauseOnFocusLoss: false,
+          draggable: false,
+          progress: undefined,
+          theme: "dark",
+          onClose: () => {
+            setBtnDisabled(false);
+            setDisableForm(false);
+          }
+        });
+      }, 2000);
+    });
+  }
 
   return (
     <>
@@ -892,6 +927,7 @@ const Create = () => {
                             <Table sx={{ minWidth: 650 }} aria-label="simple table">
                               <TableHead>
                                 <TableRow>
+                                  <TableCell>Action</TableCell>
                                   <TableCell>File Name</TableCell>
                                   <TableCell>Upload by</TableCell>
                                   <TableCell>Date</TableCell>
@@ -903,6 +939,13 @@ const Create = () => {
                                     key={row.id}
                                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                   >
+                                    <TableCell>
+                                      <Tooltip title="View File">
+                                        <IconButton onClick={ () => viewFile(row) }>
+                                          <PreviewIcon  />
+                                        </IconButton>
+                                      </Tooltip>
+                                    </TableCell>
                                     <TableCell component="th" scope="row">
                                       {row.original_name}
                                     </TableCell>
@@ -913,6 +956,12 @@ const Create = () => {
                               </TableBody>
                             </Table>
                           </TableContainer>
+                          <Viewfile 
+                            data={viewSoa.data}
+                            open={viewSoa.open} 
+                            pageTitle="View SOA" 
+                            viewSoaCallback={viewSoaCallback} 
+                          />
                           </Grid>
                         </nav>
                       </div>

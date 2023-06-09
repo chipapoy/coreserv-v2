@@ -1,5 +1,5 @@
 import formidable from 'formidable-serverless';
-import { query } from "./connection/connection";
+import { query } from "../connection/connection";
 import uniqueId from 'uniqid';
 
 export const config = {
@@ -30,7 +30,7 @@ export default async (req, res) => {
     // const test = { data: files.file.path.split('\\')[2] };
     try {
       const sql = `
-          INSERT INTO upload_tbl 
+          INSERT INTO dispatch_activity_files 
           (ref_id,record_type,original_name,file_name,size,file_path,upload_by) 
           VALUES (?,?,?,?,?,?,?)
       `;

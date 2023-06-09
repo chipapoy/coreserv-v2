@@ -6,12 +6,17 @@ export default async function handler(req, res) {
 
     try {
         const sql = `
-            SELECT * FROM upload_tbl WHERE record_type = 'rfp' AND ref_id = ?
+            SELECT 
+            id as value,
+            team_code AS label,
+            technician
+            FROM 
+            crew_tbl
+            WHERE 
+            is_active = 1 
             ORDER BY id DESC
         `;
-        const valuesParam = [
-            req.body.rfp_id
-        ];
+        const valuesParam = [];
 
         const result = await query({query: sql, values: valuesParam});
 

@@ -19,9 +19,9 @@ import Tooltip from "@mui/material/Tooltip";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import moment from 'moment';
-import ActivityList from "../../components/Dispatch/ActivityList";
-import NewActivity from "../../components/Dispatch/NewActivity";
-import UpdateActivity from "../../components/Dispatch/UpdateActivity";
+import AddIcCallIcon from '@mui/icons-material/AddIcCall';
+import CallbackList from "../../components/Callback/CallbackList";
+import NewCallback from "../../components/Callback/NewCallback";
 import DeleteForm from "../../components/Forms/Delete";
 
 const Index = () => {
@@ -30,10 +30,12 @@ const Index = () => {
   const [dispDetails,setDispDetails] = useState(0);
   const [deleteDetails,setDeleteDetails] = useState({});
 
+  const pageTitle = 'Callback'
+
   const getData = async () => {
 
     const cancelToken = axios.CancelToken.source();
-    axios.get('/api/dispatch_request/getDispatchList', {cancelToken:cancelToken.token})
+    axios.get('/api/callback_request/getCallbackList', {cancelToken:cancelToken.token})
     .then( (res) => {
       setData(res.data);
     })
@@ -63,27 +65,8 @@ const Index = () => {
               display:false
           }
       },{
-          name: "check_num",
-          label: "Check #",
-          options: {
-              filter: true,
-              sort: true,
-              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}})
-          }
-      },{
-          name: "check_date",
-          label: "Check Date",
-          options: {
-              filter: true,
-              sort: true,
-              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
-              customBodyRenderLite: (dataIndex, rowIndex) => {
-                return moment(data[dataIndex].check_date).format('DD-MMM-YY');
-              }
-          }
-      },{
-          name: "ref_num",
-          label: "Reference#",
+          name: "omt_tracking_num",
+          label: "OMT Tracking #",
           options: {
               filter: true,
               sort: true,
@@ -91,24 +74,31 @@ const Index = () => {
           }
       },{
           name: "vendor_name",
-          label: "Vendor Name",
+          label: "Vendor",
+          options: {
+            filter: true,
+            sort: true,
+            setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}})
+          }
+      },{
+          name: "status",
+          label: "Status",
           options: {
               filter: true,
               sort: true,
               setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
-              setCellProps: () => ({style: {whiteSpace:'nowrap'}})
           }
       },{
-          name: "amount",
-          label: "Amount",
+          name: "encode_by",
+          label: "Encode by",
           options: {
               filter: true,
               sort: true,
-              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
+              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}})
           }
       },{
-          name: "pickup_date",
-          label: "Pick up Date",
+          name: "encode_date",
+          label: "Encode date",
           options: {
               filter: true,
               sort: true,
@@ -117,92 +107,7 @@ const Index = () => {
                 return moment(data[dataIndex].check_date).format('DD-MMM-YY');
               }
           }
-      },{
-          name: "or_num",
-          label: "OR #",
-          options: {
-              filter: true,
-              sort: true,
-              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
-          }
-      },{
-          name: "or_date",
-          label: "OR Date",
-          options: {
-            filter: false,
-            sort: true,
-            setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
-            customBodyRenderLite: (dataIndex, rowIndex) => {
-              return moment(data[dataIndex].or_date).format('DD-MMM-YY');
-            }
-          }
-      },{
-          name: "remarks",
-          label: "Remarks",
-          options: {
-              filter: true,
-              sort: true,
-              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
-              // customBodyRenderLite: (dataIndex, rowIndex) => {
-              //   return data[dataIndex].remarks!=null ? data[dataIndex].remarks : '-';
-              // }
-          }
-      },{
-        name: "status",
-        label: "Status",
-        options: {
-            filter: true,
-            sort: true,
-            setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
-            customBodyRenderLite: (dataIndex, rowIndex) => {
-              return data[dataIndex].status!=null ? data[dataIndex].status : '-';
-            }
-        }
-    },{
-          name: "crew",
-          label: "Team Code",
-          options: {
-              filter: true,
-              sort: true,
-              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
-              customBodyRenderLite: (dataIndex, rowIndex) => {
-
-                const crewArr = data[dataIndex].crew ? data[dataIndex].crew.split(',') : '-';
-                return crewArr[0];
-              }
-          }
-      },{
-          name: "crew",
-          label: "Team Assigned",
-          options: {
-              filter: true,
-              sort: true,
-              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
-              customBodyRenderLite: (dataIndex, rowIndex) => {
-
-                const crewArr = data[dataIndex].crew ? data[dataIndex].crew.split(',') : '-';
-                return crewArr[1];
-              }
-          }
       }
-      
-      // ,{
-      //     name: "abs_cbn_received_date",
-      //     label: "Date Received by ABS-CBN",
-      //     options: {
-      //       filter: true,
-      //       sort: true,
-      //       setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
-      //     }
-      // },{
-      //   name: "received_by",
-      //   label: "Received by",
-      //   options: {
-      //     filter: true,
-      //     sort: true,
-      //     setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
-      //   }
-      // }
 
   ];
 
@@ -255,8 +160,8 @@ const Index = () => {
     // }
   }
 
-  const activityListCallback = (data) => {
-    return <ActivityList {...data}/>
+  const callbackList = (data) => {
+    return <CallbackList {...data}/>
   }
 
   const testReload = () => {
@@ -312,7 +217,7 @@ const Index = () => {
             <TableCell colSpan={colSpan}>
               <Link 
                 href={{
-                    pathname:'/dispatch/edit/'+rowData[0]
+                    pathname:'/callback/edit/'+rowData[0]
                 }}
               >
                 <Tooltip title='Update'>
@@ -321,9 +226,9 @@ const Index = () => {
                   </IconButton>
                 </Tooltip>
               </Link>
-              <Tooltip title='Add Activity'>
+              <Tooltip title='Callback'>
                 <IconButton disabled={ rowData[9]=="COMPLETED" || rowData[9]==null  ? (activityCount > 0 ? true : false) : false }>
-                  <AddTaskIcon 
+                  <AddIcCallIcon 
                     onClick={()=> {
                       setOpenModal(true); 
                       setDispDetails(rowData);
@@ -349,7 +254,7 @@ const Index = () => {
                 </IconButton>
               </Tooltip>
               { 
-                activityListCallback({ 
+                callbackList({ 
                   key:rowData[0],
                   dispId:rowData[0],
                   test: true,
@@ -371,8 +276,8 @@ const Index = () => {
     },
     customToolbar: () => { 
       return (
-        <><Link href='/dispatch/create'>  
-            <Tooltip title="New Dispatch">
+        <><Link href='/callback/create'>  
+            <Tooltip title="New Callback">
               <IconButton>
                 <AddIcon  />
               </IconButton>
@@ -431,7 +336,7 @@ const Index = () => {
             <Topmenu />
             <div className="section-body">
               <div className="container-fluid">
-                <h4>Dispatch</h4>
+                <h4>{pageTitle}</h4>
                 <ThemeProvider theme={theme}>
                   <MUIDataTable 
                     title="" 
@@ -441,7 +346,7 @@ const Index = () => {
                     data-tableid="vendorList" 
                   />
                 </ThemeProvider>
-                <NewActivity open={openModal} dispDetails={dispDetails} modalFunction={modalCallback}/>
+                <NewCallback open={openModal} dispDetails={dispDetails} modalFunction={modalCallback}/>
                 {/* <DeleteForm open={openDeleteModal} deleteDetails={deleteDetails} deleteCallback={deleteModalCallback}/> */}
                 {
                   deleteForm({
