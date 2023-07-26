@@ -10,7 +10,6 @@ import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import IconButton from "@mui/material/IconButton";
 import CachedIcon from '@mui/icons-material/Cached';
-import PaymentIcon from '@mui/icons-material/Payment';
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -21,14 +20,16 @@ import 'react-toastify/dist/ReactToastify.css';
 import moment from 'moment';
 import ActivityList from "../../components/Dispatch/ActivityList";
 import NewActivity from "../../components/Dispatch/NewActivity";
-import UpdateActivity from "../../components/Dispatch/UpdateActivity";
 import DeleteForm from "../../components/Forms/Delete";
 
 const Index = () => {
 
+  const pageTitle = 'Dispatch';
   const [data,setData] = useState([]);
   const [dispDetails,setDispDetails] = useState(0);
   const [deleteDetails,setDeleteDetails] = useState({});
+  const [rowsExpand,setRowsExpand] = useState([]);
+  const [keyTable,setKeyTable] = useState(moment().unix());
 
   const getData = async () => {
 
@@ -212,7 +213,11 @@ const Index = () => {
   const [activityCount,setActivityCount] = useState(0);
 
   const modalCallback = (data) => {
+
     setOpenModal(data.open);
+
+    const keyUnix = moment().unix();
+    setKeyTable(keyUnix);
     
     if(data.cancel == false){
       getData();
@@ -301,10 +306,11 @@ const Index = () => {
         return true;
     },
     // rowsExpanded: [0, 1],
+    rowsExpanded: rowsExpand,
     renderExpandableRow: (rowData, rowMeta) => {
       const colSpan = rowData.length + 1;
-      
-      // console.log(activityCount);
+
+      console.log(rowData);
 
       return (
         <>
@@ -348,7 +354,7 @@ const Index = () => {
                   />
                 </IconButton>
               </Tooltip>
-              { 
+              {/* { 
                 activityListCallback({ 
                   key:rowData[0],
                   dispId:rowData[0],
@@ -356,7 +362,14 @@ const Index = () => {
                   updateCallback: updateCallback,
                   listCallback: listCallback
                 }) 
-              }
+              } */}
+              <ActivityList
+                key={keyTable}
+                dispId={rowData[0]}
+                test={true}
+                updateCallback={updateCallback}
+                listCallback={listCallback}
+              />
             </TableCell>
           </TableRow>
         </>
@@ -368,6 +381,23 @@ const Index = () => {
       // console.log(curExpanded);
       // console.log(allExpanded);
       // console.log(rowsExpanded);
+    },
+    onTableChange: (action, tableState) => {
+      switch (action) {
+        case "rowExpansionChange":
+          var rowsExpanded = tableState.expandedRows.data.map(
+            item => item.index
+          );
+
+          if (rowsExpanded.length > 1) {
+            // limiting would go here
+            rowsExpanded = rowsExpanded.slice(-1);
+          }
+
+          setRowsExpand(rowsExpanded);
+
+          break;
+      }
     },
     customToolbar: () => { 
       return (
@@ -394,9 +424,9 @@ const Index = () => {
         styleOverrides: {
           fixedHeader: {
             backgroundColor: '#E35217',
-            color: '#FFF',
+            color: '#FFFFFF !important',
             lineHeight: 0,
-            padding: '12px'
+            padding: '12px !important'
           },
         },
       },
@@ -404,7 +434,7 @@ const Index = () => {
         styleOverrides: {
           headerCell: {
             backgroundColor: '#E35217',
-            color: '#FFF',
+            color: '#FFF !important',
             lineHeight: 0
           },
         },
@@ -431,7 +461,7 @@ const Index = () => {
             <Topmenu />
             <div className="section-body">
               <div className="container-fluid">
-                <h4>Dispatch</h4>
+                <h4>{pageTitle}</h4>
                 <ThemeProvider theme={theme}>
                   <MUIDataTable 
                     title="" 

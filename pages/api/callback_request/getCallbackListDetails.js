@@ -7,22 +7,17 @@ export default async function handler(req, res) {
     try {
         const sql = `
             SELECT
-            callback_id,
-            status_id,
-            callback_status,
-            attempt_count,
-            start,
-            end,
-            aht,
-            agent,
-            remarks,
-            preferred_date
+            cb.id,
+            omt_tracking_num,
+            vendor_id,
+            vendor_name
             FROM
-            callback_details_tbl AS cb_details
-            LEFT JOIN callback_status_tbl AS status ON cb_details.status_id = status.id
+            callback_tbl cb,
+            vendors
             WHERE
-            callback_id = ?
-            ORDER BY cb_details.id DESC
+            cb.vendor_id = vendors.id
+            AND
+            cb.id = ?
         `;
         const valuesParam = [
             req.body.id
@@ -30,7 +25,7 @@ export default async function handler(req, res) {
 
         const result = await query({query: sql, values: valuesParam});
 
-        res.status(200).json(result)
+        res.status(200).json(result[0])
 
     } 
     catch (error) {

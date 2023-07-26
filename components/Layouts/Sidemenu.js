@@ -29,6 +29,9 @@ const Sidemenu = () => {
               <Link href="/callback" className="nav-link icon create_page xs-hide">
                 <i className="fa fa-phone" data-toggle="tooltip" data-placement="right" title="Callback"></i>
               </Link>
+              <Link href="/otd" className="nav-link icon create_page xs-hide">
+                <i className="fa fa-phone-square" data-toggle="tooltip" data-placement="right" title="OTD"></i>
+              </Link>
             </div>
           </div>
           <div className="hright">

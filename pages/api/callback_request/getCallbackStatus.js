@@ -6,19 +6,16 @@ export default async function handler(req, res) {
 
     try {
         const sql = `
-            INSERT INTO dispatch_activity 
-            (
-                dispatch_id,disp_date,pickup_date,crew_id,encode_by
-            ) 
-            VALUES (?,?,?,?,?)
+            SELECT 
+            id as value,
+            callback_status AS label
+            FROM 
+            callback_status_tbl
+            WHERE 
+            is_active = 1 
+            ORDER BY id ASC
         `;
-        const valuesParam = [
-            req.body.dispatch_id,
-            req.body.disp_date,
-            req.body.pickup_date,
-            req.body.crew_id,
-            'Admin'
-        ];
+        const valuesParam = [];
 
         const result = await query({query: sql, values: valuesParam});
 

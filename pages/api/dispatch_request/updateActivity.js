@@ -10,7 +10,11 @@ export default async function handler(req, res) {
             action_taken = ?,
             remarks_id = ?,
             status_id = ?,
-            completion_date = ?
+            completion_date = ?,
+            abs_cbn_received_date = ?,
+            received_by = ?,
+            vergara_received_date = ?,
+            received_by_vergara = ?
             WHERE
             id = ?
         `;
@@ -19,6 +23,10 @@ export default async function handler(req, res) {
           req.body.remarks_id,
           req.body.status_id,
           req.body.complete_date,
+          req.body.abs_cbn_received_date,
+          req.body.received_by,
+          req.body.vergara_received_date,
+          req.body.received_by_vergara,
           req.body.id
         ];
 

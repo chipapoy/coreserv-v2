@@ -14,7 +14,7 @@ import { toast } from 'react-toastify';
 
 const style = {
   position: 'absolute',
-  top: '40%',
+  top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: '50%',
@@ -26,7 +26,7 @@ const style = {
 
 export default function UpdateActivityModal(props) {
 
-  const pageTitle = 'Update Dispatch Activity ' + props.openUpdateModal.id;
+  const pageTitle = 'Update Dispatch Activity';
 
   const [activityData,setActivityData] = useState([]);
 
@@ -36,12 +36,18 @@ export default function UpdateActivityModal(props) {
   const [displayErrorVendor, setDisplayErrorVendor] = useState('none');
 
   const [dispatchDate, setDispatchDate] = useState(moment().format('M/DD/YYYY'));
+  const [pickupDate, setPickupDate] = useState(moment().format('M/DD/YYYY'));
   const [assignedTo, setAssignedTo] = useState('');
   const [crew, setCrew] = useState(0);
   const [actionTaken, setActionTaken] = useState('');
   const [remarks, setRemarks] = useState(0);
   const [status, setStatus] = useState(0);
   const [completionDate, setCompletionDate] = useState('');
+  const [receivedDateByAbsCbn, setReceivedDateByAbsCbn] = useState('');
+  const [receivedBy, setReceivedBy] = useState('');
+  const [receivedDateByVergara, setReceivedDateByVergara] = useState('');
+  const [receivedByVergara, setReceivedByVergara] = useState('');
+
 
   const [crewArr, setCrewArr] = useState([]);
   const [remarksArr, setRemarksArr] = useState([]);
@@ -49,6 +55,20 @@ export default function UpdateActivityModal(props) {
 
 
   const handleClose = () => {
+
+    setActivityData([]);
+    setDispatchDate('');
+    setPickupDate('');
+    setCrew(0);
+    setActionTaken('');
+    setRemarks(0);
+    setStatus(0);
+    setCompletionDate('');
+    setReceivedDateByAbsCbn('');
+    setReceivedBy('');
+    setReceivedDateByVergara('');
+    setReceivedByVergara('');
+    
     props.modalFunction({
       open: false,
       cancel: true,
@@ -63,97 +83,6 @@ export default function UpdateActivityModal(props) {
   const [fileUpload,setFileUpload] = useState([]);
   const [uploadBtnDisabled,setUploadBtnDisabled] = useState(true);
 
-  const onFileChange = (e) => {
-
-      const fileSize = e.target.files[0].size / (1024 * 1024);
-      console.log(fileSize);
-      console.log(props.openUpdateModal.id);
-      
-      setFileUpload({
-          file: e.target.files[0]
-      });
-
-      setUploadBtnDisabled(false);
-  }
-
-  const onUpload = e => {
-    // console.log(fileUpload.file);
-    e.preventDefault();
-
-
-    const formData = new FormData();
-
-    formData.append('file',fileUpload.file);
-    formData.append('ref_id',props.openUpdateModal.id);
-    formData.append('rec_type','activity');
-
-    const uploadId = toast.loading("Uploading...");
-
-    console.log(formData)
-
-    axios.post(
-        '/api/testUpload',
-        formData,
-        {
-            headers: {
-                'content-type': 'multipart/form-data'
-            }
-        }
-    )
-    .then(res => {
-        console.log(e)
-        e.target.value = "";
-        setUploadBtnDisabled(true);
-
-        setTimeout(() => {
-          toast.update(uploadId, {
-            render: "File has been uploaded", 
-            type: 'success',
-            isLoading: false,
-            delay:undefined,
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: false,
-            pauseOnFocusLoss: false,
-            draggable: false,
-            progress: undefined,
-            theme: "dark",
-            onClose: () => {
-              // router.push("/rfp");
-              // getRfpUpload(rfpId);
-            }
-          });
-        }, 2000);
-    })
-    .catch(err => {
-        console.log(err);
-        setTimeout(() => {
-          toast.update(uploadId, {
-            render: "Something went wrong. Please try again. " + err.response.data.error, 
-            type: 'error',
-            isLoading: false,
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: false,
-            pauseOnFocusLoss: false,
-            draggable: false,
-            progress: undefined,
-            theme: "dark",
-            onClose: () => {
-              // setBtnDisabled(false);
-              // setDisableForm(false);
-              // getRfpUpload(rfpId);
-            }
-          });
-        }, 2000);
-    })
-  }
-  
-
   const getActivityDetails = async () => {
 
     await axios.post('/api/dispatch_request/getActivityDetails',{
@@ -161,12 +90,15 @@ export default function UpdateActivityModal(props) {
     })
     .then( result => {
       setActivityData(result.data);
-      setDispatchDate(moment(result.data.disp_date).format('M/DD/YYYY'))
+      setDispatchDate(moment(result.data.disp_date).format('M/DD/YYYY'));
+      setPickupDate(result.data.pickup_date!=null ? moment(result.data.pickup_date).format('M/DD/YYYY') : '');
       setCrew(result.data.crew_id);
       setActionTaken(result.data.action_taken);
       setRemarks(result.data.remarks_id);
       setStatus(result.data.status_id);
-      setCompletionDate(result.data.complete_date);
+      setCompletionDate(result.data.completion_date!=null ? moment(result.data.completion_date).format('M/DD/YYYY') : '');
+      setReceivedDateByAbsCbn(result.data.abs_cbn_received_date != null ? moment(result.data.abs_cbn_received_date).format('M/DD/YYYY') : '');
+      setReceivedBy(result.data.received_by);
     })
     .catch( err => {
       console.log(err)
@@ -195,13 +127,20 @@ export default function UpdateActivityModal(props) {
   };
 
 
-  const handleDispatchDate = (date, label) => {
-    date = moment(date).format('M/DD/YYYY');
-    setDispatchDate(date);
+  const handleReceivedDateByAbsCbn = (e,picker) => {
+    var date = moment(picker.startDate).format('M/DD/YYYY');
+    setReceivedDateByAbsCbn(date);
+    // console.log(date);
   }
 
-  const handleCompletionDate = (date, label) => {
-    date = moment(date).format('M/DD/YYYY');
+  const handleReceivedDateByVergara = (e,picker) => {
+    var date = moment(picker.startDate).format('M/DD/YYYY');
+    setReceivedDateByVergara(date);
+    // console.log(date);
+  }
+
+  const handleCompletionDate = (e,picker) => {
+    var date = moment(picker.startDate).format('M/DD/YYYY');
     setCompletionDate(date);
   }
 
@@ -252,6 +191,10 @@ export default function UpdateActivityModal(props) {
       remarks_id: remarks,
       status_id: status,
       complete_date: moment(completionDate).format('YYYY-MM-DD'),
+      abs_cbn_received_date: moment(receivedDateByAbsCbn).format('YYYY-MM-DD'),
+      received_by: receivedBy,
+      vergara_received_date: moment(receivedDateByVergara).format('YYYY-MM-DD'),
+      received_by_vergara: receivedByVergara
       // pickup_date: moment(pickUpDate).format('YYYY-MM-DD')
     }
     
@@ -278,6 +221,19 @@ export default function UpdateActivityModal(props) {
           theme: "dark",
           onClose: () => {
             // router.push("/dispatch");
+            setActivityData([]);
+            setDispatchDate('');
+            setPickupDate('');
+            setCrew(0);
+            setActionTaken('');
+            setRemarks(0);
+            setStatus(0);
+            setCompletionDate('');
+            setReceivedDateByAbsCbn('');
+            setReceivedBy('');
+            setReceivedDateByVergara('');
+            setReceivedByVergara('');
+            
             props.modalFunction({
               open: false,
               cancel: false,
@@ -328,26 +284,6 @@ export default function UpdateActivityModal(props) {
             <Typography id="modal-modal-title" variant="h6" component="h2">{pageTitle}</Typography>
             <Grid container spacing={2}>
               <Grid item xs={12} lg={12}>
-                <Stack spacing={2} direction="row">
-                  <Button 
-                    disableElevation
-                    variant="outlined" 
-                    color="primary" 
-                    type="submit"
-                    disabled={btnDisabled}
-                    children="Submit"
-                  />
-                  <Button 
-                    disableElevation
-                    variant="outlined" 
-                    color="error" 
-                    disabled={btnDisabled}
-                    onClick={ handleClose }
-                    children="Cancel"
-                  />
-                </Stack>
-              </Grid>
-              <Grid item xs={12} lg={12}>
                 <Chip 
                   label={activityData.vendor_name} 
                   variant="filled" 
@@ -368,6 +304,27 @@ export default function UpdateActivityModal(props) {
                       label="Dispatch Date" 
                       variant="standard" 
                       value={dispatchDate}
+                      disabled={disableForm}
+                      InputProps={{
+                        readOnly: true,
+                      }}
+                    />
+                  {/* </DateRangePicker> */}
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} lg={12}>
+                <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                  {/* <DateRangePicker
+                    initialSettings={{
+                      singleDatePicker: true,
+                      autoApply: true
+                    }}
+                    onCallback={handleDispatchDate}
+                  > */}
+                    <TextField 
+                      label="Pickup Date" 
+                      variant="standard" 
+                      value={pickupDate}
                       disabled={disableForm}
                       InputProps={{
                         readOnly: true,
@@ -448,29 +405,117 @@ export default function UpdateActivityModal(props) {
                 </FormControl>
               </Grid>
               <Grid item xs={12} lg={12}>
-                <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                <FormControl fullWidth sx={{ m: 1, display:remarks==8?'inline-flex':'none' }} variant="standard">
                   <DateRangePicker
                     initialSettings={{
                       singleDatePicker: true,
-                      autoApply: true
+                      drops: "up",
+                      minDate  : moment().format('MM/DD/YYYY'),
+                      locale: {
+                        cancelLabel: 'Clear'
+                      }
                     }}
-                    onCallback={handleCompletionDate}
+                    onApply={handleCompletionDate}
+                    onCancel={ (e,picker)=>setCompletionDate('')}
+                    showDropdowns={false}
                   >
                     <TextField 
                       label="Completion Date" 
-                      variant="standard" 
+                      variant="standard"
                       value={completionDate}
                     />
                   </DateRangePicker>
                 </FormControl>
               </Grid>
+              <Grid item xs={6} lg={6}>
+                <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                  <DateRangePicker
+                    initialSettings={{
+                      singleDatePicker: true,
+                      drops: "up",
+                      minDate  : moment().format('MM/DD/YYYY'),
+                      locale: {
+                        cancelLabel: 'Clear'
+                      }
+                    }}
+                    onApply={handleReceivedDateByAbsCbn}
+                    onCancel={ (e,picker)=>setReceivedDateByAbsCbn('')}
+                  >
+                    <TextField 
+                      label="Received Date by ABS-CBN" 
+                      variant="standard" 
+                      value={receivedDateByAbsCbn}
+                    />
+                  </DateRangePicker>
+                </FormControl>
+              </Grid>
+              <Grid item xs={6} lg={6}>
+                <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                  <TextField 
+                    label="Received by ABS-CBN" 
+                    variant="standard" 
+                    multiline
+                    maxRows={4}
+                    value={receivedBy}
+                    onChange={ e => setReceivedBy(e.target.value) }
+                    disabled={disableForm}
+                  />
+                </FormControl>
+              </Grid>
+              <Grid item xs={6} lg={6}>
+                <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                  <DateRangePicker
+                    initialSettings={{
+                      singleDatePicker: true,
+                      drops: "up",
+                      minDate  : moment().format('MM/DD/YYYY'),
+                      locale: {
+                        cancelLabel: 'Clear'
+                      }
+                    }}
+                    onApply={handleReceivedDateByVergara}
+                    onCancel={ (e,picker)=>setReceivedDateByVergara('')}
+                  >
+                    <TextField 
+                      label="Received Date by Vergara" 
+                      variant="standard" 
+                      value={receivedDateByVergara}
+                    />
+                  </DateRangePicker>
+                </FormControl>
+              </Grid>
+              <Grid item xs={6} lg={6}>
+                <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                  <TextField 
+                    label="Received by Vergara" 
+                    variant="standard" 
+                    multiline
+                    maxRows={4}
+                    value={receivedByVergara}
+                    onChange={ e => setReceivedByVergara(e.target.value) }
+                    disabled={disableForm}
+                  />
+                </FormControl>
+              </Grid>
               <Grid item xs={12} lg={12}>
-                {/* <FormControl fullWidth sx={{ m: 1 }} variant="standard">
-                    <ButtonGroup variant="outlined" aria-label="outlined primary button group" disableElevation>
-                      <Button variant='text' children={<input type="file" name="file_upload" onChange={onFileChange} accept=".pdf,.jpg"  />} />
-                      <Button onClick={onUpload} disabled={uploadBtnDisabled} children="Upload" />
-                    </ButtonGroup>
-                </FormControl> */}
+                <Stack spacing={1} direction="row">
+                  <Button 
+                    disableElevation
+                    variant="outlined" 
+                    color="primary" 
+                    type="submit"
+                    disabled={btnDisabled}
+                    children="Submit"
+                  />
+                  <Button 
+                    disableElevation
+                    variant="outlined" 
+                    color="error" 
+                    disabled={btnDisabled}
+                    onClick={ handleClose }
+                    children="Cancel"
+                  />
+                </Stack>
               </Grid>
             </Grid>
           </Box>

@@ -26,9 +26,12 @@ import DeleteForm from "../../components/Forms/Delete";
 
 const Index = () => {
 
+  const pageTitle = 'Request for Payment';
+
   const [data,setData] = useState([]);
   const [deleteDetails,setDeleteDetails] = useState({});
   const [openDeleteModal,setOpenDeleteModal] = useState(false);
+  const [rowsExpand,setRowsExpand] = useState([]);
 
   const deleteModalCallback = (data) => {
     setOpenDeleteModal(data.open);
@@ -44,8 +47,6 @@ const Index = () => {
       return <DeleteForm {...data}/>
     }
   }
-
-  const pageTitle = 'Request for Payment'
 
   const getData = async () => {
 
@@ -76,9 +77,9 @@ const Index = () => {
         styleOverrides: {
           fixedHeader: {
             backgroundColor: '#E35217',
-            color: '#FFFFFF',
+            color: '#FFFFFF !important',
             lineHeight: 0,
-            padding: '12px'
+            padding: '12px !important'
           },
         },
       },
@@ -86,7 +87,7 @@ const Index = () => {
         styleOverrides: {
           headerCell: {
             backgroundColor: '#E35217',
-            color: '#FFFFFF',
+            color: '#FFFFFF !important',
             lineHeight: 0
           },
         },
@@ -427,11 +428,12 @@ const Index = () => {
         // if (dataIndex === 3 || dataIndex === 4) return false;
 
         // Prevent expand/collapse of any row if there are 4 rows expanded already (but allow those already expanded to be collapsed)
-        if (expandedRows.data.length > 4 && expandedRows.data.filter(d => d.dataIndex === dataIndex).length === 0)
-        return false;
+        // if (expandedRows.data.length > 4 && expandedRows.data.filter(d => d.dataIndex === dataIndex).length === 0)
+        // return false;
         return true;
     },
     // rowsExpanded: [0, 1],
+    rowsExpanded: rowsExpand,
     renderExpandableRow: (rowData, rowMeta) => {
       const colSpan = rowData.length + 1;
 
@@ -483,6 +485,27 @@ const Index = () => {
       );
     },
     onRowExpansionChange: (curExpanded, allExpanded, rowsExpanded) => console.log(allExpanded),
+    onTableChange: (action, tableState) => {
+      switch (action) {
+        case "rowExpansionChange":
+          // console.log(action);
+          // console.dir(tableState);
+          var rowsExpanded = tableState.expandedRows.data.map(
+            item => item.index
+          );
+
+          if (rowsExpanded.length > 1) {
+            // limiting would go here
+            rowsExpanded = rowsExpanded.slice(-1);
+          }
+
+          // console.dir(rowsExpanded);
+
+          setRowsExpand(rowsExpanded);
+
+          break;
+      }
+    },
     customToolbar: () => { 
       return (
         <>

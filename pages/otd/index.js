@@ -10,9 +10,11 @@ import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import IconButton from "@mui/material/IconButton";
 import CachedIcon from '@mui/icons-material/Cached';
+import PaymentIcon from '@mui/icons-material/Payment';
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import AddTaskIcon from '@mui/icons-material/AddTask';
 import Tooltip from "@mui/material/Tooltip";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -24,18 +26,16 @@ import DeleteForm from "../../components/Forms/Delete";
 
 const Index = () => {
 
-  const pageTitle = 'Callback';
+  const pageTitle = 'On The Day';
 
   const [data,setData] = useState([]);
-  const [callbackDetails,setCallbackDetails] = useState(0);
   const [deleteDetails,setDeleteDetails] = useState({});
   const [rowsExpand,setRowsExpand] = useState([]);
-  const [keyTable,setKeyTable] = useState(moment().unix());
 
   const getData = async () => {
 
     const cancelToken = axios.CancelToken.source();
-    axios.get('/api/callback_request/getCallbackList', {cancelToken:cancelToken.token})
+    axios.get('/api/otd_request/getOtdList', {cancelToken:cancelToken.token})
     .then( (res) => {
       setData(res.data);
     })
@@ -65,6 +65,17 @@ const Index = () => {
               display:false
           }
       },{
+          name: "otd_date",
+          label: "Date",
+          options: {
+              filter: true,
+              sort: true,
+              setCellProps: () => ({style: {whiteSpace:'nowrap'}}),
+              customBodyRenderLite: (dataIndex, rowIndex) => {
+                return moment(data[dataIndex].otd_date).format('DD-MMM-YY');
+              }
+          }
+      },{
           name: "omt_tracking_num",
           label: "OMT Tracking #",
           options: {
@@ -78,58 +89,90 @@ const Index = () => {
           options: {
             filter: true,
             sort: true,
+            setCellProps: () => ({style: {whiteSpace:'nowrap'}})
+          }
+      },{
+          name: "concern",
+          label: "Concern",
+          options: {
+            filter: true,
+            sort: true,
             setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}})
           }
       },{
-          name: "status",
-          label: "Status",
+          name: "technician",
+          label: "Tech Name",
           options: {
-              filter: true,
-              sort: true,
-              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
-              customBodyRender: (value, tableMeta) => {
-                return value!=null ? value : '-';
-              }
+            filter: true,
+            sort: true,
+            setCellProps: () => ({style: {whiteSpace:'nowrap'}})
           }
       },{
-          name: "encode_by",
-          label: "Encode by",
+          name: "team_code",
+          label: "Team Code",
           options: {
-              filter: true,
-              sort: true,
-              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}})
+            filter: true,
+            sort: true,
+            setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}})
           }
       },{
-          name: "encode_date",
-          label: "Encode date",
+          name: "start",
+          label: "Start",
           options: {
-              filter: true,
-              sort: true,
-              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
-              customBodyRenderLite: (dataIndex, rowIndex) => {
-                return moment(data[dataIndex].check_date).format('DD-MMM-YY');
-              }
+            filter: true,
+            sort: true,
+            setCellProps: () => ({style: {whiteSpace:'nowrap'}}),
+            customBodyRenderLite: (dataIndex, rowIndex) => {
+              return moment(data[dataIndex].start).format('DD-MMM-YY HH:mm');
+            }
           }
-      }
+      },{
+        name: "end",
+        label: "End",
+        options: {
+          filter: true,
+          sort: true,
+          setCellProps: () => ({style: {whiteSpace:'nowrap'}}),
+          customBodyRenderLite: (dataIndex, rowIndex) => {
+            return moment(data[dataIndex].end).format('DD-MMM-YY HH:mm');
+          }
+        }
+      },{
+        name: "aht",
+        label: "AHT",
+        options: {
+          filter: true,
+          sort: true,
+          setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
+          customBodyRenderLite: (dataIndex, rowIndex) => {
+            let aht = data[dataIndex].aht;
+            return aht.slice(0,-3);
+          }
+        }
+      },{
+            name: "encode_by",
+            label: "Encode by",
+            options: {
+                filter: true,
+                sort: true,
+                setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}})
+            }
+        },{
+            name: "encode_date",
+            label: "Encode date",
+            options: {
+                filter: true,
+                sort: true,
+                setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
+                customBodyRenderLite: (dataIndex, rowIndex) => {
+                  return moment(data[dataIndex].check_date).format('DD-MMM-YY');
+                }
+            }
+        }
 
   ];
 
-  const [openModal,setOpenModal] = useState(false);
   const [openDeleteModal,setOpenDeleteModal] = useState(false);
-
-  const [activityCount,setActivityCount] = useState(0);
-
-  const modalCallback = (data) => {
-    setOpenModal(data.open);
-
-    const keyUnix = moment().unix();
-    setKeyTable(keyUnix);
-    
-    if(data.cancel == false){
-      getData();
-    }
-    
-  }
 
   const deleteModalCallback = (data) => {
     setOpenDeleteModal(data.open);
@@ -146,31 +189,6 @@ const Index = () => {
     }
   }
 
-  const updateCallback = (data) => {
-    console.log(data);
-    console.log("callback from update");
-
-    if(data.update == true){
-      getData();
-    }
-  }
-
-  const listCallback = (data) => {
-
-    // console.log(data.listCount);
-    console.log("callback from callbacklist");
-
-    setActivityCount(data.listCount);
-
-    // if(data.update == true){
-    //   getData();
-    // }
-  }
-
-  // const callbackList = (data) => {
-  //   return <CallbackList {...data}/>
-  // }
-
   const testReload = () => {
     getData();
     console.log("test");
@@ -184,8 +202,6 @@ const Index = () => {
       setData([])
     }
   }, []);
-
-  
 
   const options = {
     filterType: 'multiselect',
@@ -207,7 +223,7 @@ const Index = () => {
         // if (dataIndex === 3 || dataIndex === 4) return false;
 
         // Prevent expand/collapse of any row if there are 4 rows expanded already (but allow those already expanded to be collapsed)
-        // if (expandedRows.data.length > 1 && expandedRows.data.filter(d => d.dataIndex === dataIndex).length === 0)
+        // if (expandedRows.data.length > 4 && expandedRows.data.filter(d => d.dataIndex === dataIndex).length === 0)
         // return false;
 
         return true;
@@ -216,9 +232,6 @@ const Index = () => {
     rowsExpanded: rowsExpand,
     renderExpandableRow: (rowData, rowMeta) => {
       const colSpan = rowData.length + 1;
-      // const keyUnix = moment().unix();
-      // setKeyTable(keyUnix);
-      // console.log(rowData);
 
       if(rowData){
         return (
@@ -227,7 +240,7 @@ const Index = () => {
               <TableCell colSpan={colSpan}>
                 <Link 
                   href={{
-                      pathname:'/callback/edit/'+rowData[0]
+                      pathname:'/otd/edit/'+rowData[0]
                   }}
                 >
                   <Tooltip title='Update'>
@@ -236,19 +249,6 @@ const Index = () => {
                     </IconButton>
                   </Tooltip>
                 </Link>
-                <Tooltip title='Callback'>
-                  {/* <IconButton disabled={ rowData[9]=="COMPLETED" || rowData[9]==null  ? (activityCount > 0 ? true : false) : false }> */}
-                  <IconButton disabled={ rowData[3]=="SUCCESSFUL - FOR PICK UP" ? true : false }>
-                    <AddIcCallIcon 
-                      onClick={()=> {
-                        setOpenModal(true); 
-                        setCallbackDetails(rowData);
-                        console.log(rowData);
-                      }}  
-                      
-                    />
-                  </IconButton>
-                </Tooltip>
                 <Tooltip title='Delete'>
                   <IconButton>
                     <DeleteIcon 
@@ -256,21 +256,14 @@ const Index = () => {
                         setOpenDeleteModal(true); 
                         setDeleteDetails({
                           data: rowData,
-                          url: '/api/callback_request/deleteCallback',
-                          module: 'Callback'
+                          url: '/api/otd_request/deleteOtd',
+                          module: 'OTD'
                         });
-                        // console.log(rowData);
+                        console.log(rowData);
                       }}
                     />
                   </IconButton>
                 </Tooltip>
-                <CallbackList 
-                  key={keyTable}
-                  callbackId={rowData[0]}
-                  test={true}
-                  updateCallback={updateCallback}
-                  // listCallback={listCallback}
-                />
               </TableCell>
             </TableRow>
           </>
@@ -287,6 +280,8 @@ const Index = () => {
     onTableChange: (action, tableState) => {
       switch (action) {
         case "rowExpansionChange":
+          // console.log(action);
+          // console.dir(tableState);
           var rowsExpanded = tableState.expandedRows.data.map(
             item => item.index
           );
@@ -296,6 +291,8 @@ const Index = () => {
             rowsExpanded = rowsExpanded.slice(-1);
           }
 
+          // console.dir(rowsExpanded);
+
           setRowsExpand(rowsExpanded);
 
           break;
@@ -303,8 +300,8 @@ const Index = () => {
     },
     customToolbar: () => { 
       return (
-        <><Link href='/callback/create'>  
-            <Tooltip title="New Callback">
+        <><Link href='/otd/create'>  
+            <Tooltip title="New OTD">
               <IconButton>
                 <AddIcon  />
               </IconButton>
@@ -336,7 +333,7 @@ const Index = () => {
         styleOverrides: {
           headerCell: {
             backgroundColor: '#E35217',
-            color: '#FFF',
+            color: '#FFF !important',
             lineHeight: 0
           },
         },
@@ -373,7 +370,7 @@ const Index = () => {
                     data-tableid="vendorList" 
                   />
                 </ThemeProvider>
-                <NewCallback open={openModal} callbackDetails={callbackDetails} modalFunction={modalCallback}/>
+                {/* <NewCallback open={openModal} callbackDetails={callbackDetails} modalFunction={modalCallback}/> */}
                 {/* <DeleteForm open={openDeleteModal} deleteDetails={deleteDetails} deleteCallback={deleteModalCallback}/> */}
                 {
                   deleteForm({

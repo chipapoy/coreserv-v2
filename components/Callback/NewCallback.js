@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { React, useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -7,10 +7,14 @@ import {
   Grid,Stack,Chip,TextField,FormControl,InputLabel,Select,MenuItem
 } from '@mui/material';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
-import 'bootstrap-daterangepicker/daterangepicker.css';
 import moment from 'moment';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+// import 'eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css';
+// import DateTimePicker from 'react-datetimepicker-bootstrap';
+import "react-datetime/css/react-datetime.css";
+import Datetime from 'react-datetime';
+import { BorderColor } from '@mui/icons-material';
 
 const style = {
   position: 'absolute',
@@ -28,29 +32,42 @@ export default function BasicModal(props) {
 
   const pageTitle = 'New Callback';
 
-  const [dispatchData,setDispatchData] = useState([]);
-
   const [vendor, setVendor] = useState('');
-  const [vendorBorder, setVendorBorder] = useState('#ced4da');
-  const [vendorError, setVendorError] = useState(vendor.value===undefined ? 1 : 0);
-  const [displayErrorVendor, setDisplayErrorVendor] = useState('none');
 
-  const [dispatchDate, setDispatchDate] = useState(moment().format('M/DD/YYYY'));
-  const [assignedTo, setAssignedTo] = useState('');
-  const [crew, setCrew] = useState('');
-  const [actionTaken, setActionTaken] = useState('');
-  const [remarks, setRemarks] = useState('');
-  const [status, setStatus] = useState('');
-  const [completionDate, setCompletionDate] = useState('');
+  const [countAttempt,setCountAttempt] = useState(0);
 
-  const [crewArr, setCrewArr] = useState([]);
-  const [remarksArr, setRemarksArr] = useState([]);
+  const [callStart, setCallStart] = useState();
+  const [callStartUnix, setCallStartUnix] = useState();
+  const [callEnd, setCallEnd] = useState();
+  const [callEndUnix, setCallEndUnix] = useState();
+
   const [statusArr, setStatusArr] = useState([]);
+  const [callbackStatus, setCallbackStatus] = useState('');
+
+  const [remarks, setRemarks] = useState('');
+  const [preferredDate, setPreferredDate] = useState('');
+
+  const handlePreferredDate = (e,picker) => {
+    var date = moment(picker.startDate).format('M/DD/YYYY');
+    setPreferredDate(date);
+  }
 
   const [open, setOpen] = useState(false);
   const handleClose = () => {
-    setCrew('');
     setOpen(false);
+    setCallStart();
+    setCallStartUnix();
+    setCallEnd();
+    setCallEndUnix();
+    setErrorBorderCallStart(false);
+    setErrorBorderCallEnd(false);
+    setCallbackStatus('');
+    setRemarks('');
+    setPreferredDate('');
+    
+    setSubmitDisabled(false);
+    setBtnDisabled(false);
+    setDisableForm(false);
     props.modalFunction({
       open: false,
       cancel: true
@@ -59,47 +76,87 @@ export default function BasicModal(props) {
   // const handleOpen = () => setOpen();
   
   const [submitBtn,setSubmitBtn] = useState('Submit');
+  const [submitDisabled,setSubmitDisabled] = useState(false);
   const [btnDisabled,setBtnDisabled] = useState(false);
   const [disableForm,setDisableForm] = useState(false);
-
-  const getCrewArr = async () => {
-
-    const result = await axios.get('/api/dispatch_request/getCrew');
-
-    setCrewArr(result.data);
-  };
-
-  const getRemarksArr = async () => {
-
-    const result = await axios.get('/api/dispatch_request/getRemarks');
-
-    setRemarksArr(result.data);
-  };
+  const [errorBorderCallStart, setErrorBorderCallStart] = useState(false);
+  const [errorBorderCallEnd, setErrorBorderCallEnd] = useState(false);
 
   const getStatusArr = async () => {
 
-    const result = await axios.get('/api/dispatch_request/getStatus');
+    const result = await axios.get('/api/callback_request/getCallbackStatus');
 
     setStatusArr(result.data);
   };
 
-  // const getDispatchData = async (dispId) => {
+  const getCallbackCount = async () => {
 
-  //   await axios.post('/api/dispatch_request/getDispatchDetails',{
-  //     id: dispId
-  //   })
-  //   .then( result => {
-  //     console.log('from NewActivity.js');
-  //     setDispatchData(result.data);
-  //   })
-  //   .catch( err => {
-  //     console.log(err)
-  //   });
-  // }
+    const data = {
+      callbackId: props.callbackDetails[0]
+    }
 
-  const handleDispatchDate = (date, label) => {
-    date = moment(date).format('M/DD/YYYY');
-    setDispatchDate(date);
+    const result = await axios.post('/api/callback_request/getCallbackCount',data);
+
+    setCountAttempt(result.data.Total+1);
+  };
+  
+  const handleCallStart = (date, label) => {
+    const time = moment(date).format('HH:mm');
+    const datetime = moment(date).unix();
+    setCallStart(time);
+    setCallStartUnix(datetime);
+
+    // console.log(callEnd);
+    if(callEndUnix){
+      if(datetime <= callEndUnix){
+        console.log("Valid Time");
+        setSubmitDisabled(false);
+        setErrorBorderCallStart(false);
+      }
+      else{
+        console.log("Invalid Time");
+        setSubmitDisabled(true);
+        setErrorBorderCallStart(true);
+      }
+    }
+  }
+
+  const openCallStart = () => {
+    const date = moment().format('YYYY-MM-DD HH:mm');
+    const time = moment(date).format('HH:mm');
+    const datetime = moment(date).unix();
+    setCallStart(time);
+    setCallStartUnix(datetime);
+  }
+
+  const handleCallEnd = (date, label) => {
+    const time = moment(date).format('HH:mm');
+    const datetime = moment(date).unix();
+    setCallEnd(time);
+
+    console.log('label => ' + label );
+    console.log('Call Start => ' + callStartUnix );
+    console.log(datetime);
+
+    if(datetime >= callStartUnix){
+      console.log("Valid Time");
+      setSubmitDisabled(false);
+      setErrorBorderCallEnd(false);
+    }
+    else{
+      console.log("Invalid Time");
+      setSubmitDisabled(true);
+      setErrorBorderCallEnd(true);
+    }
+
+  }
+
+  const openCallEnd = () => {
+    const date = moment().format('YYYY-MM-DD HH:mm');
+    const time = moment(date).format('HH:mm');
+    const datetime = moment(date).unix();
+    setCallEnd(time);
+    setCallEndUnix(datetime);
   }
 
   const handleCompletionDate = (date, label) => {
@@ -112,28 +169,52 @@ export default function BasicModal(props) {
     return date;
   }
 
-  useEffect(() => {
+  const timeLabel = {
+    label: {
+      color: "rgba(0, 0, 0, 0.26)",
+      cursor: "pointer",
+      display: "inline-flex",
+      fontSize: "14px",
+      transition: "0.3s ease all",
+      lineHeight: "1.428571429",
+      fontWeight: "400",
+      paddingLeft: "0"
+    }
+  };
 
-    // console.clear();
-    
+  // const addOneDay = () => {
+  //   const date = new Date();
+  //   date.setDate(date.getDate() + 1);
+  //   return date;
+  // }
+
+  const renderInput = (props,openCalendar,closeCalendar) => {
+
+    return <TextField
+            {...props}
+            error={props.errorBorder}
+            id="outlined-search"
+            variant="standard"
+            size="small"
+            label={props.label}
+            helperText={props.errorBorder==true?'Invalid Time':''}
+          />
+  }
+
+  useEffect(() => {
     
     if(props.open){
       // getDispatchData(props.dispId);
-      console.log("from NewActivity.js");
+      console.log("from NewCallback.js");
       
-      getCrewArr();
-      getRemarksArr();
       getStatusArr();
+      getCallbackCount();
     }
-
     setOpen(props.open);
-    
 
     return () => {
-      // setDispatchData([]);
-      setCrewArr([]);
-      setRemarksArr([]);
       setStatusArr([]);
+      setCountAttempt(0);
     }
 
   }, [props]);
@@ -142,16 +223,25 @@ export default function BasicModal(props) {
     
     e.preventDefault();
 
+    setSubmitDisabled(true);
     setBtnDisabled(true);
     setDisableForm(true);
     
-    const url = '/api/dispatch_request/insertActivity'
+    const url = '/api/callback_request/insertCallbackDetails';
+
+    const start = moment().format('YYYY-MM-DD') + ' ' + callStart;
+    const end = moment().format('YYYY-MM-DD') + ' ' + callEnd;
+    const aht = moment(end).diff(moment(start),'minutes');
+    
     const data = {
-      dispatch_id: props.dispDetails[0],
-      disp_date: moment(dispatchDate).format('YYYY-MM-DD'),
-      crew_id: crew
-      // or_date: moment(orDate).format('YYYY-MM-DD'),
-      // pickup_date: moment(pickUpDate).format('YYYY-MM-DD')
+      callback_id: props.callbackDetails[0],
+      status_id: callbackStatus,
+      attempt_count: countAttempt,
+      start: moment().format('YYYY-MM-DD') + ' ' + callStart,
+      end: moment().format('YYYY-MM-DD') + ' ' + callEnd,
+      aht: ('0'+Math.floor(aht / 60)).slice(-2) + ':' + ('00' + (aht % 60)).slice(-2),
+      remarks: remarks,
+      preferred_date: moment(preferredDate).format('YYYY-MM-DD')
     }
     
     // console.log(data)
@@ -162,7 +252,7 @@ export default function BasicModal(props) {
       // resolve(res);
       setTimeout(() => {
         toast.update(notifId, {
-          render: "Dispatch activity has been added", 
+          render: "Callback details have been added", 
           type: 'success',
           isLoading: false,
           delay:undefined,
@@ -181,9 +271,19 @@ export default function BasicModal(props) {
               open: false,
               cancel: false
             });
-            setCrew('');
+            setSubmitDisabled(false);
             setBtnDisabled(false);
             setDisableForm(false);
+
+            setCallStart();
+            setCallStartUnix();
+            setCallEnd();
+            setCallEndUnix();
+            setErrorBorderCallStart(false);
+            setErrorBorderCallEnd(false);
+            setCallbackStatus('');
+            setRemarks('');
+            setPreferredDate('')
           }
         });
       }, 2000);
@@ -228,7 +328,121 @@ export default function BasicModal(props) {
         <form onSubmit={submitData}>
           <Box sx={style}>
             <Typography id="modal-modal-title" variant="h6" component="h2">{pageTitle}</Typography>
+            <br/>
             <Grid container spacing={2}>
+              <Grid item xs={12} lg={12}>
+                <Chip 
+                  label={props.callbackDetails[2]} 
+                  variant="filled" 
+                  color='error'
+                  style={{fontSize:22}}
+                />
+              </Grid>
+              <Grid item xs={12} lg={12}>
+                <Chip 
+                  label={'Call Attempt ' + countAttempt} 
+                  variant="outlined" 
+                  style={{fontSize:12}}
+                />
+              </Grid>
+              <Grid item xs={12} lg={12}>
+                {/* <InputLabel>Call Start</InputLabel> */}
+                <FormControl sx={{ m: 1 }} variant="standard">
+                  <Datetime
+                    dateFormat={false}
+                    inputProps={{ 
+                      placeholder: "Select Call Start",
+                      required: true,
+                      className: '',
+                      label: 'Call Start',
+                      errorBorder: errorBorderCallStart
+                    }}
+                    timeFormat={'HH:mm'}
+                    onOpen={ openCallStart }
+                    onChange={handleCallStart}
+                    value={callStart}
+                    input={true}
+                    renderInput={renderInput}
+                  />
+                </FormControl>
+              </Grid>
+              
+              <Grid item xs={12} lg={12}>
+                <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                  <InputLabel id="demo-simple-select-standard-label">Status</InputLabel>
+                  <Select
+                    label="Status"
+                    value={callbackStatus}
+                    onChange={ e => setCallbackStatus(e.target.value) }
+                    required
+                  >
+                    
+                    {statusArr.map( status => (
+                      <MenuItem key={status.value} value={status.value}>
+                        {status.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} lg={12}>
+                <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                  <TextField 
+                    label="Remarks" 
+                    variant="standard" 
+                    multiline
+                    maxRows={4}
+                    value={remarks}
+                    onChange={ e => setRemarks(e.target.value) }
+                    disabled={disableForm}
+                  />
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} lg={4}>
+                <FormControl sx={{ m: 1 }} variant="standard">
+                  <DateRangePicker
+                    initialSettings={{
+                      singleDatePicker: true,
+                      drops: "up",
+                      minDate  : moment().add(1,'days').format('MM/DD/YYYY'),
+                      locale: {
+                        cancelLabel: 'Clear'
+                      }
+                    }}
+                    onApply={handlePreferredDate}
+                    onCancel={ (e,picker)=>setPreferredDate('')}
+                  >
+                    <TextField 
+                      label="Preferred Date" 
+                      variant="standard" 
+                      value={preferredDate}
+                      disabled={disableForm}
+                      required={ callbackStatus==2 || callbackStatus==10 ? true : false }
+                    />
+                  </DateRangePicker>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} lg={12}>
+                {/* <InputLabel>Call End</InputLabel> */}
+                <FormControl sx={{ m: 1 }} variant="standard">
+                  <Datetime
+                    dateFormat={false}
+                    inputProps={{ 
+                      placeholder: "Select Call End",
+                      required: true,
+                      className: '',
+                      label: 'Call End',
+                      errorBorder: errorBorderCallEnd
+                    }}
+                    timeFormat={'HH:mm'}
+                    onOpen={ openCallEnd }
+                    onChange={handleCallEnd}
+                    value={callEnd}
+                    input={true}
+                    renderInput={renderInput}
+                  />
+                </FormControl>
+              </Grid>
               <Grid item xs={12} lg={12}>
                 <Stack spacing={2} direction="row">
                   <Button 
@@ -236,7 +450,7 @@ export default function BasicModal(props) {
                     variant="outlined" 
                     color="primary" 
                     type="submit"
-                    disabled={btnDisabled}
+                    disabled={submitDisabled}
                     children="Submit"
                   />
                   <Button 
@@ -248,53 +462,6 @@ export default function BasicModal(props) {
                     children="Cancel"
                   />
                 </Stack>
-              </Grid>
-              <Grid item xs={12} lg={12}>
-                <Chip 
-                  label={props.dispDetails[4]} 
-                  variant="filled" 
-                  color='error'
-                  style={{fontSize:22}}
-                />
-              </Grid>
-              <Grid item xs={12} lg={12}>
-                <FormControl fullWidth sx={{ m: 1 }} variant="standard">
-                  <DateRangePicker
-                    initialSettings={{
-                      singleDatePicker: true,
-                      autoApply: true
-                    }}
-                    onCallback={handleDispatchDate}
-                  >
-                    <TextField 
-                      label="Dispatch Date" 
-                      variant="standard" 
-                      value={dispatchDate}
-                      disabled={disableForm}
-                      required
-                    />
-                  </DateRangePicker>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} lg={12}>
-                <FormControl fullWidth sx={{ m: 1 }} variant="standard">
-                  <InputLabel id="demo-simple-select-standard-label">Crew</InputLabel>
-                  <Select
-                    labelId="demo-simple-select-standard-label"
-                    id="demo-simple-select-standard"
-                    value={crew}
-                    onChange={ e => setCrew(e.target.value) }
-                    label="Crew"
-                    required
-                  >
-                    
-                    {crewArr.map( crew => (
-                      <MenuItem key={crew.value} value={crew.value}>
-                        {crew.label + ' ' + crew.technician}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
               </Grid>
             </Grid>
           </Box>

@@ -6,17 +6,29 @@ export default async function handler(req, res) {
 
     try {
         const sql = `
-            INSERT INTO dispatch_activity 
+            INSERT INTO otd_tbl 
             (
-                dispatch_id,disp_date,pickup_date,crew_id,encode_by
+              otd_date,
+              omt_tracking_num,
+              vendor_id,
+              concern,
+              crew_id,
+              start,
+              end,
+              agent_name,
+              encode_by
             ) 
-            VALUES (?,?,?,?,?)
+            VALUES (?,?,?,?,?,?,?,?)
         `;
         const valuesParam = [
-            req.body.dispatch_id,
-            req.body.disp_date,
-            req.body.pickup_date,
+            req.body.otd_date,
+            req.body.omt_tracking_num,
+            req.body.vendor_id,
+            req.body.concern,
             req.body.crew_id,
+            req.body.start,
+            req.body.end,
+            'Admin',
             'Admin'
         ];
 

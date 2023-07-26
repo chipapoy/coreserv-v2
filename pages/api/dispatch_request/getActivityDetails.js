@@ -18,7 +18,9 @@ export default async function handler(req, res) {
             disp.pickup_date,
             disp.remarks_id,
             disp.status_id,
-            disp.crew_id
+            disp.crew_id,
+            disp.abs_cbn_received_date,
+            disp.received_by
             FROM 
             dispatch_activity AS disp
             LEFT JOIN dispatch AS dispatch ON disp.dispatch_id = dispatch.id

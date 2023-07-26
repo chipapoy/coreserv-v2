@@ -26,9 +26,16 @@ const style = {
 
 export default function BasicModal(props) {
 
-  const recordName = props.deleteDetails.module == "Dispatch" ? props.deleteDetails.data[4] : props.deleteDetails.data[1];
+  const recordArr = {
+    Dispatch: props.deleteDetails.data[4],
+    RFP: props.deleteDetails.data[1],
+    Callback: props.deleteDetails.data[2],
+    OTD: props.deleteDetails.data[3]
+  };
 
-  const pageTitle = 'Delete ' + props.deleteDetails.module + ' - ' + recordName +  ' ?';
+  // const recordName = props.deleteDetails.module == "Dispatch" ? props.deleteDetails.data[4] : props.deleteDetails.data[1];
+
+  const pageTitle = 'Delete ' + props.deleteDetails.module + ' - ' + recordArr[props.deleteDetails.module] +  ' ?';
 
   const [deleteReason,setDeleteReason] = useState('');
 

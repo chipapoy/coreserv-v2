@@ -6,17 +6,21 @@ export default async function handler(req, res) {
 
     try {
         const sql = `
-            INSERT INTO dispatch_activity 
+            INSERT INTO callback_details_tbl 
             (
-                dispatch_id,disp_date,pickup_date,crew_id,encode_by
+              callback_id,status_id,attempt_count,start,end,aht,remarks,preferred_date,agent
             ) 
-            VALUES (?,?,?,?,?)
+            VALUES (?,?,?,?,?,?,?,?,?)
         `;
         const valuesParam = [
-            req.body.dispatch_id,
-            req.body.disp_date,
-            req.body.pickup_date,
-            req.body.crew_id,
+            req.body.callback_id,
+            req.body.status_id,
+            req.body.attempt_count,
+            req.body.start,
+            req.body.end,
+            req.body.aht,
+            req.body.remarks,
+            req.body.preferred_date,
             'Admin'
         ];
 

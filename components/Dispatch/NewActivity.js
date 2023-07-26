@@ -36,11 +36,8 @@ export default function BasicModal(props) {
   const [displayErrorVendor, setDisplayErrorVendor] = useState('none');
 
   const [dispatchDate, setDispatchDate] = useState(moment().format('M/DD/YYYY'));
-  const [assignedTo, setAssignedTo] = useState('');
+  const [pickupDate, setPickupDate] = useState(moment().format('M/DD/YYYY'));
   const [crew, setCrew] = useState('');
-  const [actionTaken, setActionTaken] = useState('');
-  const [remarks, setRemarks] = useState('');
-  const [status, setStatus] = useState('');
   const [completionDate, setCompletionDate] = useState('');
 
   const [crewArr, setCrewArr] = useState([]);
@@ -83,28 +80,15 @@ export default function BasicModal(props) {
     setStatusArr(result.data);
   };
 
-  // const getDispatchData = async (dispId) => {
 
-  //   await axios.post('/api/dispatch_request/getDispatchDetails',{
-  //     id: dispId
-  //   })
-  //   .then( result => {
-  //     console.log('from NewActivity.js');
-  //     setDispatchData(result.data);
-  //   })
-  //   .catch( err => {
-  //     console.log(err)
-  //   });
-  // }
-
-  const handleDispatchDate = (date, label) => {
-    date = moment(date).format('M/DD/YYYY');
+  const handleDispatchDate = (e, picker) => {
+    var date = moment(picker.startDate).format('M/DD/YYYY');
     setDispatchDate(date);
   }
 
-  const handleCompletionDate = (date, label) => {
-    date = moment(date).format('M/DD/YYYY');
-    setCompletionDate(date);
+  const handlePickupDate = (e, picker) => {
+    var date = moment(picker.startDate).format('M/DD/YYYY');
+    setPickupDate(date);
   }
 
   const dateViewFormat = date => {
@@ -149,6 +133,7 @@ export default function BasicModal(props) {
     const data = {
       dispatch_id: props.dispDetails[0],
       disp_date: moment(dispatchDate).format('YYYY-MM-DD'),
+      pickup_date: moment(pickupDate).format('YYYY-MM-DD'),
       crew_id: crew
       // or_date: moment(orDate).format('YYYY-MM-DD'),
       // pickup_date: moment(pickUpDate).format('YYYY-MM-DD')
@@ -262,14 +247,41 @@ export default function BasicModal(props) {
                   <DateRangePicker
                     initialSettings={{
                       singleDatePicker: true,
-                      autoApply: true
+                      drops: "up",
+                      locale: {
+                        cancelLabel: 'Clear'
+                      }
                     }}
-                    onCallback={handleDispatchDate}
+                    onApply={handleDispatchDate}
+                    onCancel={ (e,picker)=>setDispatchDate('')}
                   >
                     <TextField 
                       label="Dispatch Date" 
                       variant="standard" 
                       value={dispatchDate}
+                      disabled={disableForm}
+                      required
+                    />
+                  </DateRangePicker>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} lg={12}>
+                <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                  <DateRangePicker
+                    initialSettings={{
+                      singleDatePicker: true,
+                      drops: "up",
+                      locale: {
+                        cancelLabel: 'Clear'
+                      }
+                    }}
+                    onApply={handlePickupDate}
+                    onCancel={ (e,picker)=>setPickupDate('')}
+                  >
+                    <TextField 
+                      label="Pick-up Date" 
+                      variant="standard" 
+                      value={pickupDate}
                       disabled={disableForm}
                       required
                     />

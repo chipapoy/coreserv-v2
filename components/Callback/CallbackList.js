@@ -11,36 +11,37 @@ import AttachmentIcon from '@mui/icons-material/Attachment';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import UpdateActivity from "../../components/Dispatch/UpdateActivity";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const CallbackTable = (props) => {
 
   const [callbackDetailsArr,setCallbackDetailsArr] = useState([]);
-  const [openModal,setOpenModal] = useState({
-    open:false,
-    id:null
-  });
 
-  const [uploadModal,setUploadModal] = useState({
-    open:false,
-    type:null,
-    id:null
-  });
-
-  const getActivityArr = async (dispId) => {
+  const getCallbackArr = async (callbackId) => {
 
     await axios.post('/api/callback_request/getCallbackDetails',{
-      id: dispId
+      id: callbackId
     })
     .then( result => {
       setCallbackDetailsArr(result.data);
 
-      props.listCallback({
-        listCount: result.data.length
-      });
+      // props.listCallback({
+      //   listCount: result.data.length
+      // });
     })
     .catch( err => {
-      console.log(err)
+      toast.error('Error '+err+'. Please try again.', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        pauseOnFocusLoss: false,
+        draggable: false,
+        progress: undefined,
+        theme: "dark",
+      });
     });
   };
 
@@ -49,99 +50,67 @@ const CallbackTable = (props) => {
     return date;
   }
 
-  const updateActivity = (data) => {
-    // setOpenUpdateModal(true);
-    setOpenModal({
-      open:true,
-      id:data.id
-    });
+  const ahtFormat = aht => {
+    return aht.slice(0,-3);
   }
 
-  const viewAttachment = (type,data) => {
-    // setOpenUpdateModal(true);
-    setUploadModal({
-      open:true,
-      type:type,
-      id:data.id
-    });
-  }
-
-  const modalCallback = (data) => {
-    setOpenModal({
-      open:data.open,
-      id:null
-    });
-    // console.log(data);
-    getActivityArr(props.dispId);
-
-    props.updateCallback({
-      open: data.open,
-      cancel: data.cancel,
-      update: data.update
-    })
-  }
-
-  const uploadCallback = (data) => {
-    setUploadModal({
-      open:data.open,
-      type:null,
-      id:null
-    });
-    // console.log(data);
-    // getActivityArr(props.dispId);
+  const dateTimeViewFormat = date => {
+    date = date ? moment(date).format('M/DD/YYYY HH:mm') : 'n/a';
+    return date;
   }
 
   useEffect(() => {
 
-    if(props){
-      console.log("from ActivityList.js");
+    // console.log(props);
 
-      getActivityArr(props.dispId);
-
-      
+    if(props.callbackId){
+      // console.log("from CallbackList.js");
+      getCallbackArr(props.callbackId);
     }
-    
 
     return () => {
       setCallbackDetailsArr([]);
     }
 
-  }, [props]);
+  }, []);
 
   return (
-    // <TableContainer component={Paper}>
     <>
-      <Table sx={{ maxWidth: 1200 }} size="small" aria-label="simple table" variant="head">
+      <Table sx={{ maxWidth: 1800 }} size="small" aria-label="simple table" variant="head">
         <TableHead sx={{backgroundColor:'wheat'}}>
           <TableRow>
-            <TableCell align="left">Action</TableCell>
+            {/* <TableCell align="left">Action</TableCell> */}
             <TableCell align="left">Status</TableCell>
-            <TableCell align="left">Attempt Count</TableCell>
             <TableCell align="left">Start</TableCell>
             <TableCell align="left">End</TableCell>
-            <TableCell align="left">Agent</TableCell>
-            <TableCell align="left">Remarks</TableCell>
+            <TableCell align="left">AHT</TableCell>
+            <TableCell align="left">Attempt Count</TableCell>
+            <TableCell align="left" sx={{ width: 400 }}>Remarks</TableCell>
             <TableCell align="left">Preferred Date</TableCell>
+            <TableCell align="left">Agent</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {callbackDetailsArr.map((row) => (
+            
             <TableRow
               key={row.id}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
-              <TableCell align="left">
+              {/* <TableCell align="left">
                 <IconButton onClick={ () => updateActivity(row) }>
                   <EditIcon />
                 </IconButton>  
-              </TableCell>
-              <TableCell align="left">{row.status_id}</TableCell>
+              </TableCell> */}
+
+              <TableCell align="left">{row.callback_status}</TableCell>
+              <TableCell align="left">{dateTimeViewFormat(row.start)}</TableCell>
+              <TableCell align="left">{dateTimeViewFormat(row.end)}</TableCell>
+              <TableCell align="left">{ahtFormat(row.aht)}</TableCell>
               <TableCell align="left">{row.attempt_count}</TableCell>
-              <TableCell align="left">{row.start}</TableCell>
-              <TableCell align="left">{row.end}</TableCell>
-              <TableCell align="left">{row.agent_id}</TableCell>
               <TableCell align="left">{row.remarks}</TableCell>
-              <TableCell align="left">{row.preferred_date}</TableCell>
+              <TableCell align="left">{dateViewFormat(row.preferred_date)}</TableCell>
+              <TableCell align="left">{row.agent}</TableCell>
             </TableRow>
           ))}
         </TableBody>

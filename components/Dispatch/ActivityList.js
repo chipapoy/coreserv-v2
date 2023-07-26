@@ -29,6 +29,9 @@ const ActivityTable = (props) => {
     id:null
   });
 
+  const [tableHeadFontSize,setTableHeadFontSize] = useState(12);
+  const [tableBodyFontSize,setTableBodyFontSize] = useState(11);
+
   const getActivityArr = async (dispId) => {
 
     await axios.post('/api/dispatch_request/getActivityList',{
@@ -95,37 +98,38 @@ const ActivityTable = (props) => {
 
   useEffect(() => {
 
-    if(props){
+    if(props.dispId){
       console.log("from ActivityList.js");
 
       getActivityArr(props.dispId);
-
-      
     }
-    
 
     return () => {
       setActivityArr([]);
     }
 
-  }, [props]);
+  }, []);
 
   return (
     // <TableContainer component={Paper}>
     <>
-      <Table sx={{ maxWidth: 1200 }} size="small" aria-label="simple table" variant="head">
+      <Table sx={{ maxWidth: 1800 }} size="small" aria-label="simple table" variant="head">
         <TableHead sx={{backgroundColor:'wheat'}}>
           <TableRow>
-            <TableCell align="left">Action</TableCell>
-            <TableCell align="left">Dispatch Date</TableCell>
-            <TableCell align="left">Pickup Date</TableCell>
-            <TableCell align="left">Crew/Assigned to</TableCell>
-            <TableCell align="left">Action Taken</TableCell>
-            <TableCell align="left">Remarks</TableCell>
-            <TableCell align="left">Status</TableCell>
-            <TableCell align="left">Completion Date</TableCell>
-            <TableCell align="left">OR</TableCell>
-            <TableCell align="left">SOA</TableCell>
+            <TableCell align="left" sx={{fontSize:tableHeadFontSize}}>Action</TableCell>
+            <TableCell align="left" sx={{fontSize:tableHeadFontSize}}>Dispatch Date</TableCell>
+            <TableCell align="left" sx={{fontSize:tableHeadFontSize}}>Pickup Date</TableCell>
+            <TableCell align="left" sx={{fontSize:tableHeadFontSize}}>Crew/Assigned to</TableCell>
+            <TableCell align="left" sx={{fontSize:tableHeadFontSize}}>Action Taken</TableCell>
+            <TableCell align="left" sx={{fontSize:tableHeadFontSize}}>Remarks</TableCell>
+            <TableCell align="left" sx={{fontSize:tableHeadFontSize}}>Status</TableCell>
+            <TableCell align="left" sx={{fontSize:tableHeadFontSize}}>Completion Date</TableCell>
+            <TableCell align="left" sx={{fontSize:tableHeadFontSize}}>Received date by<br/>ABS-CBN</TableCell>
+            <TableCell align="left" sx={{fontSize:tableHeadFontSize}}>Received by<br/>ABS-CBN</TableCell>
+            <TableCell align="left" sx={{fontSize:tableHeadFontSize}}>Received date by<br/>Vergara</TableCell>
+            <TableCell align="left" sx={{fontSize:tableHeadFontSize}}>Received by<br/>Vergara</TableCell>
+            <TableCell align="left" sx={{fontSize:tableHeadFontSize}}>OR</TableCell>
+            <TableCell align="left" sx={{fontSize:tableHeadFontSize}}>SOA</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -139,14 +143,18 @@ const ActivityTable = (props) => {
                   <EditIcon />
                 </IconButton>  
               </TableCell>
-              <TableCell align="left">{dateViewFormat(row.disp_date)}</TableCell>
-              <TableCell align="left">{dateViewFormat(row.pickup_date)}</TableCell>
-              <TableCell align="left">{row.crew}</TableCell>
-              <TableCell align="left">{row.action_taken}</TableCell>
-              <TableCell align="left">{row.remarks !==null ? row.remarks : '-'}</TableCell>
-              <TableCell align="left">{row.status !==null ? row.status : '-'}</TableCell>
-              <TableCell align="left">{dateViewFormat(row.completion_date)}</TableCell>
-              <TableCell align="left">
+              <TableCell align="left" sx={{fontSize:tableBodyFontSize}}>{dateViewFormat(row.disp_date)}</TableCell>
+              <TableCell align="left" sx={{fontSize:tableBodyFontSize}}>{dateViewFormat(row.pickup_date)}</TableCell>
+              <TableCell align="left" sx={{fontSize:tableBodyFontSize}}>{row.crew}</TableCell>
+              <TableCell align="left" sx={{fontSize:tableBodyFontSize}}>{row.action_taken}</TableCell>
+              <TableCell align="left" sx={{fontSize:tableBodyFontSize}}>{row.remarks !==null ? row.remarks : '-'}</TableCell>
+              <TableCell align="left" sx={{fontSize:tableBodyFontSize}}>{row.status !==null ? row.status : '-'}</TableCell>
+              <TableCell align="left" sx={{fontSize:tableBodyFontSize}}>{dateViewFormat(row.completion_date)}</TableCell>
+              <TableCell align="left" sx={{fontSize:tableBodyFontSize}}>{dateViewFormat(row.abs_cbn_received_date)}</TableCell>
+              <TableCell align="left" sx={{fontSize:tableBodyFontSize}}>{row.received_by !==null ? row.received_by : '-'}</TableCell>
+              <TableCell align="left" sx={{fontSize:tableBodyFontSize}}>{dateViewFormat(row.vergara_received_date)}</TableCell>
+              <TableCell align="left" sx={{fontSize:tableBodyFontSize}}>{row.received_by_vergara !==null ? row.received_by_vergara : '-'}</TableCell>
+              <TableCell align="left" sx={{fontSize:tableBodyFontSize}}>
                 <IconButton onClick={ () => viewAttachment('OR',row) }>
                   <AttachmentIcon />
                 </IconButton> 

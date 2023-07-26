@@ -15,12 +15,15 @@ const Topmenu = () => {
                 <div className="right">
                     <ul className="nav nav-pills">
                         <li className="nav-item dropdown">
-                            <a className="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Reports</a>
+                            {/* <a className="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Reports</a>
                             <div className="dropdown-menu">
                                 <a className="dropdown-item" href="#"><i className="dropdown-icon fa fa-file-excel-o"></i> MS Excel</a>
-                                <a className="dropdown-item" href="#"><i className="dropdown-icon fa fa-file-word-o"></i> MS Word</a>
-                                <a className="dropdown-item" href="#"><i className="dropdown-icon fa fa-file-pdf-o"></i> PDF</a>
-                            </div>
+                                
+                            </div> */}
+
+                            <Link href="/reports" className="nav-link icon create_page xs-hide">
+                                Reports <i className="fa fa-line-chart" data-toggle="tooltip" data-placement="right" title="Reports"></i>
+                            </Link>
                         </li>
                     </ul>
                     <div className="notification d-flex">

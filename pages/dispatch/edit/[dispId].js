@@ -21,7 +21,7 @@ const Create = () => {
 
   const { dispId } = router.query;
 
-  const pageTitle = 'Update Dispatch ' + dispId;
+  const pageTitle = 'Update Dispatch';
 
   const [dispatchData,setDispatchData] = useState([]);
 
@@ -38,6 +38,8 @@ const Create = () => {
   const [orDate, setOrDate] = useState('');
   const [pickUpDate, setPickUpDate] = useState('');
 
+  let initialCheckDate = checkDate;
+
   const dateRangePickerOptions = {
     ranges: {
       'This Month': [
@@ -51,23 +53,23 @@ const Create = () => {
     }
   }
 
-  const handleCheckDate = (date, label) => {
-    date = moment(date).format('M/DD/YYYY');
+  const handleCheckDate = (e, picker) => {
+    var date = moment(picker.startDate).format('MM/DD/YYYY');
     setCheckDate(date);
   }
 
-  const handleOrDate = (date, label) => {
-    date = moment(date).format('M/DD/YYYY');
+  const handleOrDate = (e, picker) => {
+    var date = moment(picker.startDate).format('MM/DD/YYYY');
     setOrDate(date);
   }
 
-  const handlePickUpDate = (date, label) => {
-    date = moment(date).format('M/DD/YYYY');
+  const handlePickUpDate = (e, picker) => {
+    var date = moment(picker.startDate).format('MM/DD/YYYY');
     setPickUpDate(date);
   }
 
   const dateViewFormat = date => {
-    date = moment(date).format('M/DD/YYYY');
+    date = moment(date).format('MM/DD/YYYY');
     return date;
   }
 
@@ -82,7 +84,6 @@ const Create = () => {
       id: dispId
     })
     .then( result => {
-      // console.log(result.data)
       setDispatchData(result.data);
 
       setCheckNumber(result.data.check_num);
@@ -241,8 +242,8 @@ const Create = () => {
                       <Grid item xs={12} lg={12}>
                         <Chip 
                           label={dispatchData.vendor_name} 
-                          variant="outlined" 
-                          color='info'
+                          variant="filled" 
+                          color='error'
                           style={{fontSize:25}}
                         />
                       </Grid>
@@ -266,9 +267,15 @@ const Create = () => {
                           <DateRangePicker
                             initialSettings={{
                               singleDatePicker: true,
-                              autoApply: true
+                              locale: {
+                                cancelLabel: 'Clear'
+                              }
                             }}
-                            onCallback={handleCheckDate}
+                            onApply={handleCheckDate}
+                            onCancel={ (e,picker)=>{
+                              setCheckDate(checkDate);
+                              console.log(moment(dispatchData.check_date).format('YYYY-MM-DD'));
+                            }}
                           >
                             <TextField 
                               label="Check Date" 
@@ -330,9 +337,13 @@ const Create = () => {
                           <DateRangePicker
                             initialSettings={{
                               singleDatePicker: true,
-                              autoApply: true
+                              // minDate  : moment(orDate).format('MM/DD/YYYY'),
+                              locale: {
+                                cancelLabel: 'Clear'
+                              }
                             }}
-                            onCallback={handleOrDate}
+                            onApply={handleOrDate}
+                            onCancel={ (e,picker)=>setOrDate('')}
                           >
                             <TextField 
                               label="OR Date" 
@@ -349,9 +360,13 @@ const Create = () => {
                           <DateRangePicker
                             initialSettings={{
                               singleDatePicker: true,
-                              autoApply: true
+                              // minDate  : moment(pickUpDate).format('MM/DD/YYYY'),
+                              locale: {
+                                cancelLabel: 'Clear'
+                              }
                             }}
-                            onCallback={handlePickUpDate}
+                            onApply={handlePickUpDate}
+                            onCancel={ (e,picker)=>setPickUpDate('')}
                           >
                             <TextField 
                               label="Pick-up Date" 

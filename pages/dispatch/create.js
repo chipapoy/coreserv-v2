@@ -52,18 +52,18 @@ const Create = () => {
     }
   }
 
-  const handleCheckDate = (date, label) => {
-    date = moment(date).format('M/DD/YYYY');
+  const handleCheckDate = (e, picker) => {
+    var date = moment(picker.startDate).format('M/DD/YYYY');
     setCheckDate(date);
   }
 
-  const handleOrDate = (date, label) => {
-    date = moment(date).format('M/DD/YYYY');
+  const handleOrDate = (e, picker) => {
+    var date = moment(picker.startDate).format('M/DD/YYYY');
     setOrDate(date);
   }
 
-  const handlePickUpDate = (date, label) => {
-    date = moment(date).format('M/DD/YYYY');
+  const handlePickUpDate = (e, picker) => {
+    var date = moment(picker.startDate).format('M/DD/YYYY');
     setPickUpDate(date);
   }
 
@@ -272,9 +272,13 @@ const Create = () => {
                           <DateRangePicker
                             initialSettings={{
                               singleDatePicker: true,
-                              autoApply: true
+                              minDate  : moment().format('MM/DD/YYYY'),
+                              locale: {
+                                cancelLabel: 'Clear'
+                              }
                             }}
-                            onCallback={handleCheckDate}
+                            onApply={handleCheckDate}
+                            onCancel={ (e,picker)=>setCheckDate('')}
                           >
                             <TextField 
                               label="Check Date" 
@@ -337,9 +341,13 @@ const Create = () => {
                           <DateRangePicker
                             initialSettings={{
                               singleDatePicker: true,
-                              autoApply: true
+                              minDate  : moment().format('MM/DD/YYYY'),
+                              locale: {
+                                cancelLabel: 'Clear'
+                              }
                             }}
-                            onCallback={handleOrDate}
+                            onApply={handleOrDate}
+                            onCancel={ (e,picker)=>setOrDate('')}
                           >
                             <TextField 
                               label="OR Date" 
@@ -356,9 +364,13 @@ const Create = () => {
                           <DateRangePicker
                             initialSettings={{
                               singleDatePicker: true,
-                              autoApply: true
+                              minDate  : moment().format('MM/DD/YYYY'),
+                              locale: {
+                                cancelLabel: 'Clear'
+                              }
                             }}
-                            onCallback={handlePickUpDate}
+                            onApply={handlePickUpDate}
+                            onCancel={ (e,picker)=>setPickUpDate('')}
                           >
                             <TextField 
                               label="Pick-up Date" 

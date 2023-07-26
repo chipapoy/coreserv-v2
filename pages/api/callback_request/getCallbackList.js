@@ -18,6 +18,8 @@ export default async function handler(req, res) {
                 FROM 
                 callback_details_tbl AS cb_details
                 LEFT JOIN callback_status_tbl AS status ON cb_details.status_id = status.id
+                WHERE
+                callback_id = cb.id
                 ORDER BY cb_details.id DESC LIMIT 1
             ) AS status
             FROM 

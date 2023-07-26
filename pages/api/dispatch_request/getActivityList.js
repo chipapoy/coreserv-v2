@@ -14,7 +14,11 @@ export default async function handler(req, res) {
             remarks.remarks,
             status.status,
             disp.completion_date,
-            disp.pickup_date
+            disp.pickup_date,
+            disp.abs_cbn_received_date,
+            disp.received_by,
+            disp.vergara_received_date,
+            disp.received_by_vergara
             FROM 
             dispatch_activity AS disp
             LEFT JOIN activity_remarks_tbl AS remarks ON disp.remarks_id = remarks.id
