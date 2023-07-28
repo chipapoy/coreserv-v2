@@ -8,13 +8,17 @@ export default async function handler(req, res) {
         const sql = `
             UPDATE otd_tbl SET
             concern = ?,
-            crew_id = ?
+            crew_id = ?,
+            update_by = ?,
+            update_date = ?
             WHERE
             id = ?
         `;
         const valuesParam = [
             req.body.concern,
             req.body.crew_id,
+            req.body.user,
+            req.body.update_date,
             req.body.id
         ];
 

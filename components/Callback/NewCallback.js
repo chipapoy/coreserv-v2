@@ -241,7 +241,9 @@ export default function BasicModal(props) {
       end: moment().format('YYYY-MM-DD') + ' ' + callEnd,
       aht: ('0'+Math.floor(aht / 60)).slice(-2) + ':' + ('00' + (aht % 60)).slice(-2),
       remarks: remarks,
-      preferred_date: moment(preferredDate).format('YYYY-MM-DD')
+      preferred_date: moment(preferredDate).format('YYYY-MM-DD'),
+      user: sessionStorage.name,
+      encode_date:  moment().format('YYYY-MM-DD HH:mm')
     }
     
     // console.log(data)

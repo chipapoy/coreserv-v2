@@ -90,7 +90,9 @@ const Create = () => {
         const url = '/api/callback_request/createCallback'
         const data = {
           vendor_id: vendor.value,
-          omt_tracking_num: omtTrackingNumber
+          omt_tracking_num: omtTrackingNumber,
+          user: sessionStorage.name,
+          encode_date:  moment().format('YYYY-MM-DD HH:mm')
         }
         
         // console.log(data)

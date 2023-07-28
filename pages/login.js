@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import Link from 'next/link';
 import Image from "next/image";
 import { useEffect, useState } from 'react';
@@ -7,6 +8,8 @@ import axios from 'axios';
 
 const Login = () => {
 
+    const router = useRouter();
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -14,26 +17,36 @@ const Login = () => {
 
         event.preventDefault();
 
-        axios.post('/api/checkLogin', {
+        axios.post('/api/access_request/checkLogin', {
             email: email,
             password: md5(password)
         })
         .then(function (res) {
-            // console.log(response);
+            console.log(res);
             // console.log(res.data.result.email)
-            sessionStorage.id = res.data.result.id;
-            sessionStorage.name = res.data.result.name;
-            sessionStorage.token = res.data.result.remember_token;
+            sessionStorage.id = res.data.id;
+            sessionStorage.name = res.data.name;
+            sessionStorage.token = res.data.remember_token;
 
+            console.log(sessionStorage);
             
+            router.push("/dashboard");
 
         })
         .catch(function (error) {
-            console.log(error.response);
+            console.log(error);
             sessionStorage.clear();
         });
 
     }
+
+    useEffect(() => {
+
+        if(sessionStorage.length > 0){
+            router.push("/dashboard");
+        }
+    
+      }, []);
 
     return (
         <div className="auth col-md-3 mx-auto ">
@@ -64,7 +77,7 @@ const Login = () => {
                                 />
                             </div>
                             <div className="form-group">
-                                <label className="form-label">Password<a href="forgot-password.html" className="float-right small">I forgot password</a></label>
+                                <label className="form-label">Password</label>
                                 <input 
                                     type="password" 
                                     className="form-control" 

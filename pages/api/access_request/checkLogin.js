@@ -6,23 +6,23 @@ export default async function handler(req, res) {
 
     try {
         const sql = `
-            UPDATE callback_tbl SET
-            omt_tracking_num = ?,
-            update_by = ?,
-            update_date = ?
+            SELECT
+            *
+            FROM
+            users
             WHERE
-            id = ?
+            email = ?
+            AND
+            password = ?
         `;
         const valuesParam = [
-            req.body.omt_tracking_num,
-            req.body.user,
-            req.body.update_date,
-            req.body.id
+            req.body.email,
+            req.body.password
         ];
 
         const result = await query({query: sql, values: valuesParam});
 
-        res.status(200).json(result)
+        res.status(200).json(result[0])
 
     } 
     catch (error) {

@@ -7,8 +7,8 @@ export default async function handler(req, res) {
     try {
         const sql = `
             INSERT INTO vendors 
-            (vendor_name,vendor_code,tin_num,address,bldg_name,city,contact_person,contact_num,tier_segment,kam,account,account_type,payment_terms,soa_type,bank_details,remarks,moa_duration,moa_status,terms,auto_renewal,with_penalty,sky_contact_id) 
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+            (vendor_name,vendor_code,tin_num,address,bldg_name,city,contact_person,contact_num,tier_segment,kam,account,account_type,payment_terms,soa_type,bank_details,remarks,moa_duration,moa_status,terms,auto_renewal,with_penalty,sky_contact_id,encode_by,encode_date) 
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
         `;
         const valuesParam = [
             req.body.vendor_name,
@@ -32,7 +32,9 @@ export default async function handler(req, res) {
             req.body.terms,
             req.body.auto_renew,
             req.body.with_penalty,
-            req.body.sky_contact_id
+            req.body.sky_contact_id,
+            req.body.user,
+            req.body.encode_date
         ];
 
         const result = await query({query: sql, values: valuesParam});

@@ -374,7 +374,9 @@ const Create = () => {
             penalty_over_interest: rfpType.value == 1 ? penaltyOverInterest : 0,
             surcharge: rfpType.value == 1 ? surcharge: 0,
             misc: rfpType.value == 1 ? misc : 0,
-            total_amount: rfpType.value == 1 ? totalAmount : 0
+            total_amount: rfpType.value == 1 ? totalAmount : 0,
+            user: sessionStorage.name,
+            encode_date:  moment().format('YYYY-MM-DD HH:mm')
         }
         
         // console.log(data)

@@ -17,9 +17,10 @@ export default async function handler(req, res) {
               end,
               aht,
               agent_name,
-              encode_by
+              encode_by,
+              encode_date
             ) 
-            VALUES (?,?,?,?,?,?,?,?,?,?)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?)
         `;
         const valuesParam = [
             req.body.otd_date,
@@ -30,8 +31,9 @@ export default async function handler(req, res) {
             req.body.start,
             req.body.end,
             req.body.aht,
-            'Admin',
-            'Admin'
+            req.body.user,
+            req.body.user,
+            req.body.encode_date
         ];
 
         const result = await query({query: sql, values: valuesParam});

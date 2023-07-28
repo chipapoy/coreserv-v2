@@ -8,14 +8,15 @@ export default async function handler(req, res) {
         const sql = `
             INSERT INTO callback_tbl 
             (
-                omt_tracking_num,vendor_id,encode_by
+                omt_tracking_num,vendor_id,encode_by,encode_date
             ) 
-            VALUES (?,?,?)
+            VALUES (?,?,?,?)
         `;
         const valuesParam = [
             req.body.omt_tracking_num,
             req.body.vendor_id,
-            'Admin'
+            req.body.user,
+            req.body.encode_date
         ];
 
         const result = await query({query: sql, values: valuesParam});

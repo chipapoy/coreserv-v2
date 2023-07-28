@@ -238,13 +238,14 @@ const Create = () => {
     formData.append('file',fileUpload.file);
     formData.append('ref_id',rfpId);
     formData.append('rec_type','rfp');
+    formData.append('user',sessionStorage.name);
 
     const uploadId = toast.loading("Uploading...");
 
     console.log(formData)
 
     axios.post(
-        '/api/testUpload',
+        '/api/rfp_request/uploadFileRfp',
         formData,
         {
             headers: {
@@ -384,7 +385,9 @@ const Create = () => {
       penalty_over_interest: rfpType == 'Electrical' ? penaltyOverInterest : 0,
       surcharge: rfpType == 'Electrical' ? surcharge : 0,
       misc: rfpType == 'Electrical' ? misc : 0,
-      total_amount: rfpType == 'Electrical' ? totalAmount: 0
+      total_amount: rfpType == 'Electrical' ? totalAmount: 0,
+      user: sessionStorage.name,
+      update_date:  moment().format('YYYY-MM-DD HH:mm')
     }
 
     const notifId = toast.loading("Please wait...");

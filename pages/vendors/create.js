@@ -152,7 +152,9 @@ const Create = () => {
             terms: e.target.terms.value,
             auto_renew: autoRenew.value === undefined ? '' : autoRenew.value,
             with_penalty: withPenalty.value === undefined ? '' : withPenalty.value,
-            sky_contact_id: skyContactId.value === undefined ? '' : skyContactId.value
+            sky_contact_id: skyContactId.value === undefined ? '' : skyContactId.value,
+            user: sessionStorage.name,
+            encode_date:  moment().format('YYYY-MM-DD HH:mm')
         }
 
         // console.log(data);

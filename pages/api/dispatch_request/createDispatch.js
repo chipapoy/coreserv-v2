@@ -8,7 +8,7 @@ export default async function handler(req, res) {
         const sql = `
             INSERT INTO dispatch 
             (
-                vendor_id,check_num,check_date,ref_num,amount,pickup_date,or_num,or_date,encode_by
+                vendor_id,check_num,check_date,ref_num,amount,pickup_date,or_num,or_date,encode_by,encode_date
             ) 
             VALUES (?,?,?,?,?,?,?,?,?)
         `;
@@ -21,7 +21,8 @@ export default async function handler(req, res) {
             req.body.pickup_date,
             req.body.or_number,
             req.body.or_date,
-            'Admin'
+            req.body.user,
+            req.body.encode_date
         ];
 
         const result = await query({query: sql, values: valuesParam});

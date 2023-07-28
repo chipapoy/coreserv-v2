@@ -92,7 +92,9 @@ const Create = () => {
     const url = '/api/callback_request/updateCallback'
     const data = {
       id: callbackId,
-      omt_tracking_num: omtTrackingNumber
+      omt_tracking_num: omtTrackingNumber,
+      user: sessionStorage.name,
+      update_date:  moment().format('YYYY-MM-DD HH:mm')
     }
 
     const notifId = toast.loading("Please wait...");

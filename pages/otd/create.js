@@ -197,7 +197,9 @@ const Create = () => {
           crew_id: crew,
           aht: ('0'+Math.floor(aht / 60)).slice(-2) + ':' + ('00' + (aht % 60)).slice(-2),
           start: start,
-          end: end
+          end: end,
+          user: sessionStorage.name,
+          encode_date:  moment().format('YYYY-MM-DD HH:mm')
         }
         
         // console.log(data);

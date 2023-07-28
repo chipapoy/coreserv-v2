@@ -24,7 +24,7 @@ export default async function handler(req, res) {
             req.body.module,
             "delete",
             JSON.stringify(req.body),
-            "admin"
+            req.body.user
         ];
 
         const result_update = await query({query: sql_update, values: valuesParam_update});

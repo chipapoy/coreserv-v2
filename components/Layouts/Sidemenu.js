@@ -1,8 +1,20 @@
+import { useRouter } from 'next/router';
+import { useState,useEffect } from 'react';
 import Link from "next/link";
 import Image from "next/image";
 import { Typography } from "@mui/material";
 
 const Sidemenu = () => {
+
+  // const router = useRouter();
+
+  // useEffect(() => {
+
+  //     if(sessionStorage.length === 0){
+  //         router.push("/login");
+  //     }
+  
+  // }, []);
 
 
   return (

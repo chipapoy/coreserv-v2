@@ -132,7 +132,9 @@ const Create = () => {
           ref_number: refNumber,
           or_number: orNumber,
           or_date: moment(orDate).format('YYYY-MM-DD'),
-          pickup_date: moment(pickUpDate).format('YYYY-MM-DD')
+          pickup_date: moment(pickUpDate).format('YYYY-MM-DD'),
+          user: sessionStorage.name,
+          encode_date:  moment().format('YYYY-MM-DD HH:mm')
         }
         
         // console.log(data)

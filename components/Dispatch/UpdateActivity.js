@@ -194,7 +194,8 @@ export default function UpdateActivityModal(props) {
       abs_cbn_received_date: moment(receivedDateByAbsCbn).format('YYYY-MM-DD'),
       received_by: receivedBy,
       vergara_received_date: moment(receivedDateByVergara).format('YYYY-MM-DD'),
-      received_by_vergara: receivedByVergara
+      received_by_vergara: receivedByVergara,
+      user: sessionStorage.name
       // pickup_date: moment(pickUpDate).format('YYYY-MM-DD')
     }
     

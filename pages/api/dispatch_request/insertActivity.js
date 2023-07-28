@@ -17,7 +17,7 @@ export default async function handler(req, res) {
             req.body.disp_date,
             req.body.pickup_date,
             req.body.crew_id,
-            'Admin'
+            req.body.user
         ];
 
         const result = await query({query: sql, values: valuesParam});

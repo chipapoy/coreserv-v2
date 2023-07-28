@@ -23,7 +23,13 @@ const Index = () => {
 
     const [data,setData] = useState([]);
 
-    const pageTitle = 'Dashboard'
+    const pageTitle = 'Dashboard';
+
+    useEffect(() => {
+
+        console.log(sessionStorage);
+    
+    }, []);
 
     return (
         <>

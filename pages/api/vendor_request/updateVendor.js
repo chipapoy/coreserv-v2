@@ -28,7 +28,9 @@ export default async function handler(req, res) {
             terms = ?,
             auto_renewal = ?,
             with_penalty = ?,
-            sky_contact_id = ?
+            sky_contact_id = ?,
+            update_by = ?,
+            update_date = ?
             WHERE
             id = ?
         `;
@@ -55,6 +57,8 @@ export default async function handler(req, res) {
             req.body.auto_renew,
             req.body.with_penalty,
             req.body.sky_contact_id,
+            req.body.user,
+            req.body.update_date,
             req.body.id
         ];
 

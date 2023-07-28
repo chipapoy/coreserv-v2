@@ -41,7 +41,7 @@ export default async (req, res) => {
           files.file.path.split('\\')[2],
           files.file.size / (1024 * 1024),
           files.file.path,
-          'admin'
+          fields.user,
       ];
   
       const queryResult =  await query({query: sql, values: valuesParam});

@@ -208,7 +208,9 @@ const Create = () => {
     const data = {
       id: otdId,
       concern: concern,
-      crew_id: crew
+      crew_id: crew,
+      user: sessionStorage.name,
+      update_date:  moment().format('YYYY-MM-DD HH:mm')
     }
 
     const notifId = toast.loading("Please wait...");

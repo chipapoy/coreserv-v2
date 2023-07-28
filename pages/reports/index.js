@@ -22,6 +22,11 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import ExportDispatch from "../../components/Report/ExportDispatch";
+import ExportCheck from "../../components/Report/ExportCheck";
+import ExportOtd from "../../components/Report/ExportOtd";
+import ExportCallback from "../../components/Report/ExportCallback";
+import ExportRfp from "../../components/Report/ExportRfp";
 
 const Index = () => {
 
@@ -35,6 +40,13 @@ const Index = () => {
   const [rowsDispatch,setRowDispatch] = useState([]);
   const [rowsCheck,setRowCheck] = useState([]);
   const [rowsOtd,setRowOtd] = useState([]);
+  const [rowsCallback,setRowCallback] = useState([]);
+  const [rowsRfpElectrical,setRowRfpElectrical] = useState([]);
+  const [rowsRfpRental,setRowRfpRental] = useState([]);
+
+  const [resultData,setResultData] = useState([]);
+  
+  let tableHeaderColor = 'wheat';
 
   const [disableForm,setDisableForm] = useState(false);
 
@@ -59,10 +71,6 @@ const Index = () => {
 
     console.log(start + ' ' + end);
   }
-
-  function createData(name, values) {
-    return { name, values };
-  }
   
   const getDispatchPivotData = async (data) => {
 
@@ -70,8 +78,12 @@ const Index = () => {
     .then( result => {
       setRowDispatch(result.data.dispatchPivot);
       setRowCheck(result.data.checkPivot);
-      setRowOtd(result.data.otdPivot)
+      setRowOtd(result.data.otdPivot);
+      setRowCallback(result.data.callbackPivot);
+      setRowRfpElectrical(result.data.rfpElectricalPivot);
+      setRowRfpRental(result.data.rfpRentalPivot);
 
+      setResultData(result.data);
       console.log(result.data);
     })
     .catch( err => {
@@ -90,6 +102,53 @@ const Index = () => {
 
   }
 
+  let dispatchColumns = [
+    {
+      id: 1,
+      displayName: 'Vendor'
+    },{
+      id: 2,
+      displayName: 'Dispatch Date'
+    },
+  ]
+
+// EXPORT BUTTON
+  const exportDispatchRaw = (e) => {
+    e.preventDefault();
+    console.log(resultData.dispatchRaw);
+
+  }
+
+  const exportCheckRaw = (e) => {
+    e.preventDefault();
+    console.log(resultData.checkRaw);
+
+  }
+
+  const exportOtdRaw = (e) => {
+    e.preventDefault();
+    console.log(resultData.otdRaw);
+
+  }
+
+  const exportCallbackRaw = (e) => {
+    e.preventDefault();
+    console.log(resultData.callbackRaw);
+
+  }
+
+  const exportRfpElectricalRaw = (e) => {
+    e.preventDefault();
+    console.log(resultData.rfpElectricalRaw);
+
+  }
+
+  const exportRfpRentalRaw = (e) => {
+    e.preventDefault();
+    console.log(resultData.rfpRentalRaw);
+
+  }
+
   return (
     <>
       <Head>
@@ -103,100 +162,224 @@ const Index = () => {
             <div className="section-body">
               <div className="container-fluid">
                 <h4>{pageTitle}</h4>
-                <Grid container spacing={2}>
-                  <Grid item xs={2} lg={2}>
-                    <FormControl  sx={{ m: 1 }} variant="standard">
-                      <DateRangePicker
-                        initialSettings={dateRangePickerOptions}
-                        onCallback={handleReportDate}
-                      >
-                        <TextField 
-                          label="Select Report Date" 
-                          variant="standard" 
-                          value={reportDate.start + ' - ' + reportDate.end}
-                          disabled={disableForm}
-                        />
-                      </DateRangePicker>
-                      
-                    </FormControl>
+                <Box sx={{m:1 }}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={12} lg={12}>
+                      <Paper elevation={1} sx={{p:2}} >
+                          <DateRangePicker
+                            initialSettings={dateRangePickerOptions}
+                            onCallback={handleReportDate}
+                          >
+                            <TextField 
+                              label="Select Report Date" 
+                              variant="standard" 
+                              value={reportDate.start + ' - ' + reportDate.end}
+                              disabled={disableForm}
+                            />
+                          </DateRangePicker>
+                          <Button 
+                            disableElevation
+                            variant="outlined" 
+                            color="primary" 
+                            type="submit"
+                            children="Submit"
+                            onClick={submitData}
+                          />
+                      </Paper>
+                    </Grid>
                   </Grid>
-                  <Grid item xs={6} lg={6}>
-                    <Button 
-                      disableElevation
-                      variant="outlined" 
-                      color="primary" 
-                      type="submit"
-                      children="Submit"
-                      onClick={submitData}
-                    />
+                </Box>
+                <Box sx={{m:1 }}>
+                  <Grid container spacing={2}>
+                    <Grid item xs={6} lg={6}>
+                      <Grid item xs={12} lg={12}>
+                          <TableContainer component={Paper}>
+                            <Table sx={{ minWidth: 650 }} size="small" aria-label="simple table">
+                              <TableHead sx={{ backgroundColor: tableHeaderColor }}>
+                                <TableRow>
+                                  <TableCell>Pivot Dispatch</TableCell>
+                                  <TableCell align="right">{moment(reportDate.start).format('D-MMM-YY') +' to '+ moment(reportDate.end).format('D-MMM-YY')}</TableCell>
+                                </TableRow>
+                              </TableHead>
+                              <TableBody>
+                                {rowsDispatch.map((row) => (
+                                  <TableRow
+                                    key={row.status}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                  >
+                                    <TableCell component="th" scope="row">{row.status}</TableCell>
+                                    <TableCell align="right">{row.total}</TableCell>
+                                  </TableRow>
+                                ))}
+                                <TableRow>
+                                  <TableCell >
+                                    <ExportDispatch
+                                      data={resultData.dispatchRaw}
+                                    />
+                                  </TableCell>
+                                </TableRow>
+                              </TableBody>
+                            </Table>
+                          </TableContainer>
+                      </Grid><br/>
+                      <Grid item xs={12} lg={12}>
+                          <TableContainer component={Paper}>
+                            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                              <TableHead  sx={{ backgroundColor: tableHeaderColor }} >
+                                <TableRow>
+                                  <TableCell>Pivot Check</TableCell>
+                                  <TableCell align="right">{moment(reportDate.start).format('D-MMM-YY') +' to '+ moment(reportDate.end).format('D-MMM-YY')}</TableCell>
+                                </TableRow>
+                              </TableHead>
+                              <TableBody>
+                                {rowsCheck.map((row) => (
+                                  <TableRow
+                                    key={row.remarks}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                  >
+                                    <TableCell component="th" scope="row">{row.remarks}</TableCell>
+                                    <TableCell align="right">{row.total}</TableCell>
+                                  </TableRow>
+                                ))}
+                                <TableRow>
+                                  <TableCell>
+                                    <ExportCheck
+                                      data={resultData.checkRaw}
+                                    />
+                                  </TableCell>
+                                </TableRow>
+                              </TableBody>
+                            </Table>
+                          </TableContainer>
+                      </Grid><br/>
+                      <Grid item xs={12} lg={12}>
+                          <TableContainer component={Paper}>
+                            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                              <TableHead  sx={{ backgroundColor: tableHeaderColor }} >
+                                <TableRow>
+                                  <TableCell>Pivot OTD</TableCell>
+                                  <TableCell align="right">{moment(reportDate.start).format('D-MMM-YY') +' to '+ moment(reportDate.end).format('D-MMM-YY')}</TableCell>
+                                </TableRow>
+                              </TableHead>
+                              <TableBody>
+                                {rowsOtd.map((row) => (
+                                  <TableRow
+                                    key={row.concern}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                  >
+                                    <TableCell component="th" scope="row">{row.concern}</TableCell>
+                                    <TableCell align="right">{row.total}</TableCell>
+                                  </TableRow>
+                                ))}
+                                <TableRow>
+                                  <TableCell>
+                                    <ExportOtd
+                                      data={resultData.otdRaw}
+                                    />
+                                  </TableCell>
+                                </TableRow>
+                              </TableBody>
+                            </Table>
+                          </TableContainer>
+                      </Grid><br/>
+                      <Grid item xs={12} lg={12}>
+                          <TableContainer component={Paper}>
+                            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                              <TableHead  sx={{ backgroundColor: tableHeaderColor }} >
+                                <TableRow>
+                                  <TableCell>Pivot Callback</TableCell>
+                                  <TableCell align="right">{moment(reportDate.start).format('D-MMM-YY') +' to '+ moment(reportDate.end).format('D-MMM-YY')}</TableCell>
+                                </TableRow>
+                              </TableHead>
+                              <TableBody>
+                                {rowsCallback.map((row) => (
+                                  <TableRow
+                                    key={row.status}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                  >
+                                    <TableCell component="th" scope="row">{row.status}</TableCell>
+                                    <TableCell align="right">{row.total}</TableCell>
+                                  </TableRow>
+                                ))}
+                                <TableRow>
+                                  <TableCell>
+                                    <ExportCallback
+                                      data={resultData.callbackRaw}
+                                    />
+                                  </TableCell>
+                                </TableRow>
+                              </TableBody>
+                            </Table>
+                          </TableContainer>
+                      </Grid>
+                    </Grid>
+
+                    <Grid item xs={6} lg={6}>
+                      <Grid item xs={12} lg={12}>
+                          <TableContainer component={Paper}>
+                            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                              <TableHead  sx={{ backgroundColor: tableHeaderColor }} >
+                                <TableRow>
+                                  <TableCell>Pivot RFP Electrical</TableCell>
+                                  <TableCell align="right">{moment(reportDate.start).format('D-MMM-YY') +' to '+ moment(reportDate.end).format('D-MMM-YY')}</TableCell>
+                                </TableRow>
+                              </TableHead>
+                              <TableBody>
+                                {rowsRfpElectrical.map((row) => (
+                                  <TableRow
+                                    key={row.vendor_name}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                  >
+                                    <TableCell component="th" scope="row">{row.vendor_name}</TableCell>
+                                    <TableCell align="right">{row.total}</TableCell>
+                                  </TableRow>
+                                ))}
+                                <TableRow>
+                                  <TableCell>
+                                    <ExportRfp
+                                      data={resultData.rfpElectricalRaw}
+                                      rfpType="Electrical"
+                                    />
+                                  </TableCell>
+                                </TableRow>
+                              </TableBody>
+                            </Table>
+                          </TableContainer>
+                      </Grid><br/>
+                      <Grid item xs={12} lg={12}>
+                          <TableContainer component={Paper}>
+                            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                              <TableHead  sx={{ backgroundColor: tableHeaderColor }} >
+                                <TableRow>
+                                  <TableCell>Pivot RFP Rental</TableCell>
+                                  <TableCell align="right">{moment(reportDate.start).format('D-MMM-YY') +' to '+ moment(reportDate.end).format('D-MMM-YY')}</TableCell>
+                                </TableRow>
+                              </TableHead>
+                              <TableBody>
+                                {rowsRfpRental.map((row) => (
+                                  <TableRow
+                                    key={row.vendor_name}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                  >
+                                    <TableCell component="th" scope="row">{row.vendor_name}</TableCell>
+                                    <TableCell align="right">{row.total}</TableCell>
+                                  </TableRow>
+                                ))}
+                                <TableRow>
+                                  <TableCell>
+                                    <ExportRfp
+                                      data={resultData.rfpRentalRaw}
+                                      rfpType="Rental"
+                                    />
+                                  </TableCell>
+                                </TableRow>
+                              </TableBody>
+                            </Table>
+                          </TableContainer>
+                      </Grid>
+                    </Grid>
                   </Grid>
-                </Grid>
-                
-                <TableContainer component={Paper}>
-                  <Table sx={{ minWidth: 650 }} size="small" aria-label="simple table">
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Pivot Dispatch</TableCell>
-                        <TableCell align="right">{moment(reportDate.start).format('D-MMM-YY') +' to '+ moment(reportDate.end).format('D-MMM-YY')}</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {rowsDispatch.map((row) => (
-                        <TableRow
-                          key={row.status}
-                          sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                        >
-                          <TableCell component="th" scope="row">{row.status}</TableCell>
-                          <TableCell align="right">{row.total}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-                <br></br>
-                <TableContainer component={Paper}>
-                  <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Pivot Check</TableCell>
-                        <TableCell align="right">{moment(reportDate.start).format('D-MMM-YY') +' to '+ moment(reportDate.end).format('D-MMM-YY')}</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {rowsCheck.map((row) => (
-                        <TableRow
-                          key={row.remarks}
-                          sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                        >
-                          <TableCell component="th" scope="row">{row.remarks}</TableCell>
-                          <TableCell align="right">{row.total}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-                <br></br>
-                <TableContainer component={Paper}>
-                  <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Pivot OTD</TableCell>
-                        <TableCell align="right">{moment(reportDate.start).format('D-MMM-YY') +' to '+ moment(reportDate.end).format('D-MMM-YY')}</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {rowsOtd.map((row) => (
-                        <TableRow
-                          key={row.concern}
-                          sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                        >
-                          <TableCell component="th" scope="row">{row.concern}</TableCell>
-                          <TableCell align="right">{row.total}</TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
+                </Box>
               </div>
             </div>
           </div>    

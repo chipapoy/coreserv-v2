@@ -8,9 +8,9 @@ export default async function handler(req, res) {
         const sql = `
             INSERT INTO callback_details_tbl 
             (
-              callback_id,status_id,attempt_count,start,end,aht,remarks,preferred_date,agent
+              callback_id,status_id,attempt_count,start,end,aht,remarks,preferred_date,agent,encode_date
             ) 
-            VALUES (?,?,?,?,?,?,?,?,?)
+            VALUES (?,?,?,?,?,?,?,?,?,?)
         `;
         const valuesParam = [
             req.body.callback_id,
@@ -21,7 +21,8 @@ export default async function handler(req, res) {
             req.body.aht,
             req.body.remarks,
             req.body.preferred_date,
-            'Admin'
+            req.body.user,
+            req.body.encode_date
         ];
 
         const result = await query({query: sql, values: valuesParam});
