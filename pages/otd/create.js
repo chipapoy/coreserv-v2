@@ -198,7 +198,7 @@ const Create = () => {
           aht: ('0'+Math.floor(aht / 60)).slice(-2) + ':' + ('00' + (aht % 60)).slice(-2),
           start: start,
           end: end,
-          user: sessionStorage.name,
+          user: localStorage.name,
           encode_date:  moment().format('YYYY-MM-DD HH:mm')
         }
         

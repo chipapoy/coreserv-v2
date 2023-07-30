@@ -135,7 +135,7 @@ export default function BasicModal(props) {
       disp_date: moment(dispatchDate).format('YYYY-MM-DD'),
       pickup_date: moment(pickupDate).format('YYYY-MM-DD'),
       crew_id: crew,
-      user: sessionStorage.name
+      user: localStorage.name
       // or_date: moment(orDate).format('YYYY-MM-DD'),
       // pickup_date: moment(pickUpDate).format('YYYY-MM-DD')
     }

@@ -166,7 +166,9 @@ const Create = () => {
       crew_id: crew,
       action_taken: actionTaken,
       remarks_id: remarks,
-      status_id: status
+      status_id: status,
+      user: localStorage.name,
+      encode_date:  moment().format('YYYY-MM-DD HH:mm')
       // or_date: moment(orDate).format('YYYY-MM-DD'),
       // pickup_date: moment(pickUpDate).format('YYYY-MM-DD')
     }

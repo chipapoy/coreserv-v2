@@ -93,7 +93,7 @@ const Create = () => {
     const data = {
       id: callbackId,
       omt_tracking_num: omtTrackingNumber,
-      user: sessionStorage.name,
+      user: localStorage.name,
       update_date:  moment().format('YYYY-MM-DD HH:mm')
     }
 

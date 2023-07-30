@@ -18,10 +18,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import CallbackStatusTable from "../../components/Settings/Tables/CallbackStatusTable";
 
 const Settings = () => {
 
@@ -30,31 +27,7 @@ const Settings = () => {
   return (
     <Grid container spacing={2}>
       <Grid item xs={6}>
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} size="small" aria-label="simple table">
-            <TableHead sx={{ backgroundColor: tableHeaderColor }}>
-              <TableRow>
-                <TableCell colSpan={3}>CALLBACK STATUS List</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Action</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Active</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {/* {rowsDispatch.map((row) => (
-                <TableRow
-                  key={row.status}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                >
-                  <TableCell component="th" scope="row">{row.status}</TableCell>
-                  <TableCell align="right">{row.total}</TableCell>
-                </TableRow>
-              ))} */}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <CallbackStatusTable />
       </Grid>
 
     </Grid>

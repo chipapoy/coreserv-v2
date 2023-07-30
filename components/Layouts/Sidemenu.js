@@ -10,7 +10,7 @@ const Sidemenu = () => {
 
   // useEffect(() => {
 
-  //     if(sessionStorage.length === 0){
+  //     if(localStorage.length === 0){
   //         router.push("/login");
   //     }
   

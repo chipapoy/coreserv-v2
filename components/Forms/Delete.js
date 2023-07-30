@@ -71,7 +71,7 @@ export default function BasicModal(props) {
       rec_id: props.deleteDetails.data[0],
       module: props.deleteDetails.module,
       reason: deleteReason,
-      user: sessionStorage.name
+      user: localStorage.name
     }
     
     console.log(data);

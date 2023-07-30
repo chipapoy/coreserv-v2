@@ -27,6 +27,8 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
+
+import UserSettings from "../../components/Settings/UserSettings";
 import VendorSettings from "../../components/Settings/VendorSettings";
 import DispatchSettings from "../../components/Settings/DispatchSettings";
 import RfpSettings from "../../components/Settings/RfpSettings";
@@ -36,34 +38,6 @@ import CallbackSettings from "../../components/Settings/CallbackSettings";
 const Index = () => {
 
   const pageTitle = 'Settings';
-
-  const [reportDate, setReportDate] = useState({
-    start: moment().format('M/DD/YYYY'),
-    end: moment().format('M/DD/YYYY'),
-  });
-
-  const [rowsDispatch,setRowDispatch] = useState([]);
-  const [rowsCheck,setRowCheck] = useState([]);
-  const [rowsOtd,setRowOtd] = useState([]);
-  const [rowsCallback,setRowCallback] = useState([]);
-  const [rowsRfpElectrical,setRowRfpElectrical] = useState([]);
-  const [rowsRfpRental,setRowRfpRental] = useState([]);
-
-  const [resultData,setResultData] = useState([]);
-  
-  let tableHeaderColor = 'wheat';
-  
-  const getDispatchPivotData = async (data) => {
-
-    await axios.post('/api/report_request/getReports',data)
-    .then( result => {
-      setResultData(result.data);
-      console.log(result.data);
-    })
-    .catch( err => {
-      console.log(err)
-    });
-  }
 
   return (
     <>
@@ -80,6 +54,18 @@ const Index = () => {
                 <h4>{pageTitle}</h4>
                 <Box sx={{m:1 }}>
                   <div>
+                    <Accordion>
+                      <AccordionSummary
+                        expandIcon={<ExpandMoreIcon />}
+                        id="vendor-settings"
+                      >
+                        <Typography>User Settings</Typography>
+                      </AccordionSummary>
+                      <AccordionDetails>
+                        <UserSettings />
+                      </AccordionDetails>
+                    </Accordion>
+
                     <Accordion>
                       <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}

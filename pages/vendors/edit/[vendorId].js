@@ -256,7 +256,7 @@ const Update = () => {
             auto_renew: autoRenew.value,
             with_penalty: withPenalty.value,
             sky_contact_id: skyContactId.value,
-            user: sessionStorage.name,
+            user: localStorage.name,
             update_date:  moment().format('YYYY-MM-DD HH:mm')
         }
 

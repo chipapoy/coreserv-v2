@@ -8,16 +8,17 @@ export default async function handler(req, res) {
         const sql = `
             INSERT INTO dispatch_activity 
             (
-                dispatch_id,disp_date,pickup_date,crew_id,encode_by
+                dispatch_id,disp_date,pickup_date,crew_id,encode_by,encode_date
             ) 
-            VALUES (?,?,?,?,?)
+            VALUES (?,?,?,?,?,?)
         `;
         const valuesParam = [
             req.body.dispatch_id,
             req.body.disp_date,
             req.body.pickup_date,
             req.body.crew_id,
-            req.body.user
+            req.body.user,
+            req.body.encode_date
         ];
 
         const result = await query({query: sql, values: valuesParam});

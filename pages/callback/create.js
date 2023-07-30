@@ -91,7 +91,7 @@ const Create = () => {
         const data = {
           vendor_id: vendor.value,
           omt_tracking_num: omtTrackingNumber,
-          user: sessionStorage.name,
+          user: localStorage.name,
           encode_date:  moment().format('YYYY-MM-DD HH:mm')
         }
         

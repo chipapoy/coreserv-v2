@@ -238,7 +238,7 @@ const Create = () => {
     formData.append('file',fileUpload.file);
     formData.append('ref_id',rfpId);
     formData.append('rec_type','rfp');
-    formData.append('user',sessionStorage.name);
+    formData.append('user',localStorage.name);
 
     const uploadId = toast.loading("Uploading...");
 
@@ -386,7 +386,7 @@ const Create = () => {
       surcharge: rfpType == 'Electrical' ? surcharge : 0,
       misc: rfpType == 'Electrical' ? misc : 0,
       total_amount: rfpType == 'Electrical' ? totalAmount: 0,
-      user: sessionStorage.name,
+      user: localStorage.name,
       update_date:  moment().format('YYYY-MM-DD HH:mm')
     }
 

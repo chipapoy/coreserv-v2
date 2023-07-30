@@ -153,7 +153,7 @@ const Create = () => {
             auto_renew: autoRenew.value === undefined ? '' : autoRenew.value,
             with_penalty: withPenalty.value === undefined ? '' : withPenalty.value,
             sky_contact_id: skyContactId.value === undefined ? '' : skyContactId.value,
-            user: sessionStorage.name,
+            user: localStorage.name,
             encode_date:  moment().format('YYYY-MM-DD HH:mm')
         }
 

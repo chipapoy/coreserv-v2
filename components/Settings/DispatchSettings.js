@@ -1,13 +1,4 @@
-import Link from 'next/link';
-import Head from 'next/head'
-import { useEffect, useState } from 'react';
-import axios from 'axios';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import {
-  List,ListItem,ListItemText,Divider,Grid,Stack,
-  Button,ButtonGroup,Box,Tabs,Tab,Typography,Input,
-  TextField,FormControl,InputAdornment
-} from '@mui/material';
+import {Grid} from '@mui/material';
 import 'bootstrap-daterangepicker/daterangepicker.css';
 import 'react-toastify/dist/ReactToastify.css';
 import moment from 'moment';
@@ -22,6 +13,8 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import RemarksTable from "../../components/Settings/Tables/RemarksTable";
+import StatusTable from "../../components/Settings/Tables/StatusTable";
 
 const Settings = () => {
 
@@ -30,59 +23,11 @@ const Settings = () => {
   return (
     <Grid container spacing={2}>
       <Grid item xs={6}>
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} size="small" aria-label="simple table">
-            <TableHead sx={{ backgroundColor: tableHeaderColor }}>
-              <TableRow>
-                <TableCell colSpan={3}>REMARKS List</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Action</TableCell>
-                <TableCell>Remark</TableCell>
-                <TableCell>Active</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {/* {rowsDispatch.map((row) => (
-                <TableRow
-                  key={row.status}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                >
-                  <TableCell component="th" scope="row">{row.status}</TableCell>
-                  <TableCell align="right">{row.total}</TableCell>
-                </TableRow>
-              ))} */}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <RemarksTable />
       </Grid>
 
       <Grid item xs={6}>
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} size="small" aria-label="simple table">
-            <TableHead sx={{ backgroundColor: tableHeaderColor }}>
-              <TableRow>
-                <TableCell colSpan={3}>STATUS List</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Action</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Active</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {/* {rowsDispatch.map((row) => (
-                <TableRow
-                  key={row.status}
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                >
-                  <TableCell component="th" scope="row">{row.status}</TableCell>
-                  <TableCell align="right">{row.total}</TableCell>
-                </TableRow>
-              ))} */}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <StatusTable />
       </Grid>
 
     </Grid>

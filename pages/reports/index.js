@@ -102,53 +102,6 @@ const Index = () => {
 
   }
 
-  let dispatchColumns = [
-    {
-      id: 1,
-      displayName: 'Vendor'
-    },{
-      id: 2,
-      displayName: 'Dispatch Date'
-    },
-  ]
-
-// EXPORT BUTTON
-  const exportDispatchRaw = (e) => {
-    e.preventDefault();
-    console.log(resultData.dispatchRaw);
-
-  }
-
-  const exportCheckRaw = (e) => {
-    e.preventDefault();
-    console.log(resultData.checkRaw);
-
-  }
-
-  const exportOtdRaw = (e) => {
-    e.preventDefault();
-    console.log(resultData.otdRaw);
-
-  }
-
-  const exportCallbackRaw = (e) => {
-    e.preventDefault();
-    console.log(resultData.callbackRaw);
-
-  }
-
-  const exportRfpElectricalRaw = (e) => {
-    e.preventDefault();
-    console.log(resultData.rfpElectricalRaw);
-
-  }
-
-  const exportRfpRentalRaw = (e) => {
-    e.preventDefault();
-    console.log(resultData.rfpRentalRaw);
-
-  }
-
   return (
     <>
       <Head>

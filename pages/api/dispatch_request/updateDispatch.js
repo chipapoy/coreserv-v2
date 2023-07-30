@@ -13,7 +13,9 @@ export default async function handler(req, res) {
             amount = ?,
             or_num = ?,
             or_date = ?,
-            pickup_date = ?
+            pickup_date = ?,
+            update_by = ?,
+            update_date = ?
             WHERE
             id = ?
         `;
@@ -25,6 +27,8 @@ export default async function handler(req, res) {
           req.body.or_number,
           req.body.or_date,
           req.body.pickup_date,
+          req.body.user,
+          req.body.update_date,
           req.body.id
         ];
 

@@ -71,7 +71,7 @@ export default function BasicModal(props) {
     formData.append('file',fileUpload.file);
     formData.append('ref_id',props.uploadModal.id);
     formData.append('rec_type',props.uploadModal.type);
-    formData.append('user',sessionStorage.name);
+    formData.append('user',localStorage.name);
 
     const uploadId = toast.loading("Uploading...");
 

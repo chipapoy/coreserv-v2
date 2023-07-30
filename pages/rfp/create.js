@@ -375,7 +375,7 @@ const Create = () => {
             surcharge: rfpType.value == 1 ? surcharge: 0,
             misc: rfpType.value == 1 ? misc : 0,
             total_amount: rfpType.value == 1 ? totalAmount : 0,
-            user: sessionStorage.name,
+            user: localStorage.name,
             encode_date:  moment().format('YYYY-MM-DD HH:mm')
         }
         

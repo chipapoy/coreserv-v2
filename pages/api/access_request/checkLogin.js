@@ -14,6 +14,8 @@ export default async function handler(req, res) {
             email = ?
             AND
             password = ?
+            AND
+            is_active = 1
         `;
         const valuesParam = [
             req.body.email,
@@ -22,7 +24,7 @@ export default async function handler(req, res) {
 
         const result = await query({query: sql, values: valuesParam});
 
-        res.status(200).json(result[0])
+        res.status(200).json(result)
 
     } 
     catch (error) {

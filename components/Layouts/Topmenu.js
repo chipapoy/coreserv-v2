@@ -19,14 +19,14 @@ const Topmenu = () => {
 
     useEffect(() => {
 
-        if(sessionStorage.length === 0){
+        if(localStorage.length === 0){
             router.push("/login");
         }
         else{
           setUserDetails({
-            id: sessionStorage.id,
-            user: sessionStorage.name,
-            token: sessionStorage.token
+            id: localStorage.id,
+            user: localStorage.name,
+            token: localStorage.token
           })
         }
     
@@ -41,7 +41,7 @@ const Topmenu = () => {
                 <h1 className="page-title">CORESERV - MDU DATABASE</h1>
               </div>
               <div className="right">
-                <div className="notification d-flex">
+                {/* <div className="notification d-flex">
                   <div className="dropdown d-flex">
                     <a className="nav-link icon d-none d-md-flex btn btn-default btn-icon ml-1" data-toggle="dropdown">
                       <i className="fa fa-bell"></i>
@@ -68,7 +68,7 @@ const Topmenu = () => {
                       <a href="" className="dropdown-item text-center text-muted-dark readall">Mark all as read</a>
                     </div>
                   </div>
-                </div>
+                </div> */}
                 <ul className="nav nav-pills">
                   <li className="nav-item dropdown">
                     {/* <a className="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Reports</a>
@@ -99,7 +99,7 @@ const Topmenu = () => {
                     <span className="">{userDetails.user}</span>
                   </a>
                   <div className="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                    <Link href="#" className="dropdown-item"><i className="dropdown-icon fe fe-user"></i> Profile</Link>
+                    <Link href="/profile" className="dropdown-item"><i className="dropdown-icon fe fe-user"></i> Profile</Link>
                     <div className="dropdown-divider"></div>
                     <Link href="/logout" className="dropdown-item" ><i className="dropdown-icon fe fe-log-out"></i> Sign out</Link>
                   </div>
