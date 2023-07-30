@@ -2,11 +2,10 @@ import { useRouter } from 'next/router';
 import { useState,useEffect } from 'react';
 import Link from "next/link";
 import Script from 'next/script';
-import {
-    List,ListItem,ListItemText,Divider,Grid,Stack,
-    Button,ButtonGroup,Box,Tabs,Tab,Typography,Input,
-    TextField,FormControl,InputAdornment
-  } from '@mui/material';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import SettingsIcon from '@mui/icons-material/Settings';
+import PermIdentityIcon from '@mui/icons-material/PermIdentity';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const Topmenu = () => {
 
@@ -78,7 +77,7 @@ const Topmenu = () => {
                     </div> */}
 
                     <Link href="/reports" className="nav-link icon create_page xs-hide">
-                        Reports <i className="fa fa-line-chart" data-toggle="tooltip" data-placement="right" title="Reports"></i>
+                        Reports <BarChartIcon />
                     </Link>
                   </li>
                   <li className="nav-item dropdown">
@@ -89,7 +88,7 @@ const Topmenu = () => {
                     </div> */}
 
                     <Link href="/settings" className="nav-link icon create_page xs-hide">
-                        Settings <i className="fe fe-settings" data-toggle="tooltip" data-placement="right" title="Settings"></i>
+                        Settings <SettingsIcon /> 
                     </Link>
                   </li>
                 </ul>
@@ -99,9 +98,13 @@ const Topmenu = () => {
                     <span className="">{userDetails.user}</span>
                   </a>
                   <div className="dropdown-menu dropdown-menu-right dropdown-menu-arrow">
-                    <Link href="/profile" className="dropdown-item"><i className="dropdown-icon fe fe-user"></i> Profile</Link>
+                    <Link href="/profile" className="dropdown-item">
+                      <PermIdentityIcon /> Profile
+                    </Link>
                     <div className="dropdown-divider"></div>
-                    <Link href="/logout" className="dropdown-item" ><i className="dropdown-icon fe fe-log-out"></i> Sign out</Link>
+                    <Link href="/logout" className="dropdown-item" >
+                      <LogoutIcon /> Sign out
+                    </Link>
                   </div>
                 </div>
               </div>

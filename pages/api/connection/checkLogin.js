@@ -1,4 +1,4 @@
-// import mysql from 'mysql2/promise';
+
 import { query } from "./connection";
 
 export default async function handler(req, res) {

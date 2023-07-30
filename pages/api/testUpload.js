@@ -8,7 +8,7 @@ export const config = {
   },
 };
 
-export default async (req, res) => {
+export default handler = async (req, res) => {
 
   const form = new formidable.IncomingForm();
 

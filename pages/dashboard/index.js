@@ -2,22 +2,16 @@ import Link from 'next/link';
 import Image from "next/image";
 import Head from 'next/head'
 import { useEffect, useState } from 'react';
-import md5 from 'md5';
 import axios from 'axios';
 import Topmenu from "../../components/Layouts/Topmenu";
 import Sidemenu from "../../components/Layouts/Sidemenu";
-import MUIDataTable, { TableHead } from "mui-datatables";
-import { ThemeProvider, createTheme } from '@mui/material/styles';
-import TableRow from '@mui/material/TableRow';
-import TableCell from '@mui/material/TableCell';
-import IconButton from "@mui/material/IconButton";
-import AddIcon from "@mui/icons-material/Add";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
-// import ReceiptIcon from "@mui/icons-material/Receipt";
-import Tooltip from "@mui/material/Tooltip";
-import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import TwoWheelerIcon from '@mui/icons-material/TwoWheeler';
+import PaymentsIcon from '@mui/icons-material/Payments';
+import ApartmentIcon from '@mui/icons-material/Apartment';
+import PhoneCallbackIcon from '@mui/icons-material/PhoneCallback';
+import PermPhoneMsgIcon from '@mui/icons-material/PermPhoneMsg';
+import RotateRightIcon from '@mui/icons-material/RotateRight';
 
 const Index = () => {
 
@@ -88,7 +82,7 @@ const Index = () => {
                     <div className="row">
                         <div className="col-xl-4 col-lg-4 col-md-12">
                             <div className="box-icon md rounded bg-info mb-4">
-                              <i className="fa fa-building"></i>
+                              <ApartmentIcon />
                             </div>
                             <p className=" mb-0 "> Total MDU Dispatch</p>
                             <h2 className="mb-2">
@@ -97,7 +91,7 @@ const Index = () => {
                         </div>
                         <div className="col-xl-4 col-lg-4 col-md-12">
                             <div className="box-icon md rounded bg-blue mb-4">
-                              <i className="fa fa-motorcycle"></i> 
+                              <TwoWheelerIcon />
                             </div>
                             <p className=" mb-0 "> Total Dispatch Activity</p>
                             <h2 className="mb-2">
@@ -106,7 +100,7 @@ const Index = () => {
                         </div>
                         <div className="col-xl-4 col-lg-4 col-md-12">
                             <div className="box-icon md rounded bg-green mb-4">
-                              <i className="fa fa-refresh"></i>
+                              <RotateRightIcon />
                             </div>
                             <p className=" mb-0 "> On-going Dispatch</p>
                             <h2 className="mb-2">
@@ -135,7 +129,7 @@ const Index = () => {
                     <div className="row">
                         <div className="col-xl-4 col-lg-4 col-md-12">
                             <div className="box-icon md rounded bg-red mb-4">
-                              <i className="fa fa-phone"></i>
+                              <PhoneCallbackIcon />
                             </div>
                             <p className=" mb-0 "> Total Callback</p>
                             <h2 className="mb-2">
@@ -144,7 +138,7 @@ const Index = () => {
                         </div>
                         <div className="col-xl-4 col-lg-4 col-md-12">
                             <div className="box-icon md rounded bg-orange mb-4">
-                              <i className="fa fa-phone-square"></i> 
+                              <PermPhoneMsgIcon />
                             </div>
                             <p className=" mb-0 "> Total OTD</p>
                             <h2 className="mb-2">
