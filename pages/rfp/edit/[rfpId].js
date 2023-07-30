@@ -465,15 +465,13 @@ const Create = () => {
                             color="primary" 
                             type="submit"
                             // onClick={submitData}
-                            children="Update"
-                          />
+                          >Update</Button>
                           <Button 
                             disableElevation
                             variant="outlined" 
                             color="error" 
                             onClick={()=>router.push('/rfp')}
-                            children="Cancel"
-                          />
+                          >Cancel</Button>
                         </Stack>
                       </Grid>
                     </Grid>
@@ -919,8 +917,12 @@ const Create = () => {
                             <ListItem divider='true' alignItems="flex-start">
                               <FormControl sx={{ m: 1 }} variant="standard">
                                 <ButtonGroup variant="outlined" aria-label="outlined primary button group" disableElevation>
-                                  <Button variant='text' children={<input type="file" name="file_upload" onChange={onFileChange} accept=".pdf,.jpg"  />} />
-                                  <Button onClick={onUpload} disabled={uploadBtnDisabled} children="Upload" />
+                                  <Button variant='text'>
+                                    <input type="file" name="file_upload" onChange={onFileChange} accept=".pdf,.jpg"  />
+                                  </Button>
+                                  <Button onClick={onUpload} disabled={uploadBtnDisabled}>
+                                    Upload
+                                  </Button>
                                 </ButtonGroup>
                               </FormControl>
                             </ListItem>

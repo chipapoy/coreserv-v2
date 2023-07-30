@@ -169,8 +169,12 @@ export default function BasicModal(props) {
         </Typography>
         <FormControl fullWidth sx={{ m: 2 }} variant="standard">
             <ButtonGroup variant="outlined" aria-label="outlined primary button group" disableElevation>
-              <Button variant='text' children={<input type="file" name="file_upload" onChange={onFileChange} accept=".pdf,.jpg"  />} />
-              <Button onClick={onUpload} disabled={uploadBtnDisabled} children="Upload" />
+              <Button variant='text'>
+                <input type="file" name="file_upload" onChange={onFileChange} accept=".pdf,.jpg"  />
+              </Button>
+              <Button onClick={onUpload} disabled={uploadBtnDisabled}>
+                Upload
+              </Button>
             </ButtonGroup>
         </FormControl>
       </>
@@ -265,11 +269,10 @@ export default function BasicModal(props) {
                   variant="outlined" 
                   color="error" 
                   onClick={ handleClose }
-                  children="Close"
                   sx={{
                     float: 'right'
                   }}
-                />  
+                >Close</Button>  
               </Typography>
             <Typography variant="body2" sx={{ mt: 2 }} gutterBottom>
               <UploadForm data={attachmentsArr} checking={checkFile} />

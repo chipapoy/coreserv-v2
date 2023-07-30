@@ -43,9 +43,8 @@ const Export = (props) => {
           size='small'
           variant="contained" 
           color="primary" 
-          children="Export Raw"
           disabled={ dataArr ? (dataArr.length == 0 ? true : false) : true }
-        />
+        >Export Raw</Button>
       </CsvDownloader>
     </div>
   );

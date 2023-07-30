@@ -135,9 +135,8 @@ const Index = () => {
                             variant="outlined" 
                             color="primary" 
                             type="submit"
-                            children="Submit"
                             onClick={submitData}
-                          />
+                          >Submit</Button>
                       </Paper>
                     </Grid>
                   </Grid>

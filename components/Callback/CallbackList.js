@@ -72,7 +72,7 @@ const CallbackTable = (props) => {
       setCallbackDetailsArr([]);
     }
 
-  }, []);
+  }, [props.callbackId]);
 
   return (
     <>

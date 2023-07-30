@@ -288,16 +288,14 @@ const AddModal = (props) => {
                   color="primary" 
                   type="submit"
                   disabled={submitDisabled}
-                  children="Submit"
-                />
+                >Submit</Button>
                 <Button 
                   disableElevation
                   variant="outlined" 
                   color="error" 
                   disabled={btnDisabled}
                   onClick={ handleClose }
-                  children="Cancel"
-                />
+                >Cancel</Button>
               </Stack>
             </Grid>
           </Grid>
@@ -528,16 +526,14 @@ const EditModal = (props) => {
                   color="primary" 
                   type="submit"
                   disabled={submitDisabled}
-                  children="Submit"
-                />
+                >Submit</Button>
                 <Button 
                   disableElevation
                   variant="outlined" 
                   color="error" 
                   disabled={btnDisabled}
                   onClick={ handleClose }
-                  children="Cancel"
-                />
+                >Cancel</Button>
               </Stack>
             </Grid>
           </Grid>

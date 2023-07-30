@@ -4,8 +4,8 @@ export async function query({query,values = []}){
 
     const connection = await mysql.createConnection({
         host: 'localhost',
-        user: 'root',
-        password: '',
+        user: 'coreserv_db',
+        password: 'coreserv_db',
         database: 'coreserv_db'
     });
 

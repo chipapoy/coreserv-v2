@@ -66,7 +66,7 @@ const Login = () => {
         router.push("/dashboard");
     }
   
-  }, []);
+  }, [router]);
 
   return (
     <>

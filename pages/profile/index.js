@@ -323,8 +323,7 @@ const Index = () => {
                                   color="primary" 
                                   type="submit"
                                   disabled={btnDisabled}
-                                  children="Save"
-                                />
+                                >Save</Button>
                               </ListItem>
                             </List>
                           </form>

@@ -19,7 +19,7 @@ const Logout = () => {
         router.push("/login");
       }
     
-    }, []);
+    }, [router]);
 
     return (
         <>Logging out..</>

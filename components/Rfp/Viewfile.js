@@ -111,11 +111,10 @@ export default function BasicModal(props) {
                   variant="outlined" 
                   color="error" 
                   onClick={ handleClose }
-                  children="Close"
                   sx={{
                     float: 'right'
                   }}
-                />  
+                >Close</Button>  
               </Typography>
             <Typography variant="body2" sx={{ mt: 2 }} gutterBottom>
               <Soa data={props.data} />

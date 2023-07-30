@@ -218,16 +218,14 @@ const Create = () => {
                             color="primary" 
                             type="submit"
                             disabled={btnDisabled}
-                            children="Save"
-                          />
+                          >Save</Button>
                           <Button 
                             disableElevation
                             variant="outlined" 
                             color="error" 
                             disabled={btnDisabled}
                             onClick={()=>router.push('/dispatch')}
-                            children="Cancel"
-                          />
+                          >Cancel</Button>
                         </Stack>
                       </Grid>
                       <Grid item xs={12} lg={12}>
