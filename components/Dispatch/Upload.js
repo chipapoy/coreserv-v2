@@ -299,6 +299,7 @@ export default function BasicModal(props) {
             onClose: () => {
               // router.push("/rfp");
               // getRfpUpload(rfpId);
+              getAttachments();
             }
           });
         }, 2000);
