@@ -52,18 +52,18 @@ const Create = () => {
     }
   }
 
-  const handleCheckDate = (date, label) => {
-    date = moment(date).format('M/DD/YYYY');
+  const handleCheckDate = (e, picker) => {
+    var date = moment(picker.startDate).format('M/DD/YYYY');
     setCheckDate(date);
   }
 
-  const handleOrDate = (date, label) => {
-    date = moment(date).format('M/DD/YYYY');
+  const handleOrDate = (e, picker) => {
+    var date = moment(picker.startDate).format('M/DD/YYYY');
     setOrDate(date);
   }
 
-  const handlePickUpDate = (date, label) => {
-    date = moment(date).format('M/DD/YYYY');
+  const handlePickUpDate = (e, picker) => {
+    var date = moment(picker.startDate).format('M/DD/YYYY');
     setPickUpDate(date);
   }
 
@@ -132,7 +132,9 @@ const Create = () => {
           ref_number: refNumber,
           or_number: orNumber,
           or_date: moment(orDate).format('YYYY-MM-DD'),
-          pickup_date: moment(pickUpDate).format('YYYY-MM-DD')
+          pickup_date: moment(pickUpDate).format('YYYY-MM-DD'),
+          user: localStorage.name,
+          encode_date:  moment().format('YYYY-MM-DD HH:mm')
         }
         
         // console.log(data)
@@ -216,16 +218,14 @@ const Create = () => {
                             color="primary" 
                             type="submit"
                             disabled={btnDisabled}
-                            children="Save"
-                          />
+                          >Save</Button>
                           <Button 
                             disableElevation
                             variant="outlined" 
                             color="error" 
                             disabled={btnDisabled}
                             onClick={()=>router.push('/dispatch')}
-                            children="Cancel"
-                          />
+                          >Cancel</Button>
                         </Stack>
                       </Grid>
                       <Grid item xs={12} lg={12}>
@@ -272,9 +272,13 @@ const Create = () => {
                           <DateRangePicker
                             initialSettings={{
                               singleDatePicker: true,
-                              autoApply: true
+                              minDate  : moment().format('MM/DD/YYYY'),
+                              locale: {
+                                cancelLabel: 'Clear'
+                              }
                             }}
-                            onCallback={handleCheckDate}
+                            onApply={handleCheckDate}
+                            onCancel={ (e,picker)=>setCheckDate('')}
                           >
                             <TextField 
                               label="Check Date" 
@@ -337,9 +341,13 @@ const Create = () => {
                           <DateRangePicker
                             initialSettings={{
                               singleDatePicker: true,
-                              autoApply: true
+                              minDate  : moment().format('MM/DD/YYYY'),
+                              locale: {
+                                cancelLabel: 'Clear'
+                              }
                             }}
-                            onCallback={handleOrDate}
+                            onApply={handleOrDate}
+                            onCancel={ (e,picker)=>setOrDate('')}
                           >
                             <TextField 
                               label="OR Date" 
@@ -356,9 +364,13 @@ const Create = () => {
                           <DateRangePicker
                             initialSettings={{
                               singleDatePicker: true,
-                              autoApply: true
+                              minDate  : moment().format('MM/DD/YYYY'),
+                              locale: {
+                                cancelLabel: 'Clear'
+                              }
                             }}
-                            onCallback={handlePickUpDate}
+                            onApply={handlePickUpDate}
+                            onCancel={ (e,picker)=>setPickUpDate('')}
                           >
                             <TextField 
                               label="Pick-up Date" 

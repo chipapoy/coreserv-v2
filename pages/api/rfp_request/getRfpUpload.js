@@ -6,7 +6,7 @@ export default async function handler(req, res) {
 
     try {
         const sql = `
-            SELECT * FROM upload_tbl WHERE rfp_id = ?
+            SELECT * FROM upload_tbl WHERE record_type = 'rfp' AND ref_id = ?
             ORDER BY id DESC
         `;
         const valuesParam = [

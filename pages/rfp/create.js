@@ -374,7 +374,9 @@ const Create = () => {
             penalty_over_interest: rfpType.value == 1 ? penaltyOverInterest : 0,
             surcharge: rfpType.value == 1 ? surcharge: 0,
             misc: rfpType.value == 1 ? misc : 0,
-            total_amount: rfpType.value == 1 ? totalAmount : 0
+            total_amount: rfpType.value == 1 ? totalAmount : 0,
+            user: localStorage.name,
+            encode_date:  moment().format('YYYY-MM-DD HH:mm')
         }
         
         // console.log(data)
@@ -508,16 +510,14 @@ const Create = () => {
                             color="primary" 
                             type="submit"
                             disabled={btnDisabled}
-                            children="Save"
-                          />
+                          >Save</Button>
                           <Button 
                             disableElevation
                             variant="outlined" 
                             color="error" 
                             disabled={btnDisabled}
                             onClick={()=>router.push('/rfp')}
-                            children="Cancel"
-                          />
+                          >Cancel</Button>
                         </Stack>
                       </Grid>
                     </Grid>
@@ -952,8 +952,12 @@ const Create = () => {
                               <FormControl sx={{ m: 1 }} variant="standard">
 
                                 <ButtonGroup variant="outlined" aria-label="outlined primary button group" disableElevation>
-                                  <Button variant='text' children={<input type="file" name="file_upload" onChange={onFileChange} accept=".pdf,.jpg"  />} />
-                                  <Button onClick={onUpload} disabled={uploadBtnDisabled} children="Upload" />
+                                  <Button variant='text'>
+                                    <input type="file" name="file_upload" onChange={onFileChange} accept=".pdf,.jpg"  />
+                                  </Button>
+                                  <Button onClick={onUpload} disabled={uploadBtnDisabled}>
+                                    Upload
+                                  </Button>
                                 </ButtonGroup>
                               </FormControl>
                             </ListItem>

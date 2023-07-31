@@ -22,13 +22,31 @@ import Tooltip from "@mui/material/Tooltip";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import moment from 'moment';
-import Activity from "../../components/Activity/Dispatch";
+import DeleteForm from "../../components/Forms/Delete";
 
 const Index = () => {
 
-  const [data,setData] = useState([]);
+  const pageTitle = 'Request for Payment';
 
-  const pageTitle = 'Request for Payment'
+  const [data,setData] = useState([]);
+  const [deleteDetails,setDeleteDetails] = useState({});
+  const [openDeleteModal,setOpenDeleteModal] = useState(false);
+  const [rowsExpand,setRowsExpand] = useState([]);
+
+  const deleteModalCallback = (data) => {
+    setOpenDeleteModal(data.open);
+    
+    if(data.cancel == false){
+      getData();
+    }
+    
+  }
+
+  const deleteForm = (data) => {
+    if(data.open == true){
+      return <DeleteForm {...data}/>
+    }
+  }
 
   const getData = async () => {
 
@@ -52,6 +70,37 @@ const Index = () => {
         });
     })
   }
+
+  const theme = createTheme({
+    components: {
+      MUIDataTableHeadCell: {
+        styleOverrides: {
+          fixedHeader: {
+            backgroundColor: '#E35217',
+            color: '#FFFFFF !important',
+            lineHeight: 0,
+            padding: '12px !important'
+          },
+        },
+      },
+      MUIDataTableSelectCell: {
+        styleOverrides: {
+          headerCell: {
+            backgroundColor: '#E35217',
+            color: '#FFFFFF !important',
+            lineHeight: 0
+          },
+        },
+      },
+      MUIDataTableBodyCell: {
+        styleOverrides: {
+          root: {
+            fontSize: '11px',
+          },
+        },
+      }
+    },
+  });
 
   useEffect(() => {
       
@@ -379,11 +428,12 @@ const Index = () => {
         // if (dataIndex === 3 || dataIndex === 4) return false;
 
         // Prevent expand/collapse of any row if there are 4 rows expanded already (but allow those already expanded to be collapsed)
-        if (expandedRows.data.length > 4 && expandedRows.data.filter(d => d.dataIndex === dataIndex).length === 0)
-        return false;
+        // if (expandedRows.data.length > 4 && expandedRows.data.filter(d => d.dataIndex === dataIndex).length === 0)
+        // return false;
         return true;
     },
     // rowsExpanded: [0, 1],
+    rowsExpanded: rowsExpand,
     renderExpandableRow: (rowData, rowMeta) => {
       const colSpan = rowData.length + 1;
 
@@ -415,24 +465,47 @@ const Index = () => {
               </IconButton>
             </Tooltip>
           </Link>
-          <Link 
-            href={{
-                pathname:'/rfp/delete',
-                query: { id: rowData[0] }
-            }}
-            title='Delete'
-          >  
-            <Tooltip>
-              <IconButton>
-                <DeleteIcon  />
-              </IconButton>
-            </Tooltip>
-          </Link>
+          <Tooltip title='Delete'>
+            <IconButton>
+              <DeleteIcon 
+                onClick={()=> {
+                  setOpenDeleteModal(true); 
+                  setDeleteDetails({
+                    data: rowData,
+                    url: '/api/rfp_request/deleteRfp',
+                    module: 'RFP'
+                  });
+                  console.log(rowData);
+                }}
+              />
+            </IconButton>
+          </Tooltip>
         </TableCell>
       </TableRow>
       );
     },
     onRowExpansionChange: (curExpanded, allExpanded, rowsExpanded) => console.log(allExpanded),
+    onTableChange: (action, tableState) => {
+      switch (action) {
+        case "rowExpansionChange":
+          // console.log(action);
+          // console.dir(tableState);
+          var rowsExpanded = tableState.expandedRows.data.map(
+            item => item.index
+          );
+
+          if (rowsExpanded.length > 1) {
+            // limiting would go here
+            rowsExpanded = rowsExpanded.slice(-1);
+          }
+
+          // console.dir(rowsExpanded);
+
+          setRowsExpand(rowsExpanded);
+
+          break;
+      }
+    },
     customToolbar: () => { 
       return (
         <>
@@ -453,36 +526,7 @@ const Index = () => {
     }
   }
 
-  const theme = createTheme({
-    components: {
-      MUIDataTableHeadCell: {
-        styleOverrides: {
-          fixedHeader: {
-            backgroundColor: '#E35217',
-            color: '#FFF',
-            lineHeight: 0,
-            padding: '12px'
-          },
-        },
-      },
-      MUIDataTableSelectCell: {
-        styleOverrides: {
-          headerCell: {
-            backgroundColor: '#E35217',
-            color: '#FFF',
-            lineHeight: 0
-          },
-        },
-      },
-      MUIDataTableBodyCell: {
-        styleOverrides: {
-          root: {
-            fontSize: '11px',
-          },
-        },
-      }
-    },
-  });
+  
 
   const testReload = () => {
     getData();
@@ -514,6 +558,13 @@ const Index = () => {
                       // components={}
                   />
                 </ThemeProvider>
+                {
+                  deleteForm({
+                    open:openDeleteModal,
+                    deleteDetails:deleteDetails,
+                    deleteCallback:deleteModalCallback
+                  })
+                }
               </div>
             </div>
           </div>    

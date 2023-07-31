@@ -163,6 +163,8 @@ const Create = () => {
             sky_contact_id: skyContact.value,
             internal_order1: internalOrder1,
             internal_order2: internalOrder2,
+            user: sessionStorage.name,
+            update_date:  moment().format('YYYY-MM-DD HH:mm')
         }
         
         console.log(data)

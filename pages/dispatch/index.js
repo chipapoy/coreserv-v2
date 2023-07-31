@@ -10,26 +10,33 @@ import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import IconButton from "@mui/material/IconButton";
 import CachedIcon from '@mui/icons-material/Cached';
-import PaymentIcon from '@mui/icons-material/Payment';
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import ReceiptIcon from "@mui/icons-material/Receipt";
+import AddTaskIcon from '@mui/icons-material/AddTask';
 import Tooltip from "@mui/material/Tooltip";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import moment from 'moment';
+import ActivityList from "../../components/Dispatch/ActivityList";
+import NewActivity from "../../components/Dispatch/NewActivity";
+import DeleteForm from "../../components/Forms/Delete";
 
 const Index = () => {
 
+  const pageTitle = 'Dispatch';
   const [data,setData] = useState([]);
+  const [dispDetails,setDispDetails] = useState(0);
+  const [deleteDetails,setDeleteDetails] = useState({});
+  const [rowsExpand,setRowsExpand] = useState([]);
+  const [keyTable,setKeyTable] = useState(moment().unix());
 
   const getData = async () => {
 
     const cancelToken = axios.CancelToken.source();
     axios.get('/api/dispatch_request/getDispatchList', {cancelToken:cancelToken.token})
     .then( (res) => {
-          setData(res.data);
+      setData(res.data);
     })
     .catch( (err) => {
 
@@ -46,17 +53,6 @@ const Index = () => {
         });
     })
   }
-
-  useEffect(() => {
-      
-    getData();
-
-    return () => {
-      setData([])
-      // setData([]);
-    }
-  }, []);
-
 
   const columns = [
       {
@@ -142,56 +138,147 @@ const Index = () => {
             }
           }
       },{
-          name: "action_taken",
-          label: "Action Taken",
-          options: {
-              filter: true,
-              sort: true,
-              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}})
-          }
-      },{
           name: "remarks",
           label: "Remarks",
           options: {
               filter: true,
               sort: true,
               setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
+              // customBodyRenderLite: (dataIndex, rowIndex) => {
+              //   return data[dataIndex].remarks!=null ? data[dataIndex].remarks : '-';
+              // }
           }
       },{
-          name: "team_code",
+        name: "status",
+        label: "Status",
+        options: {
+            filter: true,
+            sort: true,
+            setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
+            customBodyRenderLite: (dataIndex, rowIndex) => {
+              return data[dataIndex].status!=null ? data[dataIndex].status : '-';
+            }
+        }
+    },{
+          name: "crew",
           label: "Team Code",
           options: {
               filter: true,
               sort: true,
               setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
+              customBodyRenderLite: (dataIndex, rowIndex) => {
+
+                const crewArr = data[dataIndex].crew ? data[dataIndex].crew.split(',') : '-';
+                return crewArr[0];
+              }
           }
       },{
-          name: "team_assigned",
+          name: "crew",
           label: "Team Assigned",
           options: {
               filter: true,
               sort: true,
               setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
+              customBodyRenderLite: (dataIndex, rowIndex) => {
+
+                const crewArr = data[dataIndex].crew ? data[dataIndex].crew.split(',') : '-';
+                return crewArr[1];
+              }
           }
-      },{
-          name: "abs_cbn_received_date",
-          label: "Date Received by ABS-CBN",
-          options: {
-            filter: true,
-            sort: true,
-            setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
-          }
-      },{
-        name: "received_by",
-        label: "Received by",
-        options: {
-          filter: true,
-          sort: true,
-          setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
-        }
-    }
+      }
+      
+      // ,{
+      //     name: "abs_cbn_received_date",
+      //     label: "Date Received by ABS-CBN",
+      //     options: {
+      //       filter: true,
+      //       sort: true,
+      //       setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
+      //     }
+      // },{
+      //   name: "received_by",
+      //   label: "Received by",
+      //   options: {
+      //     filter: true,
+      //     sort: true,
+      //     setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
+      //   }
+      // }
 
   ];
+
+  const [openModal,setOpenModal] = useState(false);
+  const [openDeleteModal,setOpenDeleteModal] = useState(false);
+
+  const [activityCount,setActivityCount] = useState(0);
+
+  const modalCallback = (data) => {
+
+    setOpenModal(data.open);
+
+    const keyUnix = moment().unix();
+    setKeyTable(keyUnix);
+    
+    if(data.cancel == false){
+      getData();
+    }
+    
+  }
+
+  const deleteModalCallback = (data) => {
+    setOpenDeleteModal(data.open);
+    
+    if(data.cancel == false){
+      getData();
+    }
+    
+  }
+
+  const deleteForm = (data) => {
+    if(data.open == true){
+      return <DeleteForm {...data}/>
+    }
+  }
+
+  const updateCallback = (data) => {
+    console.log(data);
+    console.log("callback from update");
+
+    if(data.update == true){
+      getData();
+    }
+  }
+
+  const listCallback = (data) => {
+    console.log(data.listCount);
+    console.log("callback from activity list");
+
+    setActivityCount(data.listCount);
+
+    // if(data.update == true){
+    //   getData();
+    // }
+  }
+
+  const activityListCallback = (data) => {
+    return <ActivityList {...data}/>
+  }
+
+  const testReload = () => {
+    getData();
+    console.log("test");
+  }
+
+  useEffect(() => {
+      
+    getData();
+
+    return () => {
+      setData([])
+    }
+  }, []);
+
+  
 
   const options = {
     filterType: 'multiselect',
@@ -204,8 +291,8 @@ const Index = () => {
     selectableRowsHideCheckboxes: true,
     print: false,
     onRowClick: function(rowData,meta){
-        console.log(rowData[0])
-        console.log(meta)
+        // console.log(rowData[0])
+        // console.log(meta)
     },
     expandableRows: true,
     expandableRowsHeader: false,
@@ -213,48 +300,104 @@ const Index = () => {
         // if (dataIndex === 3 || dataIndex === 4) return false;
 
         // Prevent expand/collapse of any row if there are 4 rows expanded already (but allow those already expanded to be collapsed)
-        if (expandedRows.data.length > 4 && expandedRows.data.filter(d => d.dataIndex === dataIndex).length === 0)
-        return false;
+        // if (expandedRows.data.length > 4 && expandedRows.data.filter(d => d.dataIndex === dataIndex).length === 0)
+        // return false;
+
         return true;
     },
     // rowsExpanded: [0, 1],
+    rowsExpanded: rowsExpand,
     renderExpandableRow: (rowData, rowMeta) => {
       const colSpan = rowData.length + 1;
 
+      console.log(rowData);
+
       return (
-      <TableRow>
-        <TableCell colSpan={colSpan}>
-          <Link 
-            href={{
-                pathname:'/dispatch/edit/'+rowData[0]
-            }}
-            title='Update'
-          >
-            <Tooltip>
-              <IconButton>
-                <EditIcon  />
-              </IconButton>
-            </Tooltip>
-          </Link>
-          <Link 
-            href={{
-                pathname:'/dispatch/delete',
-                query: { id: rowData[0] }
-            }}
-            title='Delete'
-          >  
-            <Tooltip>
-              <IconButton>
-                <DeleteIcon  />
-              </IconButton>
-            </Tooltip>
-          </Link>
-        </TableCell>
-      </TableRow>
+        <>
+          <TableRow>
+            <TableCell colSpan={colSpan}>
+              <Link 
+                href={{
+                    pathname:'/dispatch/edit/'+rowData[0]
+                }}
+              >
+                <Tooltip title='Update'>
+                  <IconButton>
+                    <EditIcon  />
+                  </IconButton>
+                </Tooltip>
+              </Link>
+              <Tooltip title='Add Activity'>
+                <IconButton disabled={ rowData[9]=="COMPLETED" || rowData[9]==null  ? (activityCount > 0 ? true : false) : false }>
+                  <AddTaskIcon 
+                    onClick={()=> {
+                      setOpenModal(true); 
+                      setDispDetails(rowData);
+                      console.log(rowData);
+                    }}  
+                    
+                  />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title='Delete'>
+                <IconButton>
+                  <DeleteIcon 
+                    onClick={()=> {
+                      setOpenDeleteModal(true); 
+                      setDeleteDetails({
+                        data: rowData,
+                        url: '/api/dispatch_request/deleteDispatch',
+                        module: 'Dispatch'
+                      });
+                      console.log(rowData);
+                    }}
+                  />
+                </IconButton>
+              </Tooltip>
+              {/* { 
+                activityListCallback({ 
+                  key:rowData[0],
+                  dispId:rowData[0],
+                  test: true,
+                  updateCallback: updateCallback,
+                  listCallback: listCallback
+                }) 
+              } */}
+              <ActivityList
+                key={keyTable}
+                dispId={rowData[0]}
+                test={true}
+                updateCallback={updateCallback}
+                listCallback={listCallback}
+              />
+            </TableCell>
+          </TableRow>
+        </>
+        
       );
     },
     onRowExpansionChange: (curExpanded, allExpanded, rowsExpanded) => {
-      console.log(allExpanded)
+      // console.log('onRowExpansionChange');
+      // console.log(curExpanded);
+      // console.log(allExpanded);
+      // console.log(rowsExpanded);
+    },
+    onTableChange: (action, tableState) => {
+      switch (action) {
+        case "rowExpansionChange":
+          var rowsExpanded = tableState.expandedRows.data.map(
+            item => item.index
+          );
+
+          if (rowsExpanded.length > 1) {
+            // limiting would go here
+            rowsExpanded = rowsExpanded.slice(-1);
+          }
+
+          setRowsExpand(rowsExpanded);
+
+          break;
+      }
     },
     customToolbar: () => { 
       return (
@@ -281,9 +424,9 @@ const Index = () => {
         styleOverrides: {
           fixedHeader: {
             backgroundColor: '#E35217',
-            color: '#FFF',
+            color: '#FFFFFF !important',
             lineHeight: 0,
-            padding: '12px'
+            padding: '12px !important'
           },
         },
       },
@@ -291,7 +434,7 @@ const Index = () => {
         styleOverrides: {
           headerCell: {
             backgroundColor: '#E35217',
-            color: '#FFF',
+            color: '#FFF !important',
             lineHeight: 0
           },
         },
@@ -305,26 +448,20 @@ const Index = () => {
       }
     },
   });
-
-  const testReload = () => {
-    getData();
-    console.log("test");
-  }
-
+  
   return (
     <>
       <Head>
         <title>Coreserv</title>
       </Head>
       <div id="main_content">
-
           <Sidemenu />
           {/* <ToastContainer /> */}
           <div className="page">
             <Topmenu />
             <div className="section-body">
               <div className="container-fluid">
-                <h4>Dispatch</h4>
+                <h4>{pageTitle}</h4>
                 <ThemeProvider theme={theme}>
                   <MUIDataTable 
                     title="" 
@@ -334,6 +471,15 @@ const Index = () => {
                     data-tableid="vendorList" 
                   />
                 </ThemeProvider>
+                <NewActivity open={openModal} dispDetails={dispDetails} modalFunction={modalCallback}/>
+                {/* <DeleteForm open={openDeleteModal} deleteDetails={deleteDetails} deleteCallback={deleteModalCallback}/> */}
+                {
+                  deleteForm({
+                    open:openDeleteModal,
+                    deleteDetails:deleteDetails,
+                    deleteCallback:deleteModalCallback
+                  })
+                }
               </div>
             </div>
           </div>    

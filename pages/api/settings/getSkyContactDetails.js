@@ -14,7 +14,7 @@ export default async function handler(req, res) {
         FROM 
         sky_contact_details 
         WHERE 
-        status = 1 
+        is_active = 1 
         ORDER BY contact_person ASC
         `;
         const valuesParam = [];

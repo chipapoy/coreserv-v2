@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import 'react-toastify/dist/ReactToastify.css';
 import Select from 'react-select';
+import moment from 'moment';
 
 const Update = () => {
 
@@ -254,65 +255,49 @@ const Update = () => {
             terms: terms,
             auto_renew: autoRenew.value,
             with_penalty: withPenalty.value,
-            sky_contact_id: skyContactId.value
+            sky_contact_id: skyContactId.value,
+            user: localStorage.name,
+            update_date:  moment().format('YYYY-MM-DD HH:mm')
         }
 
         console.log(data);
-        const url = '/api/vendor_request/updateVendor'
+        const url = '/api/vendor_request/updateVendor';
 
-        await axios.post(url, data)
+        const notifId = toast.loading("Please wait...");
+
+        axios.post(url, data)
         .then( res => {
             
-            if(res.status === 200){
 
-                toast.success('Vendor has been updated', {
-                    position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: false,
-                    pauseOnFocusLoss: false,
-                    draggable: false,
-                    progress: undefined,
-                    theme: "dark"
-                })
-                
-                toast.onChange(v => {
-                    console.log(v)
-                    if(v.status === "removed"){
-                        router.push("/vendors")
-                    }
-                });
-            }  
-            else{
-
-                setSubmitBtn('Submit');
-                setBtnDisabled(false);
-                SetDisableForm(false)
-
-                toast.error('Unable to connect to server. Please try again.', {
-                    position: "top-right",
-                    autoClose: 5000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: false,
-                    pauseOnFocusLoss: false,
-                    draggable: false,
-                    progress: undefined,
-                    theme: "dark",
-                });
-            }
+            setTimeout(() => {
+              toast.update(notifId, {
+                render: "Vendor has been updated", 
+                type: 'success',
+                isLoading: false,
+                delay:undefined,
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: false,
+                pauseOnFocusLoss: false,
+                draggable: false,
+                progress: undefined,
+                theme: "dark",
+                onClose: () => {
+                  router.push("/vendors");
+                }
+              });
+            }, 2000);
 
         })
         .catch(err => {
 
-            setSubmitBtn('Submit');
-            setBtnDisabled(false);
-            SetDisableForm(false)
-
-            // console.log(err)
-
-            toast.error(err.message, {
+            setTimeout(() => {
+              toast.update(notifId, {
+                render: "Something went wrong. Please try again.", 
+                type: 'error',
+                isLoading: false,
                 position: "top-right",
                 autoClose: 5000,
                 hideProgressBar: false,
@@ -322,7 +307,14 @@ const Update = () => {
                 draggable: false,
                 progress: undefined,
                 theme: "dark",
-            });
+                onClose: () => {
+                  setSubmitBtn('Submit');
+                  setBtnDisabled(false);
+                  SetDisableForm(false)
+                }
+              });
+            }, 2000);
+
         });
     }
 

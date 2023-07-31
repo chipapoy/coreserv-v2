@@ -8,7 +8,7 @@ export const config = {
   },
 };
 
-export default async (req, res) => {
+export default handler = async (req, res) => {
 
   const form = new formidable.IncomingForm();
 
@@ -31,22 +31,21 @@ export default async (req, res) => {
     try {
       const sql = `
           INSERT INTO upload_tbl 
-          (rfp_id,original_name,file_name,size,file_path,upload_by) 
-          VALUES (?,?,?,?,?,?)
+          (ref_id,record_type,original_name,file_name,size,file_path,upload_by) 
+          VALUES (?,?,?,?,?,?,?,?)
       `;
       const valuesParam = [
-          fields.rfp_id,
+          fields.ref_id,
+          fields.rec_type,
           files.file.name,
           files.file.path.split('\\')[2],
           files.file.size / (1024 * 1024),
           files.file.path,
-          'admin'
+          fields.user
       ];
   
       const queryResult =  await query({query: sql, values: valuesParam});
   
-      // res.status(200).json({ message: result })
-      // return { message: result };
       const result = { message: queryResult };
 
       res.status(200).json({ fields, files, result });
