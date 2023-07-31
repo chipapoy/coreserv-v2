@@ -70,97 +70,6 @@ export default function BasicModal(props) {
 
   const NoFile = () => {
 
-  // const onFileChange = (e) => {
-
-  //   const fileSize = e.target.files[0].size / (1024 * 1024);
-  //   console.log(fileSize);
-  //   console.log(e.target.files[0]);
-    
-  //   setFileUpload({
-  //       file: e.target.files[0]
-  //   });
-
-  //   setUploadBtnDisabled(false);
-  // }
-
-  // const onUpload = e => {
-  //   // console.log(fileUpload.file);
-  //   e.preventDefault();
-
-
-  //   const formData = new FormData();
-
-  //   formData.append('file',fileUpload.file);
-  //   formData.append('ref_id',props.uploadModal.id);
-  //   formData.append('rec_type',props.uploadModal.type);
-  //   formData.append('user',localStorage.name);
-
-  //   const uploadId = toast.loading("Uploading...");
-
-  //   console.log(formData)
-
-  //   axios.post(
-  //       '/api/dispatch_request/uploadFile',
-  //       formData,
-  //       {
-  //           headers: {
-  //               'content-type': 'multipart/form-data'
-  //           }
-  //       }
-  //   )
-  //   .then(res => {
-  //       console.log(e)
-  //       e.target.value = "";
-  //       setUploadBtnDisabled(true);
-
-  //       setTimeout(() => {
-  //         toast.update(uploadId, {
-  //           render: "File has been uploaded", 
-  //           type: 'success',
-  //           isLoading: false,
-  //           delay:undefined,
-  //           position: "top-right",
-  //           autoClose: 3000,
-  //           hideProgressBar: false,
-  //           closeOnClick: true,
-  //           pauseOnHover: false,
-  //           pauseOnFocusLoss: false,
-  //           draggable: false,
-  //           progress: undefined,
-  //           theme: "dark",
-  //           onClose: () => {
-  //             // router.push("/rfp");
-  //             // getRfpUpload(rfpId);
-  //           }
-  //         });
-  //       }, 2000);
-  //   })
-  //   .catch(err => {
-  //       console.log(err);
-  //       setTimeout(() => {
-  //         toast.update(uploadId, {
-  //           render: "Something went wrong. Please try again. " + err.response.data.error, 
-  //           type: 'error',
-  //           isLoading: false,
-  //           position: "top-right",
-  //           autoClose: 5000,
-  //           hideProgressBar: false,
-  //           closeOnClick: true,
-  //           pauseOnHover: false,
-  //           pauseOnFocusLoss: false,
-  //           draggable: false,
-  //           progress: undefined,
-  //           theme: "dark",
-  //           onClose: () => {
-  //             // setBtnDisabled(false);
-  //             // setDisableForm(false);
-  //             // getRfpUpload(rfpId);
-  //           }
-  //         });
-  //       }, 2000);
-  //   })
-  // }
-
     return (
       <>
         <Typography variant="body2" gutterBottom>
@@ -189,7 +98,7 @@ export default function BasicModal(props) {
 
     const docs = [
       // { uri: data.data.file_path.replace('public','') }, // Local File Dev
-      { uri: data.data.file_path.replace('public/uploads','') }, // Local File Prod
+      { uri: 'http://' + data.data.file_path }, // Local File Prod
     ];
 
     return (
