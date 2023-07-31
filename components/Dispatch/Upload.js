@@ -98,7 +98,7 @@ export default function BasicModal(props) {
 
     const docs = [
       // { uri: data.data.file_path.replace('public','') }, // Local File Dev
-      { uri: 'http://' + data.data.file_path }, // Local File Prod
+      { uri: 'http://localhost/public/uploads/' + data.data.file_name }, // Local File Prod
     ];
 
     return (

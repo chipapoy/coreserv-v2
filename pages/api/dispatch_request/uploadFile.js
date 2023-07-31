@@ -38,7 +38,7 @@ export default async function handler(req, res) {
           fields.ref_id,
           fields.rec_type,
           files.file.name,
-          files.file.path.split('\\')[2],
+          files.file.path.split('\\')[8],
           files.file.size / (1024 * 1024),
           files.file.path,
           fields.user,
