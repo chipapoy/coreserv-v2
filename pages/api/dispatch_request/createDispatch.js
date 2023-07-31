@@ -10,7 +10,7 @@ export default async function handler(req, res) {
             (
                 vendor_id,check_num,check_date,ref_num,amount,pickup_date,or_num,or_date,encode_by,encode_date
             ) 
-            VALUES (?,?,?,?,?,?,?,?,?)
+            VALUES (?,?,?,?,?,?,?,?,?,?)
         `;
         const valuesParam = [
             req.body.vendor_id,

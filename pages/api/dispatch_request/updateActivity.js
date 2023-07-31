@@ -15,7 +15,8 @@ export default async function handler(req, res) {
             received_by = ?,
             vergara_received_date = ?,
             received_by_vergara = ?,
-            update_by = ?
+            update_by = ?,
+            update_date = ?
             WHERE
             id = ?
         `;
@@ -29,6 +30,7 @@ export default async function handler(req, res) {
           req.body.vergara_received_date,
           req.body.received_by_vergara,
           req.body.user,
+          req.body.update_date,
           req.body.id
         ];
 

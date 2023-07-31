@@ -195,7 +195,8 @@ export default function UpdateActivityModal(props) {
       received_by: receivedBy,
       vergara_received_date: moment(receivedDateByVergara).format('YYYY-MM-DD'),
       received_by_vergara: receivedByVergara,
-      user: localStorage.name
+      user: localStorage.name,
+      update_date:  moment().format('YYYY-MM-DD HH:mm')
       // pickup_date: moment(pickUpDate).format('YYYY-MM-DD')
     }
     

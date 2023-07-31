@@ -47,12 +47,202 @@ export default function BasicModal(props) {
   const [attachmentsArr,setAttachmentsArr] = useState([]);
   const [fileUpload,setFileUpload] = useState([]);
   const [uploadBtnDisabled,setUploadBtnDisabled] = useState(true);
+  
+
+  const getAttachments = async () => {
+
+    await axios.post('/api/dispatch_request/getAttachments',{
+      ref_id: props.uploadModal.id,
+      type: props.uploadModal.type,
+    })
+    .then( result => {
+      setAttachmentsArr(result.data);
+
+      // console.log(Object.keys(result.data).length > 0);
+      if(Object.keys(result.data).length > 0){
+        setCheckFile(true);
+      }
+    })
+    .catch( err => {
+      console.log(err)
+    });
+  };
+
+  const NoFile = () => {
+
+  // const onFileChange = (e) => {
+
+  //   const fileSize = e.target.files[0].size / (1024 * 1024);
+  //   console.log(fileSize);
+  //   console.log(e.target.files[0]);
+    
+  //   setFileUpload({
+  //       file: e.target.files[0]
+  //   });
+
+  //   setUploadBtnDisabled(false);
+  // }
+
+  // const onUpload = e => {
+  //   // console.log(fileUpload.file);
+  //   e.preventDefault();
+
+
+  //   const formData = new FormData();
+
+  //   formData.append('file',fileUpload.file);
+  //   formData.append('ref_id',props.uploadModal.id);
+  //   formData.append('rec_type',props.uploadModal.type);
+  //   formData.append('user',localStorage.name);
+
+  //   const uploadId = toast.loading("Uploading...");
+
+  //   console.log(formData)
+
+  //   axios.post(
+  //       '/api/dispatch_request/uploadFile',
+  //       formData,
+  //       {
+  //           headers: {
+  //               'content-type': 'multipart/form-data'
+  //           }
+  //       }
+  //   )
+  //   .then(res => {
+  //       console.log(e)
+  //       e.target.value = "";
+  //       setUploadBtnDisabled(true);
+
+  //       setTimeout(() => {
+  //         toast.update(uploadId, {
+  //           render: "File has been uploaded", 
+  //           type: 'success',
+  //           isLoading: false,
+  //           delay:undefined,
+  //           position: "top-right",
+  //           autoClose: 3000,
+  //           hideProgressBar: false,
+  //           closeOnClick: true,
+  //           pauseOnHover: false,
+  //           pauseOnFocusLoss: false,
+  //           draggable: false,
+  //           progress: undefined,
+  //           theme: "dark",
+  //           onClose: () => {
+  //             // router.push("/rfp");
+  //             // getRfpUpload(rfpId);
+  //           }
+  //         });
+  //       }, 2000);
+  //   })
+  //   .catch(err => {
+  //       console.log(err);
+  //       setTimeout(() => {
+  //         toast.update(uploadId, {
+  //           render: "Something went wrong. Please try again. " + err.response.data.error, 
+  //           type: 'error',
+  //           isLoading: false,
+  //           position: "top-right",
+  //           autoClose: 5000,
+  //           hideProgressBar: false,
+  //           closeOnClick: true,
+  //           pauseOnHover: false,
+  //           pauseOnFocusLoss: false,
+  //           draggable: false,
+  //           progress: undefined,
+  //           theme: "dark",
+  //           onClose: () => {
+  //             // setBtnDisabled(false);
+  //             // setDisableForm(false);
+  //             // getRfpUpload(rfpId);
+  //           }
+  //         });
+  //       }, 2000);
+  //   })
+  // }
+
+    return (
+      <>
+        <Typography variant="body2" gutterBottom>
+          No file has found.
+        </Typography>
+        <FormControl fullWidth sx={{ m: 2 }} variant="standard">
+            <ButtonGroup variant="outlined" aria-label="outlined primary button group" disableElevation>
+              <input type="file" name="file_upload" onChange={onFileChange} accept=".pdf,.jpg"  />
+              <Button onClick={onUpload} disabled={uploadBtnDisabled}>
+                Upload
+              </Button>
+            </ButtonGroup>
+        </FormControl>
+      </>
+    );
+  }
+
+  const HasFile = (data) => {
+
+    if(data){
+
+      const path = data.data.file_path;
+      console.log(path.replace('public',''));
+      console.log('this is attachment component');
+    }
+
+    const docs = [
+      { uri: data.data.file_path.replace('public','') }, // Local File
+    ];
+
+    return (
+      <>
+        {/* <Typography variant="body2" gutterBottom>
+          body2. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos
+          blanditiis tenetur unde suscipit, quam beatae rerum inventore consectetur,
+          neque doloribus, cupiditate numquam dignissimos laborum fugiat deleniti? Eum
+          quasi quidem quibusdam.
+        </Typography> */}
+        <DocViewer
+          documents={docs}
+          // initialActiveDocument={docs[0]}
+          pluginRenderers={DocViewerRenderers}
+
+          config={{
+            header: {
+              disableHeader: false,
+              disableFileName: true,
+              retainURLParams: false,
+            },
+            pdfZoom: {
+              defaultZoom: 1, // 1 as default,
+              zoomJump: 0.2, // 0.1 as default,
+            },
+          }}
+        />
+      </>
+    );
+  }
+
+  const UploadForm = (props) => {
+
+    if(props.checking){
+      return (
+        <>
+          <HasFile data={props.data} />
+        </>
+      )
+    }
+
+    return (
+      <>
+        <NoFile />
+      </>
+    )
+  }
+
 
   const onFileChange = (e) => {
 
     const fileSize = e.target.files[0].size / (1024 * 1024);
     console.log(fileSize);
-    console.log(props.uploadModal.id);
+    console.log(e.target.files[0]);
     
     setFileUpload({
         file: e.target.files[0]
@@ -139,101 +329,6 @@ export default function BasicModal(props) {
     })
   }
 
-  const getAttachments = async () => {
-
-    await axios.post('/api/dispatch_request/getAttachments',{
-      ref_id: props.uploadModal.id,
-      type: props.uploadModal.type,
-    })
-    .then( result => {
-      setAttachmentsArr(result.data);
-
-      // console.log(Object.keys(result.data).length > 0);
-      if(Object.keys(result.data).length > 0){
-        setCheckFile(true);
-      }
-    })
-    .catch( err => {
-      console.log(err)
-    });
-  };
-
-  const NoFile = () => {
-
-    console.log('this is upload form component');
-
-    return (
-      <>
-        <Typography variant="body2" gutterBottom>
-          No file has found.
-        </Typography>
-        <FormControl fullWidth sx={{ m: 2 }} variant="standard">
-            <ButtonGroup variant="outlined" aria-label="outlined primary button group" disableElevation>
-              <Button variant='text'>
-                <input type="file" name="file_upload" onChange={onFileChange} accept=".pdf,.jpg"  />
-              </Button>
-              <Button onClick={onUpload} disabled={uploadBtnDisabled}>
-                Upload
-              </Button>
-            </ButtonGroup>
-        </FormControl>
-      </>
-    );
-  }
-
-  const HasFile = (data) => {
-
-    if(data){
-
-      const path = data.data.file_path;
-      console.log(path.replace('public',''));
-      console.log('this is attachment component');
-    }
-
-    const docs = [
-      { uri: data.data.file_path.replace('public','') }, // Local File
-    ];
-
-    return (
-      <>
-        {/* <Typography variant="body2" gutterBottom>
-          body2. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quos
-          blanditiis tenetur unde suscipit, quam beatae rerum inventore consectetur,
-          neque doloribus, cupiditate numquam dignissimos laborum fugiat deleniti? Eum
-          quasi quidem quibusdam.
-        </Typography> */}
-        <DocViewer
-          documents={docs}
-          // initialActiveDocument={docs[0]}
-          pluginRenderers={DocViewerRenderers}
-
-          config={{
-            header: {
-              disableHeader: false,
-              disableFileName: true,
-              retainURLParams: false,
-            },
-            pdfZoom: {
-              defaultZoom: 1, // 1 as default,
-              zoomJump: 0.2, // 0.1 as default,
-            },
-          }}
-        />
-      </>
-    );
-  }
-
-  const UploadForm = (props) => {
-
-    // console.log(props);
-
-    if(props.checking){
-      return <HasFile data={props.data} />
-    }
-
-    return <NoFile />
-  }
-
   useEffect(() => {
     
     if(props.uploadModal.open){
@@ -263,7 +358,7 @@ export default function BasicModal(props) {
         <Container maxWidth="sm">
           <Box sx={style}>
               <Typography variant="h5">
-                View File
+                View File {pageTitle}
                 <Button 
                   disableElevation
                   variant="outlined" 
@@ -275,7 +370,27 @@ export default function BasicModal(props) {
                 >Close</Button>  
               </Typography>
             <Typography variant="body2" sx={{ mt: 2 }} gutterBottom>
-              <UploadForm data={attachmentsArr} checking={checkFile} />
+              {/* <UploadForm data={attachmentsArr} checking={checkFile} /> */}
+              { 
+                checkFile ? 
+                <HasFile data={attachmentsArr} /> 
+                : 
+                <>
+                  <Typography variant="body2" gutterBottom>
+                    No file has found.
+                  </Typography>
+                  <FormControl fullWidth sx={{ m: 2 }} variant="standard">
+                      
+                      <input type="file" name="file_upload" onChange={onFileChange} accept=".pdf,.jpg"  />
+                      <br />
+                      <ButtonGroup variant="outlined" aria-label="outlined primary button group" disableElevation>
+                        <Button onClick={onUpload} disabled={uploadBtnDisabled}>
+                          Upload
+                        </Button>
+                      </ButtonGroup>
+                  </FormControl>
+                </>
+              }
             </Typography>
           </Box>
           
