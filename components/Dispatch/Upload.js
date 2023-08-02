@@ -5,7 +5,7 @@ import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
 import {
   Grid,Stack,Chip,TextField,FormControl,InputLabel,Select,MenuItem,
-  Card,CardHeader,CardContent,CardActions,ButtonGroup,Container,Divider
+  Card,CardHeader,CardContent,CardActions,ButtonGroup,Container,Divider,Image
 } from '@mui/material';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
 import 'bootstrap-daterangepicker/daterangepicker.css';
@@ -100,6 +100,8 @@ export default function BasicModal(props) {
       // { uri: data.data.file_path.replace('public','') }, // Local File Dev
       { uri: 'http://localhost/public/uploads/' + data.data.file_name }, // Local File Prod
     ];
+    
+    console.log(docs)
 
     return (
       <>
