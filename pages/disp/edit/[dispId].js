@@ -2,17 +2,15 @@ import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import Topmenu from "../../components/Layouts/Topmenu";
-import Sidemenu from "../../components/Layouts/Sidemenu";
-import Select from 'react-select';
+import Topmenu from "../../../components/Layouts/Topmenu";
+import Sidemenu from "../../../components/Layouts/Sidemenu";
 import DateRangePicker from 'react-bootstrap-daterangepicker';
 import 'bootstrap-daterangepicker/daterangepicker.css';
 import moment from 'moment';
 import { toast } from 'react-toastify';
 import {
-  Grid,Stack,Button,Typography,TextField,FormControl
+  Grid,Stack,Chip,Button,TextField,FormControl
 } from '@mui/material';
-import { NumericFormat } from 'react-number-format';
 
 
 
@@ -21,10 +19,11 @@ const Create = () => {
 
   const router = useRouter();
 
-  const pageTitle = 'New Dispatch';
+  const { dispId } = router.query;
 
-  const [vendorArr,setVendorArr] = useState([]);
-  const [rfpTypeArr,setRfpTypeArr] = useState([]);
+  const pageTitle = 'Update Dispatch';
+
+  const [dispatchData,setDispatchData] = useState([]);
 
   const [vendor, setVendor] = useState('');
   const [vendorBorder, setVendorBorder] = useState('#ced4da');
@@ -38,6 +37,8 @@ const Create = () => {
   const [orNumber, setOrNumber] = useState('');
   const [orDate, setOrDate] = useState('');
   const [pickUpDate, setPickUpDate] = useState('');
+
+  let initialCheckDate = checkDate;
 
   const dateRangePickerOptions = {
     ranges: {
@@ -53,18 +54,23 @@ const Create = () => {
   }
 
   const handleCheckDate = (e, picker) => {
-    var date = moment(picker.startDate).format('M/DD/YYYY');
+    var date = moment(picker.startDate).format('MM/DD/YYYY');
     setCheckDate(date);
   }
 
   const handleOrDate = (e, picker) => {
-    var date = moment(picker.startDate).format('M/DD/YYYY');
+    var date = moment(picker.startDate).format('MM/DD/YYYY');
     setOrDate(date);
   }
 
   const handlePickUpDate = (e, picker) => {
-    var date = moment(picker.startDate).format('M/DD/YYYY');
+    var date = moment(picker.startDate).format('MM/DD/YYYY');
     setPickUpDate(date);
+  }
+
+  const dateViewFormat = date => {
+    date = moment(date).format('MM/DD/YYYY');
+    return date;
   }
 
   const [submitBtn,setSubmitBtn] = useState('Submit');
@@ -72,24 +78,39 @@ const Create = () => {
   const [disableForm,setDisableForm] = useState(false);
 
 
+  const getDispatchData = async (dispId) => {
+
+    await axios.post('/api/dispatch_request/getDispatchDetails',{
+      id: dispId
+    })
+    .then( result => {
+      setDispatchData(result.data);
+
+      setCheckNumber(result.data.check_num);
+      setCheckDate(dateViewFormat(result.data.check_date));
+      setCheckAmount(result.data.amount);
+      setRefNum(result.data.ref_num);
+      setOrNumber(result.data.or_num);
+      setOrDate(dateViewFormat(result.data.or_date));
+      setPickUpDate(dateViewFormat(result.data.pickup_date));
+
+    })
+    .catch( err => {
+      console.log(err)
+    });
+  }
+
   useEffect(() => {
 
     console.clear();
-    
-    const getVendorArr = async () => {
 
-        const result = await axios.get('/api/vendor_request/getVendorNameList');
-
-        setVendorArr(result.data);
-    };
-
-    getVendorArr();
+    getDispatchData(dispId);
 
     return () => {
-        setVendorArr([]);
+      setDispatchData([]);
     }
 
-  }, []);
+  }, [dispId]);
 
   const handleVendorName = (val) => {
 
@@ -110,87 +131,77 @@ const Create = () => {
     
     e.preventDefault();
 
-    setVendorBorder(vendor.value===undefined ? '#f44336' : '#ced4da');
-    setVendorError(vendor.value===undefined ? 1 : 0);
-    setDisplayErrorVendor(vendor.value===undefined ? 'block' : 'none');
-
-    const errorCount =  vendorError;
-
-      console.log(errorCount);
-
-      if(errorCount === 0){
-
-        setBtnDisabled(true);
-        setDisableForm(true);
-        
-        const url = '/api/dispatch_request/createDispatch'
-        const data = {
-          vendor_id: vendor.value,
-          check_num: checkNumber,
-          check_date: moment(checkDate).format('YYYY-MM-DD'),
-          amount: checkAmount,
-          ref_number: refNumber,
-          or_number: orNumber,
-          or_date: moment(orDate).format('YYYY-MM-DD'),
-          pickup_date: moment(pickUpDate).format('YYYY-MM-DD'),
-          user: localStorage.name,
-          encode_date:  moment().format('YYYY-MM-DD HH:mm')
-        }
-        
-        // console.log(data)
-        const notifId = toast.loading("Please wait...");
-        
-        axios.post(url, data)
-        .then( res => {
-          // resolve(res);
-          setTimeout(() => {
-            toast.update(notifId, {
-              render: "New Dispatch has been created", 
-              type: 'success',
-              isLoading: false,
-              delay:undefined,
-              position: "top-right",
-              autoClose: 3000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: false,
-              pauseOnFocusLoss: false,
-              draggable: false,
-              progress: undefined,
-              theme: "dark",
-              onClose: () => {
-                router.push("/dispatch");
-              }
-            });
-          }, 2000);
-        })
-        .catch(err => {
-
-          setTimeout(() => {
-            toast.update(notifId, {
-              render: "Something went wrong. Please try again.", 
-              type: 'error',
-              isLoading: false,
-              position: "top-right",
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: false,
-              pauseOnFocusLoss: false,
-              draggable: false,
-              progress: undefined,
-              theme: "dark",
-              onClose: () => {
-                setBtnDisabled(false);
-                setDisableForm(false);
-              }
-            });
-          }, 2000);
-
-
+    setBtnDisabled(true);
+    setDisableForm(true);
+    
+    const url = '/api/dispatch_request/updateDispatch'
+    const data = {
+      id: dispId,
+      check_num: checkNumber,
+      check_date: moment(checkDate).format('YYYY-MM-DD'),
+      amount: checkAmount,
+      ref_number: refNumber,
+      or_number: orNumber,
+      or_date: moment(orDate).format('YYYY-MM-DD'),
+      pickup_date: moment(pickUpDate).format('YYYY-MM-DD'),
+      user: localStorage.name,
+      update_date:  moment().format('YYYY-MM-DD HH:mm')
+    }
+    
+    // console.log(data)
+    const notifId = toast.loading("Please wait...");
+    
+    axios.post(url, data)
+    .then( res => {
+      // resolve(res);
+      setTimeout(() => {
+        toast.update(notifId, {
+          render: "Dispatch details has been updated", 
+          type: 'success',
+          isLoading: false,
+          delay:undefined,
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          pauseOnFocusLoss: false,
+          draggable: false,
+          progress: undefined,
+          theme: "dark",
+          onClose: () => {
+            router.push("/disp");
+          }
         });
+      }, 2000);
+
         
-      }
+    })
+    .catch(err => {
+
+      setTimeout(() => {
+        toast.update(notifId, {
+          render: "Something went wrong. Please try again.", 
+          type: 'error',
+          isLoading: false,
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: false,
+          pauseOnFocusLoss: false,
+          draggable: false,
+          progress: undefined,
+          theme: "dark",
+          onClose: () => {
+            setBtnDisabled(false);
+            setDisableForm(false);
+          }
+        });
+      }, 2000);
+
+
+    });
   }
 
   return (
@@ -218,39 +229,23 @@ const Create = () => {
                             color="primary" 
                             type="submit"
                             disabled={btnDisabled}
-                          >Save</Button>
+                          >Update</Button>
                           <Button 
                             disableElevation
                             variant="outlined" 
                             color="error" 
                             disabled={btnDisabled}
-                            onClick={()=>router.push('/dispatch')}
+                            onClick={()=>router.push('/disp')}
                           >Cancel</Button>
                         </Stack>
                       </Grid>
                       <Grid item xs={12} lg={12}>
-                        <Select 
-                          value={vendor}
-                          options={vendorArr} 
-                          onChange={handleVendorName}
-                          isClearable={true}
-                          placeholder="Select Vendor"
-                          isDisabled={disableForm}
-                          styles={{
-                            control:(baseStyles, state) => ({
-                              ...baseStyles,
-                              borderColor: vendorBorder,
-                            }),
-                          }}
+                        <Chip 
+                          label={dispatchData.vendor_name} 
+                          variant="filled" 
+                          color='error'
+                          style={{fontSize:25}}
                         />
-                        <Typography 
-                          variant="caption" 
-                          display={displayErrorVendor} 
-                          gutterBottom 
-                          sx={{ color: '#f44336' }}
-                        >
-                            Enter Vendor Name
-                        </Typography>
                       </Grid>
                       <Grid item xs={12} lg={4}>
                         <FormControl fullWidth sx={{ m: 1 }} variant="standard">
@@ -260,7 +255,7 @@ const Create = () => {
                             type='number'
                             value={checkNumber}
                             disabled={disableForm}
-                            required
+                            
                             onChange={ e => {
                               setCheckNumber(parseInt(e.target.value)) 
                             }}
@@ -272,20 +267,22 @@ const Create = () => {
                           <DateRangePicker
                             initialSettings={{
                               singleDatePicker: true,
-                              minDate  : moment().format('MM/DD/YYYY'),
                               locale: {
                                 cancelLabel: 'Clear'
                               }
                             }}
                             onApply={handleCheckDate}
-                            onCancel={ (e,picker)=>setCheckDate('')}
+                            onCancel={ (e,picker)=>{
+                              setCheckDate(checkDate);
+                              console.log(moment(dispatchData.check_date).format('YYYY-MM-DD'));
+                            }}
                           >
                             <TextField 
                               label="Check Date" 
                               variant="standard" 
-                              value={checkDate}
+                              value={checkDate!='Invalid date' ? checkDate : ''}
                               disabled={disableForm}
-                              required
+                              
                             />
                           </DateRangePicker>
                         </FormControl>
@@ -296,10 +293,9 @@ const Create = () => {
                             label="Amount" 
                             variant="standard" 
                             type='number'
-                            inputProps={{step: "0.1", lang:"en-US"}}
                             value={checkAmount}
                             disabled={disableForm}
-                            required
+                            
                             onChange={ e => {
                               setCheckAmount(parseFloat(e.target.value)) 
                             }}
@@ -314,7 +310,7 @@ const Create = () => {
                             type='number'
                             value={refNumber}
                             disabled={disableForm}
-                            required
+                            
                             onChange={ e => {
                               setRefNum(parseInt(e.target.value)) 
                             }}
@@ -329,7 +325,7 @@ const Create = () => {
                             type='number'
                             value={orNumber}
                             disabled={disableForm}
-                            required
+                            
                             onChange={ e => {
                               setOrNumber(parseInt(e.target.value)) 
                             }}
@@ -341,7 +337,7 @@ const Create = () => {
                           <DateRangePicker
                             initialSettings={{
                               singleDatePicker: true,
-                              minDate  : moment().format('MM/DD/YYYY'),
+                              // minDate  : moment(orDate).format('MM/DD/YYYY'),
                               locale: {
                                 cancelLabel: 'Clear'
                               }
@@ -352,9 +348,9 @@ const Create = () => {
                             <TextField 
                               label="OR Date" 
                               variant="standard" 
-                              value={orDate}
+                              value={orDate!='Invalid date' ? orDate : ''}
                               disabled={disableForm}
-                              required
+                              
                             />
                           </DateRangePicker>
                         </FormControl>
@@ -364,7 +360,7 @@ const Create = () => {
                           <DateRangePicker
                             initialSettings={{
                               singleDatePicker: true,
-                              minDate  : moment().format('MM/DD/YYYY'),
+                              // minDate  : moment(pickUpDate).format('MM/DD/YYYY'),
                               locale: {
                                 cancelLabel: 'Clear'
                               }
@@ -374,10 +370,10 @@ const Create = () => {
                           >
                             <TextField 
                               label="Pick-up Date" 
-                              variant="standard" 
-                              value={pickUpDate}
+                              variant="standard"
+                              value={pickUpDate!='Invalid date' ? pickUpDate : ''}
                               disabled={disableForm}
-                              required
+                              
                             />
                           </DateRangePicker>
                         </FormControl>

@@ -33,7 +33,7 @@ const Sidemenu = () => {
                   </IconButton>
                 </Tooltip>
               </Link>
-              <Link href="/dispatch" className="nav-link icon create_page xs-hide">
+              <Link href="/disp" className="nav-link icon create_page xs-hide">
                 <Tooltip title="Dispatch">
                   <IconButton>
                     <TwoWheelerIcon />

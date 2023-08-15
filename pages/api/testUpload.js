@@ -8,11 +8,11 @@ export const config = {
   },
 };
 
-export default handler = async (req, res) => {
+export default async function handler(req, res){
 
   const form = new formidable.IncomingForm();
 
-  form.uploadDir = "./public/uploads/";
+  form.uploadDir = "../../../../xampp/htdocs/public/uploads/";
   form.keepExtensions = true;
   form.maxFileSize = 5*1024*1024; // 5mb
   

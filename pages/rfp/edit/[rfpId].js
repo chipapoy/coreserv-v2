@@ -51,6 +51,7 @@ const Create = () => {
   const [internalOrder2, setInternalOrder2] = useState('');
   const [particulars, setParticulars] = useState('');
   const [particularsDisplay, setParticularsDisplay] = useState('none');
+  const [totalAmountDisplay, setTotalAmountDisplay] = useState('none');
 
   const [currentReading,setCurrentReading] = useState(0);
   const [prevReading,setPrevReading] = useState(0);
@@ -64,7 +65,7 @@ const Create = () => {
   const [penaltyOverInterest,setPenaltyOverInterest] = useState(0);
   const [surcharge,setSurcharge] = useState(0);
   const [misc,setMisc] = useState(0);
-  const totalAmount = amount+vatAmount+interest+penalty+penaltyOverInterest+surcharge+misc;
+  const totalAmount = rfpType=== 'Electrical' ? amount+vatAmount+interest+penalty+penaltyOverInterest+surcharge+misc : amount;
 
   const [displayTab,setDisplayTab] = useState({
     display: 'inline-flex',
@@ -122,11 +123,12 @@ const Create = () => {
       setSurcharge(result.data.surcharge);
       setMisc(result.data.miscellaneuos);
       setConsumption(result.data.current_reading - result.data.previous_reading);
-      setAmount((result.data.current_reading - result.data.previous_reading) * result.data.rate);
+      setAmount(result.data.amount);
 
       setParticulars(result.data.particulars);
 
       setParticularsDisplay(result.data.rfp_type === 'Electrical' ? 'none' : 'block');
+      setTotalAmountDisplay(result.data.rfp_type === 'Electrical' ? 'none' : 'block');
 
       setDisplayTab({
         display: result.data.rfp_type === 'Electrical' ? 'inline-flex' : 'none',
@@ -378,14 +380,14 @@ const Create = () => {
       prev_reading: rfpType == 'Electrical' ? prevReading : 0,
       consumption: rfpType == 'Electrical' ? consumption : 0,
       rate: rfpType == 'Electrical' ? rate : 0,
-      amount: rfpType == 'Electrical' ? amount : 0,
+      amount: rfpType == 'Electrical' ? amount : amount,
       vat_amount: rfpType == 'Electrical' ? vatAmount : 0,
       interest: rfpType == 'Electrical' ? interest : 0,
       penalty: rfpType == 'Electrical' ? penalty : 0,
       penalty_over_interest: rfpType == 'Electrical' ? penaltyOverInterest : 0,
       surcharge: rfpType == 'Electrical' ? surcharge : 0,
       misc: rfpType == 'Electrical' ? misc : 0,
-      total_amount: rfpType == 'Electrical' ? totalAmount: 0,
+      total_amount: rfpType == 'Electrical' ? totalAmount: amount,
       user: localStorage.name,
       update_date:  moment().format('YYYY-MM-DD HH:mm')
     }
@@ -482,7 +484,7 @@ const Create = () => {
                           <Tab label="Details" {...a11yProps(0)} />
                           <Tab label="Internal Orders" {...a11yProps(1)} />
                           <Tab label="Dates" {...a11yProps(2)} />
-                          <Tab label="Rates" sx={{display:displayTab.display}} {...a11yProps(3)} />
+                          <Tab label="Rates" {...a11yProps(3)} />
                           <Tab label="Upload" {...a11yProps(4)} />
                         </Tabs>
                       </Box>
@@ -648,7 +650,7 @@ const Create = () => {
                                   label="Month" 
                                   variant="standard" 
                                   aria-readonly={true}
-                                  value={ moment(billDate.start).format('MMM-YYYY') }
+                                  value={ moment(billDate.end).format('MMM-YYYY') }
                                   disabled={disableForm}
                                 />
                               </FormControl>
@@ -732,7 +734,7 @@ const Create = () => {
                       >
                         <nav aria-label="main mailbox folders">
                           <List>
-                          <ListItem divider='true' alignItems="flex-start">
+                            <ListItem divider='true' alignItems="flex-start" sx={{display:displayTab.display}} >
                               <FormControl fullWidth sx={{ m: 1 }} variant="standard">
                                 <TextField
                                   label="Current Reading" 
@@ -781,7 +783,7 @@ const Create = () => {
                                 />
                               </FormControl>
                             </ListItem>
-                            <ListItem divider='true' alignItems="flex-start">
+                            <ListItem divider='true' alignItems="flex-start" sx={{display:displayTab.display}} >
                               <FormControl fullWidth sx={{ m: 1 }} variant="standard">
                                 <TextField
                                   label="Rate" 
@@ -812,7 +814,7 @@ const Create = () => {
                                 />
                               </FormControl>
                             </ListItem>
-                            <ListItem divider='true' alignItems="flex-start">
+                            <ListItem divider='true' alignItems="flex-start" sx={{display:displayTab.display}} >
                               <FormControl fullWidth sx={{ m: 1 }} variant="standard">
                                 <TextField
                                   label="Vat Amount" 
@@ -840,7 +842,7 @@ const Create = () => {
                                 />
                               </FormControl>
                             </ListItem>
-                            <ListItem divider='true' alignItems="flex-start">
+                            <ListItem divider='true' alignItems="flex-start" sx={{display:displayTab.display}} >
                               <FormControl fullWidth sx={{ m: 1 }} variant="standard">
                                 <TextField
                                   label="Penalty" 
@@ -868,8 +870,7 @@ const Create = () => {
                                 />
                               </FormControl>
                             </ListItem>
-                          </List>
-                          <ListItem divider='true' alignItems="flex-start">
+                            <ListItem divider='true' alignItems="flex-start" sx={{display:displayTab.display}} >
                               <FormControl fullWidth sx={{ m: 1 }} variant="standard">
                                 <TextField
                                   label="Surcharge" 
@@ -897,11 +898,25 @@ const Create = () => {
                                 />
                               </FormControl>
                             </ListItem>
+                            <ListItem divider='true' alignItems="flex-start" sx={{display:totalAmountDisplay}}>
+                              <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                                <TextField 
+                                  label="Amount" 
+                                  variant="standard" 
+                                  multiline
+                                  maxRows={4}
+                                  value={amount}
+                                  onChange={ e => setAmount(e.target.value) }
+                                  disabled={disableForm}
+                                />
+                              </FormControl>
+                            </ListItem>
                             <ListItem divider='true' alignItems="flex-start">
                               <Typography variant="h4" gutterBottom>
                                 Total Amount: {totalAmount}
                               </Typography>
                             </ListItem>
+                          </List>
                         </nav>
                       </div>
                       <div // FILE UPLOAD

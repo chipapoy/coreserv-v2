@@ -286,7 +286,7 @@ const Index = () => {
               filter: false,
               sort: true,
               customBodyRenderLite: (dataIndex, rowIndex) => {
-                return data[dataIndex].rfp_type === 'Rental' ? 'N/A' : data[dataIndex].rate;
+                return data[dataIndex].rfp_type === 'Rental' ? 'N/A' : data[dataIndex].rate.toFixed(2);
               }
           }
       },{
@@ -296,7 +296,7 @@ const Index = () => {
               filter: false,
               sort: true,
               customBodyRenderLite: (dataIndex, rowIndex) => {
-                return data[dataIndex].rfp_type === 'Rental' ? 'N/A' : data[dataIndex].amount;
+                return data[dataIndex].amount.toFixed(2);
               }
           }
       },{
@@ -307,7 +307,7 @@ const Index = () => {
               sort: true,
               setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
               customBodyRenderLite: (dataIndex, rowIndex) => {
-                return data[dataIndex].rfp_type === 'Rental' ? 'N/A' : data[dataIndex].vat_amount;
+                return data[dataIndex].rfp_type === 'Rental' ? 'N/A' : data[dataIndex].vat_amount.toFixed(2);
               }
           }
       },{
@@ -317,7 +317,7 @@ const Index = () => {
               filter: false,
               sort: true,
               customBodyRenderLite: (dataIndex, rowIndex) => {
-                return data[dataIndex].rfp_type === 'Rental' ? 'N/A' : data[dataIndex].interest;
+                return data[dataIndex].rfp_type === 'Rental' ? 'N/A' : data[dataIndex].interest.toFixed(2);
               }
           }
       },{
@@ -327,7 +327,7 @@ const Index = () => {
               filter: false,
               sort: true,
               customBodyRenderLite: (dataIndex, rowIndex) => {
-                return data[dataIndex].rfp_type === 'Rental' ? 'N/A' : data[dataIndex].penalty;
+                return data[dataIndex].rfp_type === 'Rental' ? 'N/A' : data[dataIndex].penalty.toFixed(2);
               }
           }
       },{
@@ -337,7 +337,7 @@ const Index = () => {
               filter: false,
               sort: true,
               customBodyRenderLite: (dataIndex, rowIndex) => {
-                return data[dataIndex].rfp_type === 'Rental' ? 'N/A' : data[dataIndex].penalty_over_interest_vat_amount;
+                return data[dataIndex].rfp_type === 'Rental' ? 'N/A' : data[dataIndex].penalty_over_interest_vat_amount.toFixed(2);
               }
           }
       },{
@@ -347,7 +347,7 @@ const Index = () => {
               filter: false,
               sort: true,
               customBodyRenderLite: (dataIndex, rowIndex) => {
-                return data[dataIndex].rfp_type === 'Rental' ? 'N/A' : data[dataIndex].surcharge;
+                return data[dataIndex].rfp_type === 'Rental' ? 'N/A' : data[dataIndex].surcharge.toFixed(2);
               }
           }
       },{
@@ -357,7 +357,7 @@ const Index = () => {
               filter: false,
               sort: true,
               customBodyRenderLite: (dataIndex, rowIndex) => {
-                return data[dataIndex].rfp_type === 'Rental' ? 'N/A' : data[dataIndex].miscellaneuos;
+                return data[dataIndex].rfp_type === 'Rental' ? 'N/A' : data[dataIndex].miscellaneuos.toFixed(2);
               }
           }
       },{
@@ -368,7 +368,7 @@ const Index = () => {
               sort: true,
               setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
               customBodyRenderLite: (dataIndex, rowIndex) => {
-                return data[dataIndex].rfp_type === 'Rental' ? 'N/A' : data[dataIndex].total_amount;
+                return data[dataIndex].total_amount.toFixed(2);
               }
           }
       },{

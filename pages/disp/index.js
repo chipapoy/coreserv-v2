@@ -69,7 +69,10 @@ const Index = () => {
           options: {
               filter: true,
               sort: true,
-              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}})
+              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
+              customBodyRender: (value, tableMeta) => {
+                return value!=0 ? value : 'N/A';
+              }
           }
       },{
           name: "check_date",
@@ -78,8 +81,14 @@ const Index = () => {
               filter: true,
               sort: true,
               setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
-              customBodyRenderLite: (dataIndex, rowIndex) => {
-                return moment(data[dataIndex].check_date).format('DD-MMM-YY');
+              // customBodyRenderLite: (dataIndex, rowIndex) => {
+              //   return moment(data[dataIndex].check_date).format('DD-MMM-YY');
+              // }
+              customBodyRender: (value, tableMeta) => {
+
+                let date = moment(value).format('DD-MMM-YY');
+
+                return date!='Invalid date' ? date : '-';
               }
           }
       },{
@@ -88,7 +97,10 @@ const Index = () => {
           options: {
               filter: true,
               sort: true,
-              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}})
+              setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
+              customBodyRender: (value, tableMeta) => {
+                return value!=0 ? value : 'N/A';
+              }
           }
       },{
           name: "vendor_name",
@@ -114,8 +126,14 @@ const Index = () => {
               filter: true,
               sort: true,
               setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
-              customBodyRenderLite: (dataIndex, rowIndex) => {
-                return moment(data[dataIndex].check_date).format('DD-MMM-YY');
+              // customBodyRenderLite: (dataIndex, rowIndex) => {
+              //   return moment(data[dataIndex].check_date).format('DD-MMM-YY');
+              // }
+              customBodyRender: (value, tableMeta) => {
+
+                let date = moment(value).format('DD-MMM-YY');
+
+                return date!='Invalid date' ? date : '-';
               }
           }
       },{
@@ -125,6 +143,9 @@ const Index = () => {
               filter: true,
               sort: true,
               setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
+              customBodyRender: (value, tableMeta) => {
+                return value!=0 ? value : 'N/A';
+              }
           }
       },{
           name: "or_date",
@@ -133,8 +154,14 @@ const Index = () => {
             filter: false,
             sort: true,
             setCellHeaderProps: () => ({style: {whiteSpace:'nowrap'}}),
-            customBodyRenderLite: (dataIndex, rowIndex) => {
-              return moment(data[dataIndex].or_date).format('DD-MMM-YY');
+            // customBodyRenderLite: (dataIndex, rowIndex) => {
+            //   return moment(data[dataIndex].or_date).format('DD-MMM-YY');
+            // }
+            customBodyRender: (value, tableMeta) => {
+
+              let date = moment(value).format('DD-MMM-YY');
+
+              return date!='Invalid date' ? date : '-';
             }
           }
       },{
@@ -318,7 +345,7 @@ const Index = () => {
             <TableCell colSpan={colSpan}>
               <Link 
                 href={{
-                    pathname:'/dispatch/edit/'+rowData[0]
+                    pathname:'/disp/edit/'+rowData[0]
                 }}
               >
                 <Tooltip title='Update'>
@@ -401,7 +428,7 @@ const Index = () => {
     },
     customToolbar: () => { 
       return (
-        <><Link href='/dispatch/create'>  
+        <><Link href='/disp/create'>  
             <Tooltip title="New Dispatch">
               <IconButton>
                 <AddIcon  />

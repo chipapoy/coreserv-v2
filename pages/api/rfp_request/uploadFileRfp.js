@@ -12,7 +12,7 @@ export default async function handler(req, res) {
 
   const form = new formidable.IncomingForm();
 
-  form.uploadDir = "./public/uploads/";
+  form.uploadDir = "../../../../xampp/htdocs/public/uploads/";
   form.keepExtensions = true;
   form.maxFileSize = 5*1024*1024; // 5mb
   
@@ -38,7 +38,7 @@ export default async function handler(req, res) {
           fields.ref_id,
           fields.rec_type,
           files.file.name,
-          files.file.path.split('\\')[2],
+          files.file.path.split('\\')[8],
           files.file.size / (1024 * 1024),
           files.file.path,
           fields.user
@@ -52,7 +52,7 @@ export default async function handler(req, res) {
   
     } 
     catch (error) {
-      res.status(500).json({ message: String(err) })
+      res.status(500).json({ message: String(error) })
     }
 
   });
