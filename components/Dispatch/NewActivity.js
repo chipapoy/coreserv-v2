@@ -7,7 +7,7 @@ import {
   Grid,Stack,Chip,TextField,FormControl,InputLabel,Select,MenuItem
 } from '@mui/material';
 import DateRangePicker from 'react-bootstrap-daterangepicker';
-import 'bootstrap-daterangepicker/daterangepicker.css';
+// import 'bootstrap-daterangepicker/daterangepicker.css';
 import moment from 'moment';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -30,13 +30,8 @@ export default function BasicModal(props) {
 
   const [dispatchData,setDispatchData] = useState([]);
 
-  const [vendor, setVendor] = useState('');
-  const [vendorBorder, setVendorBorder] = useState('#ced4da');
-  const [vendorError, setVendorError] = useState(vendor.value===undefined ? 1 : 0);
-  const [displayErrorVendor, setDisplayErrorVendor] = useState('none');
-
-  const [dispatchDate, setDispatchDate] = useState(moment().format('M/DD/YYYY'));
-  const [pickupDate, setPickupDate] = useState(moment().format('M/DD/YYYY'));
+  const [dispatchDate, setDispatchDate] = useState(moment().format('M/DD/YYYY HH:mm'));
+  const [pickupDate, setPickupDate] = useState(moment().format('M/DD/YYYY HH:mm'));
   const [crew, setCrew] = useState('');
   const [completionDate, setCompletionDate] = useState('');
 
@@ -58,6 +53,13 @@ export default function BasicModal(props) {
   const [submitBtn,setSubmitBtn] = useState('Submit');
   const [btnDisabled,setBtnDisabled] = useState(false);
   const [disableForm,setDisableForm] = useState(false);
+
+  const [dispDateError, setDispDateError] = useState(false);
+  const [displayErrorDispDate, setDisplayErrorDispDate] = useState('');
+  const [pickDateError, setPickDateError] = useState(false);
+  const [displayErrorPickDate, setDisplayErrorPickDate] = useState('');
+  const [countErrorDispDate, setCountErrorDispDate] = useState(0);
+  const [countErrorPickDate, setCountErrorPickDate] = useState(0);
 
   const getCrewArr = async () => {
 
@@ -82,13 +84,70 @@ export default function BasicModal(props) {
 
 
   const handleDispatchDate = (e, picker) => {
-    var date = moment(picker.startDate).format('M/DD/YYYY');
+    var date = moment(picker.startDate).format('M/DD/YYYY HH:mm');
     setDispatchDate(date);
   }
 
+  const handleDispatchDateText = (e) => {
+    const date = e.target.value;
+    
+    const dateIsValid = moment(date, "M/DD/YYYY HH:mm", true).isValid();
+
+    setDispatchDate(e.target.value);
+
+    const maxError = 1;
+    
+    if(dateIsValid){
+      
+      if(countErrorDispDate > 0){
+        setCountErrorDispDate(countErrorDispDate-1);
+        setDispDateError(false);
+        setDisplayErrorDispDate('');
+      }
+    }
+    else{
+
+      if(maxError > countErrorDispDate){
+        setCountErrorDispDate(countErrorDispDate+1);
+        setDispDateError(true);
+        setDisplayErrorDispDate('Incorrect entry');
+      }
+    }
+
+    
+  }
+
   const handlePickupDate = (e, picker) => {
-    var date = moment(picker.startDate).format('M/DD/YYYY');
+    var date = moment(picker.startDate).format('M/DD/YYYY HH:mm');
     setPickupDate(date);
+  }
+
+  const handlePickupDateText = (e) => {
+
+    const date = e.target.value;
+    
+    const dateIsValid = moment(date, "M/DD/YYYY HH:mm", true).isValid();
+
+    setPickupDate(e.target.value);
+
+    const maxError = 1;
+    
+    if(dateIsValid){
+      
+      if(countErrorPickDate > 0){
+        setCountErrorPickDate(countErrorPickDate-1);
+        setPickDateError(false);
+        setDisplayErrorPickDate('');
+      }
+    }
+    else{
+
+      if(maxError > countErrorPickDate){
+        setCountErrorPickDate(countErrorPickDate+1);
+        setPickDateError(true);
+        setDisplayErrorPickDate('Incorrect entry');
+      }
+    }
   }
 
   const dateViewFormat = date => {
@@ -126,14 +185,18 @@ export default function BasicModal(props) {
     
     e.preventDefault();
 
+    let totalError = countErrorDispDate + countErrorPickDate;
+
+    console.log(totalError);
+
     setBtnDisabled(true);
     setDisableForm(true);
     
     const url = '/api/dispatch_request/insertActivity'
     const data = {
       dispatch_id: props.dispDetails[0],
-      disp_date: moment(dispatchDate).format('YYYY-MM-DD'),
-      pickup_date: moment(pickupDate).format('YYYY-MM-DD'),
+      disp_date: moment(dispatchDate).format('YYYY-MM-DD HH:mm'),
+      pickup_date: moment(pickupDate).format('YYYY-MM-DD HH:mm'),
       crew_id: crew,
       user: localStorage.name,
       encode_date:  moment().format('YYYY-MM-DD HH:mm')
@@ -247,7 +310,9 @@ export default function BasicModal(props) {
                   <DateRangePicker
                     initialSettings={{
                       singleDatePicker: true,
-                      drops: "up",
+                      timePicker: true,
+                      timePicker24Hour: true,
+                      drops: "down",
                       locale: {
                         cancelLabel: 'Clear'
                       }
@@ -259,7 +324,10 @@ export default function BasicModal(props) {
                       label="Dispatch Date" 
                       variant="standard" 
                       value={dispatchDate}
+                      onChange={handleDispatchDateText}
                       disabled={disableForm}
+                      error={dispDateError}
+                      helperText={displayErrorDispDate}
                       required
                     />
                   </DateRangePicker>
@@ -270,7 +338,9 @@ export default function BasicModal(props) {
                   <DateRangePicker
                     initialSettings={{
                       singleDatePicker: true,
-                      drops: "up",
+                      timePicker: true,
+                      timePicker24Hour: true,
+                      drops: "down",
                       locale: {
                         cancelLabel: 'Clear'
                       }
@@ -282,7 +352,10 @@ export default function BasicModal(props) {
                       label="Pick-up Date" 
                       variant="standard" 
                       value={pickupDate}
+                      onChange={handlePickupDateText}
                       disabled={disableForm}
+                      error={pickDateError}
+                      helperText={displayErrorPickDate}
                       required
                     />
                   </DateRangePicker>
