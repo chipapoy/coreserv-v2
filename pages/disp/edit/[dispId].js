@@ -170,7 +170,7 @@ const Create = () => {
           progress: undefined,
           theme: "dark",
           onClose: () => {
-            router.push("/dispatch");
+            router.push("/disp");
           }
         });
       }, 2000);
@@ -235,7 +235,7 @@ const Create = () => {
                             variant="outlined" 
                             color="error" 
                             disabled={btnDisabled}
-                            onClick={()=>router.push('/dispatch')}
+                            onClick={()=>router.push('/disp')}
                           >Cancel</Button>
                         </Stack>
                       </Grid>
@@ -255,7 +255,7 @@ const Create = () => {
                             type='number'
                             value={checkNumber}
                             disabled={disableForm}
-                            required
+                            
                             onChange={ e => {
                               setCheckNumber(parseInt(e.target.value)) 
                             }}
@@ -280,9 +280,9 @@ const Create = () => {
                             <TextField 
                               label="Check Date" 
                               variant="standard" 
-                              value={checkDate}
+                              value={checkDate!='Invalid date' ? checkDate : ''}
                               disabled={disableForm}
-                              required
+                              
                             />
                           </DateRangePicker>
                         </FormControl>
@@ -295,7 +295,7 @@ const Create = () => {
                             type='number'
                             value={checkAmount}
                             disabled={disableForm}
-                            required
+                            
                             onChange={ e => {
                               setCheckAmount(parseFloat(e.target.value)) 
                             }}
@@ -310,7 +310,7 @@ const Create = () => {
                             type='number'
                             value={refNumber}
                             disabled={disableForm}
-                            required
+                            
                             onChange={ e => {
                               setRefNum(parseInt(e.target.value)) 
                             }}
@@ -325,7 +325,7 @@ const Create = () => {
                             type='number'
                             value={orNumber}
                             disabled={disableForm}
-                            required
+                            
                             onChange={ e => {
                               setOrNumber(parseInt(e.target.value)) 
                             }}
@@ -348,9 +348,9 @@ const Create = () => {
                             <TextField 
                               label="OR Date" 
                               variant="standard" 
-                              value={orDate}
+                              value={orDate!='Invalid date' ? orDate : ''}
                               disabled={disableForm}
-                              required
+                              
                             />
                           </DateRangePicker>
                         </FormControl>
@@ -370,10 +370,10 @@ const Create = () => {
                           >
                             <TextField 
                               label="Pick-up Date" 
-                              variant="standard" 
-                              value={pickUpDate}
+                              variant="standard"
+                              value={pickUpDate!='Invalid date' ? pickUpDate : ''}
                               disabled={disableForm}
-                              required
+                              
                             />
                           </DateRangePicker>
                         </FormControl>

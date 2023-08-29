@@ -159,7 +159,7 @@ const Create = () => {
               progress: undefined,
               theme: "dark",
               onClose: () => {
-                router.push("/dispatch");
+                router.push("/disp");
               }
             });
           }, 2000);
@@ -224,7 +224,7 @@ const Create = () => {
                             variant="outlined" 
                             color="error" 
                             disabled={btnDisabled}
-                            onClick={()=>router.push('/dispatch')}
+                            onClick={()=>router.push('/disp')}
                           >Cancel</Button>
                         </Stack>
                       </Grid>
@@ -260,7 +260,6 @@ const Create = () => {
                             type='number'
                             value={checkNumber}
                             disabled={disableForm}
-                            required
                             onChange={ e => {
                               setCheckNumber(parseInt(e.target.value)) 
                             }}
@@ -272,7 +271,6 @@ const Create = () => {
                           <DateRangePicker
                             initialSettings={{
                               singleDatePicker: true,
-                              minDate  : moment().format('MM/DD/YYYY'),
                               locale: {
                                 cancelLabel: 'Clear'
                               }
@@ -285,7 +283,6 @@ const Create = () => {
                               variant="standard" 
                               value={checkDate}
                               disabled={disableForm}
-                              required
                             />
                           </DateRangePicker>
                         </FormControl>
@@ -299,7 +296,6 @@ const Create = () => {
                             inputProps={{step: "0.1", lang:"en-US"}}
                             value={checkAmount}
                             disabled={disableForm}
-                            required
                             onChange={ e => {
                               setCheckAmount(parseFloat(e.target.value)) 
                             }}
@@ -314,7 +310,6 @@ const Create = () => {
                             type='number'
                             value={refNumber}
                             disabled={disableForm}
-                            required
                             onChange={ e => {
                               setRefNum(parseInt(e.target.value)) 
                             }}
@@ -329,7 +324,6 @@ const Create = () => {
                             type='number'
                             value={orNumber}
                             disabled={disableForm}
-                            required
                             onChange={ e => {
                               setOrNumber(parseInt(e.target.value)) 
                             }}
@@ -341,7 +335,6 @@ const Create = () => {
                           <DateRangePicker
                             initialSettings={{
                               singleDatePicker: true,
-                              minDate  : moment().format('MM/DD/YYYY'),
                               locale: {
                                 cancelLabel: 'Clear'
                               }
@@ -354,7 +347,6 @@ const Create = () => {
                               variant="standard" 
                               value={orDate}
                               disabled={disableForm}
-                              required
                             />
                           </DateRangePicker>
                         </FormControl>
@@ -377,7 +369,6 @@ const Create = () => {
                               variant="standard" 
                               value={pickUpDate}
                               disabled={disableForm}
-                              required
                             />
                           </DateRangePicker>
                         </FormControl>
