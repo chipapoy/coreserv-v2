@@ -24,12 +24,17 @@ const Create = () => {
   const pageTitle = 'New Dispatch';
 
   const [vendorArr,setVendorArr] = useState([]);
-  const [rfpTypeArr,setRfpTypeArr] = useState([]);
+  const [dispTypeArr,setDispTypeArr] = useState([]);
 
   const [vendor, setVendor] = useState('');
   const [vendorBorder, setVendorBorder] = useState('#ced4da');
   const [vendorError, setVendorError] = useState(vendor.value===undefined ? 1 : 0);
   const [displayErrorVendor, setDisplayErrorVendor] = useState('none');
+
+  const [dispType, setDispType] = useState('');
+  const [dispTypeBorder, setDispTypeBorder] = useState('#ced4da');
+  const [dispTypeError, setDispTypeError] = useState(vendor.value===undefined ? 1 : 0);
+  const [displayErrorDispType, setDisplayErrorDispType] = useState('none');
 
   const [checkDate, setCheckDate] = useState('');
   const [checkNumber, setCheckNumber] = useState('');
@@ -83,10 +88,19 @@ const Create = () => {
         setVendorArr(result.data);
     };
 
+    const getDispTypeArr = async () => {
+
+      const result = await axios.get('/api/dispatch_request/getDispType');
+
+      setDispTypeArr(result.data);
+    };
+
     getVendorArr();
+    getDispTypeArr();
 
     return () => {
         setVendorArr([]);
+        setDispTypeArr([]);
     }
 
   }, []);
@@ -106,6 +120,21 @@ const Create = () => {
     }  
   }
 
+  const handleDispType = (val) => {
+
+    setDispType(val);
+    setDispTypeBorder('#ced4da');
+    setDispTypeError(0);
+    setDisplayErrorDispType('none');
+    
+    if(val===null) {
+      setDispType([]);
+      setDispTypeBorder('#f44336');
+      setDispTypeError(1);
+      setDisplayErrorDispType('block');
+    }  
+  }
+
   const submitData = e => {
     
     e.preventDefault();
@@ -114,7 +143,11 @@ const Create = () => {
     setVendorError(vendor.value===undefined ? 1 : 0);
     setDisplayErrorVendor(vendor.value===undefined ? 'block' : 'none');
 
-    const errorCount =  vendorError;
+    setDispTypeBorder(dispType.value===undefined ? '#f44336' : '#ced4da');
+    setDispTypeError(dispType.value===undefined ? 1 : 0);
+    setDisplayErrorDispType(dispType.value===undefined ? 'block' : 'none');
+
+    const errorCount =  vendorError + dispTypeError;
 
       console.log(errorCount);
 
@@ -126,6 +159,7 @@ const Create = () => {
         const url = '/api/dispatch_request/createDispatch'
         const data = {
           vendor_id: vendor.value,
+          disp_type: dispType.value,
           check_num: checkNumber,
           check_date: moment(checkDate).format('YYYY-MM-DD'),
           amount: checkAmount,
@@ -250,6 +284,30 @@ const Create = () => {
                           sx={{ color: '#f44336' }}
                         >
                             Enter Vendor Name
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={12} lg={12}>
+                        <Select 
+                          value={dispType}
+                          options={dispTypeArr} 
+                          onChange={handleDispType}
+                          isClearable={true}
+                          placeholder="Select Dispatch Type"
+                          isDisabled={disableForm}
+                          styles={{
+                            control:(baseStyles, state) => ({
+                              ...baseStyles,
+                              borderColor: dispTypeBorder,
+                            }),
+                          }}
+                        />
+                        <Typography 
+                          variant="caption" 
+                          display={displayErrorDispType} 
+                          gutterBottom 
+                          sx={{ color: '#f44336' }}
+                        >
+                            Enter Dispatch Type
                         </Typography>
                       </Grid>
                       <Grid item xs={12} lg={4}>

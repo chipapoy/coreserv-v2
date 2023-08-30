@@ -31,7 +31,7 @@ export default function BasicModal(props) {
   const [dispatchData,setDispatchData] = useState([]);
 
   const [dispatchDate, setDispatchDate] = useState(moment().format('M/DD/YYYY HH:mm'));
-  const [pickupDate, setPickupDate] = useState(moment().format('M/DD/YYYY HH:mm'));
+  const [pickupDate, setPickupDate] = useState(moment().format('M/DD/YYYY'));
   const [crew, setCrew] = useState('');
   const [completionDate, setCompletionDate] = useState('');
 
@@ -118,7 +118,7 @@ export default function BasicModal(props) {
   }
 
   const handlePickupDate = (e, picker) => {
-    var date = moment(picker.startDate).format('M/DD/YYYY HH:mm');
+    var date = moment(picker.startDate).format('M/DD/YYYY');
     setPickupDate(date);
   }
 
@@ -126,7 +126,7 @@ export default function BasicModal(props) {
 
     const date = e.target.value;
     
-    const dateIsValid = moment(date, "M/DD/YYYY HH:mm", true).isValid();
+    const dateIsValid = moment(date, "M/DD/YYYY", true).isValid();
 
     setPickupDate(e.target.value);
 
@@ -196,7 +196,7 @@ export default function BasicModal(props) {
     const data = {
       dispatch_id: props.dispDetails[0],
       disp_date: moment(dispatchDate).format('YYYY-MM-DD HH:mm'),
-      pickup_date: moment(pickupDate).format('YYYY-MM-DD HH:mm'),
+      pickup_date: moment(pickupDate).format('YYYY-MM-DD'),
       crew_id: crew,
       user: localStorage.name,
       encode_date:  moment().format('YYYY-MM-DD HH:mm')
@@ -299,7 +299,7 @@ export default function BasicModal(props) {
               </Grid>
               <Grid item xs={12} lg={12}>
                 <Chip 
-                  label={props.dispDetails[4]} 
+                  label={props.dispDetails[5]} 
                   variant="filled" 
                   color='error'
                   style={{fontSize:22}}
@@ -338,8 +338,8 @@ export default function BasicModal(props) {
                   <DateRangePicker
                     initialSettings={{
                       singleDatePicker: true,
-                      timePicker: true,
-                      timePicker24Hour: true,
+                      // timePicker: true,
+                      // timePicker24Hour: true,
                       drops: "down",
                       locale: {
                         cancelLabel: 'Clear'

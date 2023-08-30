@@ -54,6 +54,11 @@ const ActivityTable = (props) => {
     return date;
   }
 
+  const dateTimeViewFormat = date => {
+    date = date ? moment(date).format('M/DD/YYYY HH:mm') : 'n/a';
+    return date;
+  }
+
   const updateActivity = (data) => {
     // setOpenUpdateModal(true);
     setOpenModal({
@@ -143,7 +148,7 @@ const ActivityTable = (props) => {
                   <EditIcon />
                 </IconButton>  
               </TableCell>
-              <TableCell align="left" sx={{fontSize:tableBodyFontSize}}>{dateViewFormat(row.disp_date)}</TableCell>
+              <TableCell align="left" sx={{fontSize:tableBodyFontSize}}>{dateTimeViewFormat(row.disp_date)}</TableCell>
               <TableCell align="left" sx={{fontSize:tableBodyFontSize}}>{dateViewFormat(row.pickup_date)}</TableCell>
               <TableCell align="left" sx={{fontSize:tableBodyFontSize}}>{row.crew}</TableCell>
               <TableCell align="left" sx={{fontSize:tableBodyFontSize}}>{row.action_taken}</TableCell>

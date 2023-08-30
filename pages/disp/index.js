@@ -64,6 +64,17 @@ const Index = () => {
               display:false
           }
       },{
+          name: "disp_type",
+          label: "Dispatch Type",
+          options: {
+              filter: true,
+              sort: true,
+              setCellProps: () => ({style: {whiteSpace:'nowrap'}}),
+              customBodyRender: (value, tableMeta) => {
+                return value;
+              }
+          }
+      },{
           name: "check_num",
           label: "Check #",
           options: {

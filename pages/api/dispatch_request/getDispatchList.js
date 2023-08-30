@@ -44,7 +44,15 @@ export default async function handler(req, res) {
             ) AS remarks,
             (
                 SELECT CONCAT(crew.team_code,',',crew.technician) FROM dispatch_activity activity, crew_tbl crew WHERE activity.dispatch_id = dispatch.id AND activity.crew_id = crew.id ORDER BY activity.id DESC LIMIT 1
-            ) AS crew
+            ) AS crew,
+            (
+                SELECT 
+                disp_type
+                FROM 
+                disp_type_tbl
+                WHERE 
+                disp_type_tbl.id = dispatch.disp_type
+            ) AS disp_type
             FROM 
             dispatch
             LEFT JOIN vendors ON vendors.id = dispatch.vendor_id

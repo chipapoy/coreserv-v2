@@ -9,8 +9,9 @@ import 'bootstrap-daterangepicker/daterangepicker.css';
 import moment from 'moment';
 import { toast } from 'react-toastify';
 import {
-  Grid,Stack,Chip,Button,TextField,FormControl
+  Grid,Stack,Chip,Button,TextField,FormControl,Select,MenuItem
 } from '@mui/material';
+// import Select from 'react-select';
 
 
 
@@ -24,11 +25,15 @@ const Create = () => {
   const pageTitle = 'Update Dispatch';
 
   const [dispatchData,setDispatchData] = useState([]);
+  
+  const [dispTypeArr,setDispTypeArr] = useState([]);
 
-  const [vendor, setVendor] = useState('');
-  const [vendorBorder, setVendorBorder] = useState('#ced4da');
-  const [vendorError, setVendorError] = useState(vendor.value===undefined ? 1 : 0);
-  const [displayErrorVendor, setDisplayErrorVendor] = useState('none');
+  const [dispType, setDispType] = useState(0);
+
+  // const [vendor, setVendor] = useState('');
+  // const [vendorBorder, setVendorBorder] = useState('#ced4da');
+  // const [vendorError, setVendorError] = useState(vendor.value===undefined ? 1 : 0);
+  // const [displayErrorVendor, setDisplayErrorVendor] = useState('none');
 
   const [checkDate, setCheckDate] = useState('');
   const [checkNumber, setCheckNumber] = useState('');
@@ -37,8 +42,6 @@ const Create = () => {
   const [orNumber, setOrNumber] = useState('');
   const [orDate, setOrDate] = useState('');
   const [pickUpDate, setPickUpDate] = useState('');
-
-  let initialCheckDate = checkDate;
 
   const dateRangePickerOptions = {
     ranges: {
@@ -93,6 +96,7 @@ const Create = () => {
       setOrNumber(result.data.or_num);
       setOrDate(dateViewFormat(result.data.or_date));
       setPickUpDate(dateViewFormat(result.data.pickup_date));
+      setDispType(result.data.disp_type)
 
     })
     .catch( err => {
@@ -100,32 +104,26 @@ const Create = () => {
     });
   }
 
+  const getDispTypeArr = async () => {
+
+    const result = await axios.get('/api/dispatch_request/getDispType');
+
+    setDispTypeArr(result.data);
+  };
+
   useEffect(() => {
 
     console.clear();
 
+    getDispTypeArr();
     getDispatchData(dispId);
 
     return () => {
+      getDispTypeArr([]);
       setDispatchData([]);
     }
 
   }, [dispId]);
-
-  const handleVendorName = (val) => {
-
-    setVendor(val);
-    setVendorBorder('#ced4da');
-    setVendorError(0);
-    setDisplayErrorVendor('none');
-    
-    if(val===null) {
-      setVendor([]);
-      setVendorBorder('#f44336');
-      setVendorError(1);
-      setDisplayErrorVendor('block');
-    }  
-  }
 
   const submitData = e => {
     
@@ -137,6 +135,7 @@ const Create = () => {
     const url = '/api/dispatch_request/updateDispatch'
     const data = {
       id: dispId,
+      disp_type: dispType,
       check_num: checkNumber,
       check_date: moment(checkDate).format('YYYY-MM-DD'),
       amount: checkAmount,
@@ -246,6 +245,23 @@ const Create = () => {
                           color='error'
                           style={{fontSize:25}}
                         />
+                      </Grid>
+                      <Grid item xs={12} lg={12}>
+                        <FormControl fullWidth sx={{ m: 1 }} variant="standard">
+                          <label className="form-label">Dispatch Type</label>
+                          <Select 
+                              value={dispType}
+                              // options={dispTypeArr} 
+                              onChange={ e => setDispType(e.target.value)}
+                              isDisabled={disableForm}
+                          >
+                            {dispTypeArr.map( type => (
+                              <MenuItem key={type.value} value={type.value} >
+                                {type.label}
+                              </MenuItem>
+                            ))}
+                          </Select>
+                        </FormControl>
                       </Grid>
                       <Grid item xs={12} lg={4}>
                         <FormControl fullWidth sx={{ m: 1 }} variant="standard">

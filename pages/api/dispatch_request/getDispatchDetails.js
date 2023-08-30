@@ -8,6 +8,7 @@ export default async function handler(req, res) {
         const sql = `
             SELECT 
             dispatch.id,
+            dispatch.disp_type,
             dispatch.check_num,
             dispatch.check_date,
             dispatch.ref_num,
@@ -24,9 +25,12 @@ export default async function handler(req, res) {
             dispatch.received_by
             FROM 
             dispatch,
-            vendors
+            vendors,
+            disp_type_tbl AS dispType
             WHERE 
             dispatch.vendor_id = vendors.id
+            AND
+            dispatch.disp_type = dispType.id
             AND
             dispatch.is_active = 1 
             AND

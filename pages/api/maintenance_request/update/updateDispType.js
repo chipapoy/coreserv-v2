@@ -1,20 +1,14 @@
 // import mysql from 'mysql2/promise';
-import { query } from "../connection/connection";
+import { query } from "../../connection/connection";
 
 export default async function handler(req, res) {
 
 
     try {
         const sql = `
-            UPDATE dispatch SET
+            UPDATE disp_type_tbl SET
             disp_type = ?,
-            check_num = ?,
-            check_date = ?,
-            ref_num = ?,
-            amount = ?,
-            or_num = ?,
-            or_date = ?,
-            pickup_date = ?,
+            is_active = ?,
             update_by = ?,
             update_date = ?
             WHERE
@@ -22,13 +16,7 @@ export default async function handler(req, res) {
         `;
         const valuesParam = [
           req.body.disp_type,
-          req.body.check_num,
-          req.body.check_date,
-          req.body.ref_number,
-          req.body.amount,
-          req.body.or_number,
-          req.body.or_date,
-          req.body.pickup_date,
+          req.body.is_active,
           req.body.user,
           req.body.update_date,
           req.body.id
